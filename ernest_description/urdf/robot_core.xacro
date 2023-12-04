@@ -51,6 +51,10 @@
 
   </link>
 
+  <gazebo reference="base_link">
+    <material>Gazebo/White</material>
+  </gazebo>
+ 
 <!-- CHASSIS --> 
     <!-- REAR PART --> 
   <link name="back_chassis">
@@ -74,6 +78,10 @@
     </xacro:inertial_box>
     
   </link>
+
+  <gazebo reference="back_chassis">
+    <material>Gazebo/White</material>
+  </gazebo>
 
     <!-- REAR WELDING --> 
   <joint name="front_attatch" type="fixed">
@@ -104,6 +112,10 @@
     </xacro:inertial_box>
   </link>
 
+  <gazebo reference="middle_chassis">
+    <material>Gazebo/White</material>
+  </gazebo>
+
     <!-- STEERING JOINT --> 
   <joint name="steering_joint" type="revolute">
     <axis xyz="0 0 -1"/>
@@ -133,6 +145,9 @@
       <origin xyz="0 0 0"/>  
     </xacro:inertial_box>
   </link>
+  <gazebo reference="front_chassis">
+    <material>Gazebo/White</material>
+  </gazebo>
 
     <!-- BOOGIE JOINT --> 
   <joint name="bogie_joint" type="revolute">
@@ -164,6 +179,10 @@
         <origin xyz="0 0 0" rpy="0 ${pi/2} ${flip*pi/2}" /> 
       </xacro:inertial_cylinder>
     </link>
+
+  <gazebo reference="{wheel_prefix}_wheel_link">
+    <material>Gazebo/Black</material>
+  </gazebo>
 
     <!-- rolling -->
     <joint name="${wheel_prefix}_wheel" type="continuous">
