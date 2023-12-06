@@ -1,0 +1,22 @@
+[35m[1mConsolidate compiler generated dependencies of target straight_line_node[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/straight_line_node.dir/src/straight_line.cpp.o[0m
+[100%] [32m[1mLinking CXX executable straight_line_node[0m
+[100%] Built target straight_line_node
+-- Install configuration: ""
+-- Installing: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/lib/ernest_mpc/straight_line_node
+-- Set runtime path of "/home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/lib/ernest_mpc/straight_line_node" to ""
+-- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ament_index/resource_index/package_run_dependencies/ernest_mpc
+-- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ament_index/resource_index/parent_prefix_path/ernest_mpc
+-- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/environment/ament_prefix_path.sh
+-- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/environment/ament_prefix_path.dsv
+-- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/environment/path.sh
+-- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/environment/path.dsv
+-- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/local_setup.bash
+-- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/local_setup.sh
+-- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/local_setup.zsh
+-- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/local_setup.dsv
+-- Installing: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/package.dsv
+-- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ament_index/resource_index/packages/ernest_mpc
+-- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/cmake/ernest_mpcConfig.cmake
+-- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/cmake/ernest_mpcConfig-version.cmake
+-- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/package.xml

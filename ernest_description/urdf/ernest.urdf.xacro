@@ -2,5 +2,6 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro"  name="ernest">
 
     <xacro:include filename="robot_core.xacro" />
+    <xacro:include filename="diff_drive_control.xacro" />
 
 </robot> 

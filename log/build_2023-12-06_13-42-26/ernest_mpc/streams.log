@@ -1,0 +1,26 @@
+[0.210s] Invoking command in '/home/mariobo/ernest_ws/src/ernest_simulations/build/ernest_mpc': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/local/bin/cmake --build /home/mariobo/ernest_ws/src/ernest_simulations/build/ernest_mpc -- -j8 -l8
+[0.242s] [35m[1mConsolidate compiler generated dependencies of target straight_line_node[0m
+[0.269s] [ 50%] [32mBuilding CXX object CMakeFiles/straight_line_node.dir/src/straight_line.cpp.o[0m
+[5.701s] [100%] [32m[1mLinking CXX executable straight_line_node[0m
+[6.000s] [100%] Built target straight_line_node
+[6.008s] Invoked command in '/home/mariobo/ernest_ws/src/ernest_simulations/build/ernest_mpc' returned '0': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/local/bin/cmake --build /home/mariobo/ernest_ws/src/ernest_simulations/build/ernest_mpc -- -j8 -l8
+[6.057s] Invoking command in '/home/mariobo/ernest_ws/src/ernest_simulations/build/ernest_mpc': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/local/bin/cmake --install /home/mariobo/ernest_ws/src/ernest_simulations/build/ernest_mpc
+[6.064s] -- Install configuration: ""
+[6.064s] -- Installing: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/lib/ernest_mpc/straight_line_node
+[6.066s] -- Set runtime path of "/home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/lib/ernest_mpc/straight_line_node" to ""
+[6.067s] -- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ament_index/resource_index/package_run_dependencies/ernest_mpc
+[6.067s] -- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ament_index/resource_index/parent_prefix_path/ernest_mpc
+[6.068s] -- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/environment/ament_prefix_path.sh
+[6.069s] -- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/environment/ament_prefix_path.dsv
+[6.070s] -- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/environment/path.sh
+[6.070s] -- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/environment/path.dsv
+[6.070s] -- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/local_setup.bash
+[6.070s] -- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/local_setup.sh
+[6.070s] -- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/local_setup.zsh
+[6.073s] -- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/local_setup.dsv
+[6.073s] -- Installing: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/package.dsv
+[6.073s] -- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ament_index/resource_index/packages/ernest_mpc
+[6.073s] -- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/cmake/ernest_mpcConfig.cmake
+[6.074s] -- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/cmake/ernest_mpcConfig-version.cmake
+[6.074s] -- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/package.xml
+[6.074s] Invoked command in '/home/mariobo/ernest_ws/src/ernest_simulations/build/ernest_mpc' returned '0': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/local/bin/cmake --install /home/mariobo/ernest_ws/src/ernest_simulations/build/ernest_mpc

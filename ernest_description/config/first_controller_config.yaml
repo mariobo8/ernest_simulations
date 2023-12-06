@@ -1,0 +1,22 @@
+# Controller manager configuration
+controller_manager:
+  ros__parameters:
+    update_rate: 50  # Hz
+
+    # Declare controller name and type
+    forward_position_controller:
+      type: position_controllers/JointGroupPositionController
+
+        
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+        
+# Controller properties and joints to use
+forward_position_controller:
+  ros__parameters:
+    joints:
+      - steering_joint
+      - front_left_wheel_steer
+      - front_right_wheel_steer
+      - rear_left_wheel_steer
+      - rear_right_wheel_steer

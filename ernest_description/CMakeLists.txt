@@ -34,8 +34,18 @@ if(BUILD_TESTING)
 endif()
 
 install(
-  DIRECTORY urdf launch config
+  DIRECTORY urdf launch config rviz
   DESTINATION share/${PROJECT_NAME}
+)
+
+add_executable(twist src/twist.cpp)
+# Link the executable with the necessary libraries
+ament_target_dependencies(twist rclcpp geometry_msgs)
+
+# Install the executable
+install(TARGETS
+  twist
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 ament_package()

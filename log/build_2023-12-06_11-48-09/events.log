@@ -1,0 +1,116 @@
+[0.000000] (-) TimerEvent: {}
+[0.000307] (-) JobUnselected: {'identifier': 'ernest_controller'}
+[0.000807] (-) JobUnselected: {'identifier': 'ernest_description'}
+[0.000979] (ernest_mpc) JobQueued: {'identifier': 'ernest_mpc', 'dependencies': OrderedDict()}
+[0.001123] (ernest_mpc) JobStarted: {'identifier': 'ernest_mpc'}
+[0.109569] (-) TimerEvent: {}
+[0.220173] (-) TimerEvent: {}
+[0.224966] (ernest_mpc) JobProgress: {'identifier': 'ernest_mpc', 'progress': 'cmake'}
+[0.226612] (ernest_mpc) JobProgress: {'identifier': 'ernest_mpc', 'progress': 'build'}
+[0.228045] (ernest_mpc) Command: {'cmd': ['/usr/local/bin/cmake', '--build', '/home/mariobo/ernest_ws/src/ernest_simulations/build/ernest_mpc', '--', '-j8', '-l8'], 'cwd': '/home/mariobo/ernest_ws/src/ernest_simulations/build/ernest_mpc', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'mariobo'), ('GIO_MODULE_DIR', '/home/mariobo/snap/code/common/.cache/gio-modules'), ('SSH_AGENT_PID', '1692'), ('XDG_SESSION_TYPE', 'x11'), ('GIT_ASKPASS', '/snap/code/146/usr/share/code/resources/app/extensions/git/dist/askpass.sh'), ('GTK_EXE_PREFIX_VSCODE_SNAP_ORIG', ''), ('GDK_BACKEND_VSCODE_SNAP_ORIG', ''), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/opt/ros/foxy/opt/yaml_cpp_vendor/lib:/opt/ros/foxy/opt/rviz_ogre_vendor/lib:/opt/ros/foxy/lib/x86_64-linux-gnu:/opt/ros/foxy/lib'), ('HOME', '/home/mariobo'), ('CHROME_DESKTOP', 'code-url-handler.desktop'), ('LOCPATH_VSCODE_SNAP_ORIG', ''), ('TERM_PROGRAM_VERSION', '1.84.2'), ('DESKTOP_SESSION', 'ubuntu'), ('GTK_PATH', '/snap/code/146/usr/lib/x86_64-linux-gnu/gtk-3.0'), ('GTK_IM_MODULE_FILE', '/home/mariobo/snap/code/common/.cache/immodules/immodules.cache'), ('GIO_LAUNCHED_DESKTOP_FILE', '/var/lib/snapd/desktop/applications/code_code.desktop'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('GSETTINGS_SCHEMA_DIR_VSCODE_SNAP_ORIG', ''), ('VSCODE_GIT_ASKPASS_MAIN', '/snap/code/146/usr/share/code/resources/app/extensions/git/dist/askpass-main.js'), ('VSCODE_GIT_ASKPASS_NODE', '/snap/code/146/usr/share/code/code'), ('MANAGERPID', '1509'), ('DBUS_STARTER_BUS_TYPE', 'session'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus,guid=a39447b64229f1307d3acaac656f61b3'), ('COLORTERM', 'truecolor'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '46477'), ('IM_CONFIG_PHASE', '1'), ('ROS_DISTRO', 'foxy'), ('LOGNAME', 'mariobo'), ('JOURNAL_STREAM', '8:54410'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_CONFIG_DIRS_VSCODE_SNAP_ORIG', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_SESSION_CLASS', 'user'), ('XDG_DATA_DIRS_VSCODE_SNAP_ORIG', '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('USERNAME', 'mariobo'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('ROS_LOCALHOST_ONLY', '0'), ('WINDOWPATH', '2'), ('PATH', '/home/mariobo/.local/bin:/opt/ros/foxy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('SESSION_MANAGER', 'local/ubuntu:@/tmp/.ICE-unix/1727,unix/ubuntu:/tmp/.ICE-unix/1727'), ('GTK_EXE_PREFIX', '/snap/code/146/usr'), ('INVOCATION_ID', '5121629b47fe4dc794a2fcd73afe5462'), ('XDG_MENU_PREFIX', 'gnome-'), ('BAMF_DESKTOP_FILE_HINT', '/var/lib/snapd/desktop/applications/code_code.desktop'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('GDK_BACKEND', 'x11'), ('DISPLAY', ':0'), ('LOCPATH', '/snap/code/146/usr/lib/locale'), ('LANG', 'en_US.UTF-8'), ('XDG_CURRENT_DESKTOP', 'Unity'), ('GIO_MODULE_DIR_VSCODE_SNAP_ORIG', ''), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/gdm/Xauthority'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('VSCODE_GIT_IPC_HANDLE', '/run/user/1000/vscode-git-0e9b702b7d.sock'), ('TERM_PROGRAM', 'vscode'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('GSETTINGS_SCHEMA_DIR', '/home/mariobo/snap/code/146/.local/share/glib-2.0/schemas'), ('ROS_DOMAIN_ID', '23'), ('AMENT_PREFIX_PATH', '/opt/ros/foxy'), ('ORIGINAL_XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('SHELL', '/bin/bash'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('GTK_PATH_VSCODE_SNAP_ORIG', ''), ('GTK_IM_MODULE_FILE_VSCODE_SNAP_ORIG', ''), ('GPG_AGENT_INFO', '/run/user/1000/gnupg/S.gpg-agent:0:1'), ('VSCODE_GIT_ASKPASS_EXTRA_ARGS', '--ms-enable-electron-run-as-node'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/mariobo/ernest_ws/src/ernest_simulations/build/ernest_mpc'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('DBUS_STARTER_ADDRESS', 'unix:path=/run/user/1000/bus,guid=a39447b64229f1307d3acaac656f61b3'), ('XDG_DATA_DIRS', '/home/mariobo/snap/code/146/.local/share:/home/mariobo/snap/code/146:/snap/code/146/usr/share:/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('PYTHONPATH', '/opt/ros/foxy/lib/python3.8/site-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/foxy')]), 'shell': False}
+[0.256768] (ernest_mpc) StdoutLine: {'line': b'-- Found ament_cmake: 0.9.12 (/opt/ros/foxy/share/ament_cmake/cmake)\n'}
+[0.285149] (ernest_mpc) StdoutLine: {'line': b'-- Using PYTHON_EXECUTABLE: /usr/bin/python3\n'}
+[0.326459] (-) TimerEvent: {}
+[0.427030] (-) TimerEvent: {}
+[0.528883] (-) TimerEvent: {}
+[0.558981] (ernest_mpc) StdoutLine: {'line': b'-- Found rclcpp: 2.4.3 (/opt/ros/foxy/share/rclcpp/cmake)\n'}
+[0.601316] (ernest_mpc) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[0.606034] (ernest_mpc) StdoutLine: {'line': b'-- Found rosidl_adapter: 1.3.1 (/opt/ros/foxy/share/rosidl_adapter/cmake)\n'}
+[0.638693] (-) TimerEvent: {}
+[0.740325] (-) TimerEvent: {}
+[0.752004] (ernest_mpc) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[0.803570] (ernest_mpc) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 1.0.4 (/opt/ros/foxy/share/rmw_implementation_cmake/cmake)\n'}
+[0.806231] (ernest_mpc) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[0.841288] (-) TimerEvent: {}
+[0.946933] (-) TimerEvent: {}
+[0.957905] (ernest_mpc) StdoutLine: {'line': b'-- Found geometry_msgs: 2.0.5 (/opt/ros/foxy/share/geometry_msgs/cmake)\n'}
+[0.995503] (ernest_mpc) StdoutLine: {'line': b'-- Found nav_msgs: 2.0.5 (/opt/ros/foxy/share/nav_msgs/cmake)\n'}
+[1.056627] (-) TimerEvent: {}
+[1.061516] (ernest_mpc) StdoutLine: {'line': b'-- Found tf2: 0.13.14 (/opt/ros/foxy/share/tf2/cmake)\n'}
+[1.070569] (ernest_mpc) StdoutLine: {'line': b'-- Found ament_lint_auto: 0.9.8 (/opt/ros/foxy/share/ament_lint_auto/cmake)\n'}
+[1.157253] (-) TimerEvent: {}
+[1.162033] (ernest_mpc) StdoutLine: {'line': b"-- Added test 'copyright' to check source files copyright and LICENSE\n"}
+[1.163141] (ernest_mpc) StdoutLine: {'line': b"-- Added test 'cppcheck' to perform static code analysis on C / C++ code\n"}
+[1.163533] (ernest_mpc) StdoutLine: {'line': b'-- Configured cppcheck include dirs: \n'}
+[1.163715] (ernest_mpc) StdoutLine: {'line': b'-- Configured cppcheck exclude dirs and/or files: \n'}
+[1.164112] (ernest_mpc) StdoutLine: {'line': b"-- Added test 'cpplint' to check C / C++ code against the Google style\n"}
+[1.164265] (ernest_mpc) StdoutLine: {'line': b'-- Configured cpplint exclude dirs and/or files: \n'}
+[1.164808] (ernest_mpc) StdoutLine: {'line': b"-- Added test 'lint_cmake' to check CMake code style\n"}
+[1.165813] (ernest_mpc) StdoutLine: {'line': b"-- Added test 'uncrustify' to check C / C++ code style\n"}
+[1.165992] (ernest_mpc) StdoutLine: {'line': b'-- Configured uncrustify additional arguments: \n'}
+[1.166750] (ernest_mpc) StdoutLine: {'line': b"-- Added test 'xmllint' to check XML markup files\n"}
+[1.168246] (ernest_mpc) StdoutLine: {'line': b'-- Configuring done\n'}
+[1.186715] (ernest_mpc) StdoutLine: {'line': b'-- Generating done\n'}
+[1.190811] (ernest_mpc) StdoutLine: {'line': b'-- Build files have been written to: /home/mariobo/ernest_ws/src/ernest_simulations/build/ernest_mpc\n'}
+[1.217559] (ernest_mpc) StdoutLine: {'line': b'[ 50%] \x1b[32mBuilding CXX object CMakeFiles/straight_line_node.dir/src/straight_line.cpp.o\x1b[0m\n'}
+[1.260990] (-) TimerEvent: {}
+[1.370848] (-) TimerEvent: {}
+[1.481180] (-) TimerEvent: {}
+[1.589818] (-) TimerEvent: {}
+[1.699357] (-) TimerEvent: {}
+[1.809074] (-) TimerEvent: {}
+[1.917833] (-) TimerEvent: {}
+[2.028151] (-) TimerEvent: {}
+[2.136217] (-) TimerEvent: {}
+[2.246089] (-) TimerEvent: {}
+[2.354259] (-) TimerEvent: {}
+[2.463631] (-) TimerEvent: {}
+[2.574176] (-) TimerEvent: {}
+[2.681656] (-) TimerEvent: {}
+[2.790422] (-) TimerEvent: {}
+[2.900208] (-) TimerEvent: {}
+[3.009844] (-) TimerEvent: {}
+[3.121321] (-) TimerEvent: {}
+[3.233292] (-) TimerEvent: {}
+[3.343830] (-) TimerEvent: {}
+[3.452176] (-) TimerEvent: {}
+[3.557239] (-) TimerEvent: {}
+[3.668163] (-) TimerEvent: {}
+[3.777142] (-) TimerEvent: {}
+[3.886753] (-) TimerEvent: {}
+[3.992326] (-) TimerEvent: {}
+[4.102177] (-) TimerEvent: {}
+[4.213742] (-) TimerEvent: {}
+[4.322420] (-) TimerEvent: {}
+[4.430291] (-) TimerEvent: {}
+[4.541082] (-) TimerEvent: {}
+[4.648807] (-) TimerEvent: {}
+[4.758068] (-) TimerEvent: {}
+[4.866591] (-) TimerEvent: {}
+[4.977008] (-) TimerEvent: {}
+[5.082699] (-) TimerEvent: {}
+[5.184265] (-) TimerEvent: {}
+[5.243503] (ernest_mpc) StdoutLine: {'line': b'[100%] \x1b[32m\x1b[1mLinking CXX executable straight_line_node\x1b[0m\n'}
+[5.285114] (-) TimerEvent: {}
+[5.391925] (-) TimerEvent: {}
+[5.463016] (ernest_mpc) StdoutLine: {'line': b'[100%] Built target straight_line_node\n'}
+[5.482639] (ernest_mpc) CommandEnded: {'returncode': 0}
+[5.492420] (-) TimerEvent: {}
+[5.518312] (ernest_mpc) JobProgress: {'identifier': 'ernest_mpc', 'progress': 'install'}
+[5.532926] (ernest_mpc) Command: {'cmd': ['/usr/local/bin/cmake', '--install', '/home/mariobo/ernest_ws/src/ernest_simulations/build/ernest_mpc'], 'cwd': '/home/mariobo/ernest_ws/src/ernest_simulations/build/ernest_mpc', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'mariobo'), ('GIO_MODULE_DIR', '/home/mariobo/snap/code/common/.cache/gio-modules'), ('SSH_AGENT_PID', '1692'), ('XDG_SESSION_TYPE', 'x11'), ('GIT_ASKPASS', '/snap/code/146/usr/share/code/resources/app/extensions/git/dist/askpass.sh'), ('GTK_EXE_PREFIX_VSCODE_SNAP_ORIG', ''), ('GDK_BACKEND_VSCODE_SNAP_ORIG', ''), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/opt/ros/foxy/opt/yaml_cpp_vendor/lib:/opt/ros/foxy/opt/rviz_ogre_vendor/lib:/opt/ros/foxy/lib/x86_64-linux-gnu:/opt/ros/foxy/lib'), ('HOME', '/home/mariobo'), ('CHROME_DESKTOP', 'code-url-handler.desktop'), ('LOCPATH_VSCODE_SNAP_ORIG', ''), ('TERM_PROGRAM_VERSION', '1.84.2'), ('DESKTOP_SESSION', 'ubuntu'), ('GTK_PATH', '/snap/code/146/usr/lib/x86_64-linux-gnu/gtk-3.0'), ('GTK_IM_MODULE_FILE', '/home/mariobo/snap/code/common/.cache/immodules/immodules.cache'), ('GIO_LAUNCHED_DESKTOP_FILE', '/var/lib/snapd/desktop/applications/code_code.desktop'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('GSETTINGS_SCHEMA_DIR_VSCODE_SNAP_ORIG', ''), ('VSCODE_GIT_ASKPASS_MAIN', '/snap/code/146/usr/share/code/resources/app/extensions/git/dist/askpass-main.js'), ('VSCODE_GIT_ASKPASS_NODE', '/snap/code/146/usr/share/code/code'), ('MANAGERPID', '1509'), ('DBUS_STARTER_BUS_TYPE', 'session'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus,guid=a39447b64229f1307d3acaac656f61b3'), ('COLORTERM', 'truecolor'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '46477'), ('IM_CONFIG_PHASE', '1'), ('ROS_DISTRO', 'foxy'), ('LOGNAME', 'mariobo'), ('JOURNAL_STREAM', '8:54410'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_CONFIG_DIRS_VSCODE_SNAP_ORIG', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_SESSION_CLASS', 'user'), ('XDG_DATA_DIRS_VSCODE_SNAP_ORIG', '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('USERNAME', 'mariobo'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('ROS_LOCALHOST_ONLY', '0'), ('WINDOWPATH', '2'), ('PATH', '/home/mariobo/.local/bin:/opt/ros/foxy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('SESSION_MANAGER', 'local/ubuntu:@/tmp/.ICE-unix/1727,unix/ubuntu:/tmp/.ICE-unix/1727'), ('GTK_EXE_PREFIX', '/snap/code/146/usr'), ('INVOCATION_ID', '5121629b47fe4dc794a2fcd73afe5462'), ('XDG_MENU_PREFIX', 'gnome-'), ('BAMF_DESKTOP_FILE_HINT', '/var/lib/snapd/desktop/applications/code_code.desktop'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('GDK_BACKEND', 'x11'), ('DISPLAY', ':0'), ('LOCPATH', '/snap/code/146/usr/lib/locale'), ('LANG', 'en_US.UTF-8'), ('XDG_CURRENT_DESKTOP', 'Unity'), ('GIO_MODULE_DIR_VSCODE_SNAP_ORIG', ''), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/gdm/Xauthority'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('VSCODE_GIT_IPC_HANDLE', '/run/user/1000/vscode-git-0e9b702b7d.sock'), ('TERM_PROGRAM', 'vscode'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('GSETTINGS_SCHEMA_DIR', '/home/mariobo/snap/code/146/.local/share/glib-2.0/schemas'), ('ROS_DOMAIN_ID', '23'), ('AMENT_PREFIX_PATH', '/opt/ros/foxy'), ('ORIGINAL_XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('SHELL', '/bin/bash'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('GTK_PATH_VSCODE_SNAP_ORIG', ''), ('GTK_IM_MODULE_FILE_VSCODE_SNAP_ORIG', ''), ('GPG_AGENT_INFO', '/run/user/1000/gnupg/S.gpg-agent:0:1'), ('VSCODE_GIT_ASKPASS_EXTRA_ARGS', '--ms-enable-electron-run-as-node'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/mariobo/ernest_ws/src/ernest_simulations/build/ernest_mpc'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('DBUS_STARTER_ADDRESS', 'unix:path=/run/user/1000/bus,guid=a39447b64229f1307d3acaac656f61b3'), ('XDG_DATA_DIRS', '/home/mariobo/snap/code/146/.local/share:/home/mariobo/snap/code/146:/snap/code/146/usr/share:/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('PYTHONPATH', '/opt/ros/foxy/lib/python3.8/site-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/foxy')]), 'shell': False}
+[5.539829] (ernest_mpc) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[5.540548] (ernest_mpc) StdoutLine: {'line': b'-- Installing: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/lib/ernest_mpc/straight_line_node\n'}
+[5.545516] (ernest_mpc) StdoutLine: {'line': b'-- Set runtime path of "/home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/lib/ernest_mpc/straight_line_node" to ""\n'}
+[5.546854] (ernest_mpc) StdoutLine: {'line': b'-- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ament_index/resource_index/package_run_dependencies/ernest_mpc\n'}
+[5.547201] (ernest_mpc) StdoutLine: {'line': b'-- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ament_index/resource_index/parent_prefix_path/ernest_mpc\n'}
+[5.547499] (ernest_mpc) StdoutLine: {'line': b'-- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/environment/ament_prefix_path.sh\n'}
+[5.547787] (ernest_mpc) StdoutLine: {'line': b'-- Installing: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/environment/ament_prefix_path.dsv\n'}
+[5.548089] (ernest_mpc) StdoutLine: {'line': b'-- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/environment/path.sh\n'}
+[5.548452] (ernest_mpc) StdoutLine: {'line': b'-- Installing: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/environment/path.dsv\n'}
+[5.548740] (ernest_mpc) StdoutLine: {'line': b'-- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/local_setup.bash\n'}
+[5.549025] (ernest_mpc) StdoutLine: {'line': b'-- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/local_setup.sh\n'}
+[5.549641] (ernest_mpc) StdoutLine: {'line': b'-- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/local_setup.zsh\n'}
+[5.549967] (ernest_mpc) StdoutLine: {'line': b'-- Installing: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/local_setup.dsv\n'}
+[5.550259] (ernest_mpc) StdoutLine: {'line': b'-- Installing: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/package.dsv\n'}
+[5.550562] (ernest_mpc) StdoutLine: {'line': b'-- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ament_index/resource_index/packages/ernest_mpc\n'}
+[5.550722] (ernest_mpc) StdoutLine: {'line': b'-- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/cmake/ernest_mpcConfig.cmake\n'}
+[5.550988] (ernest_mpc) StdoutLine: {'line': b'-- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/cmake/ernest_mpcConfig-version.cmake\n'}
+[5.551665] (ernest_mpc) StdoutLine: {'line': b'-- Up-to-date: /home/mariobo/ernest_ws/src/ernest_simulations/install/ernest_mpc/share/ernest_mpc/package.xml\n'}
+[5.551965] (ernest_mpc) CommandEnded: {'returncode': 0}
+[5.593232] (-) TimerEvent: {}
+[5.702362] (-) TimerEvent: {}
+[5.815061] (-) TimerEvent: {}
+[5.918621] (-) TimerEvent: {}
+[6.026525] (ernest_mpc) JobEnded: {'identifier': 'ernest_mpc', 'rc': 0}
+[6.029830] (-) TimerEvent: {}
+[6.030214] (-) EventReactorShutdown: {}
