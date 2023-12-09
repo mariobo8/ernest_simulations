@@ -24,6 +24,7 @@ def generate_launch_description():
         output='screen'
     )
 
+
     return LaunchDescription([
         load_joint_state_controller,
         RegisterEventHandler(

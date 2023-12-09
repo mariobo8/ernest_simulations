@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ernest">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ernest_lowpoly">
+
+<xacro:macro name="robot_core" params="prefix">
   <xacro:include filename="inertial_macros.xacro"/>
 
   <xacro:property name="body_width" value="0.318"/>
@@ -28,8 +30,16 @@
       <color rgba="0 0 0 1"/>
   </material>
 
+  <link name="${prefix}base_link">
+  </link>
+
+  <joint name="${prefix}frame_joint" type="fixed">
+    <origin  xyz="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="chassis"/>
+  </joint> 
 <!-- BASE LINK -->
-  <link name="base_link">
+  <link name="${prefix}chassis">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
@@ -51,13 +61,9 @@
 
   </link>
 
-  <gazebo reference="base_link">
-    <material>Gazebo/White</material>
-  </gazebo>
- 
 <!-- CHASSIS --> 
     <!-- REAR PART --> 
-  <link name="back_chassis">
+  <link name="${prefix}back_chassis">
     <visual>
       <geometry>
         <box size="${middle_chassis_length} ${chassis_thickness} ${chassis_height}"/>
@@ -79,20 +85,16 @@
     
   </link>
 
-  <gazebo reference="back_chassis">
-    <material>Gazebo/White</material>
-  </gazebo>
-
     <!-- REAR WELDING --> 
-  <joint name="front_attatch" type="fixed">
-    <parent link="base_link"/>
+  <joint name="${prefix}front_attatch" type="fixed">
+    <parent link="chassis"/>
     <child link="back_chassis"/>
     <origin xyz="${chassis_thickness/-2} 0 0"/>
   </joint>
 
 
     <!-- MIDDLE PART --> 
-  <link name="middle_chassis">
+  <link name="${prefix}pivot">
     <visual>
       <geometry>
         <box size="${middle_chassis_length} ${chassis_thickness} ${chassis_height}"/>
@@ -112,21 +114,18 @@
     </xacro:inertial_box>
   </link>
 
-  <gazebo reference="middle_chassis">
-    <material>Gazebo/White</material>
-  </gazebo>
 
     <!-- STEERING JOINT --> 
-  <joint name="steering_joint" type="fixed">
-    <!-- <axis xyz="0 0 -1"/> -->
-     <!-- <limit effort="50" lower="-1.571" upper="1.571" velocity="30"/> -->
-    <parent link="back_chassis"/>
-    <child link="middle_chassis"/>
+  <joint name="${prefix}pivot_joint" type="revolute">
+    <axis xyz="0 0 -1"/> 
+    <limit effort="50" lower="-1.571" upper="1.571" velocity="30"/>
+    <parent link="back_chassis"/> 
+    <child link="pivot"/>
     <origin xyz="${-1*middle_chassis_length} 0 0"/>
   </joint>
 
     <!-- FRONT PART --> 
-  <link name="front_chassis">
+  <link name="${prefix}bogie">
     <visual>
       <geometry>
         <box size=" ${chassis_thickness} ${body_width} ${chassis_height}"/>
@@ -145,23 +144,21 @@
       <origin xyz="0 0 0"/>  
     </xacro:inertial_box>
   </link>
-  <gazebo reference="front_chassis">
-    <material>Gazebo/White</material>
-  </gazebo>
+
 
     <!-- BOOGIE JOINT --> 
-  <joint name="bogie_joint" type="revolute">
+  <joint name="${prefix}bogie_joint" type="revolute">
     <axis xyz="0 0 1"/>
     <limit effort="50" lower="-1.571" upper="1.571" velocity="30"/>
-    <parent link="middle_chassis"/>
-    <child link="front_chassis"/>
+    <parent link="pivot"/>
+    <child link="bogie"/>
     <origin xyz="${body_length/-2} 0 0" rpy="0 ${-pi/2} 0"/>
   </joint>
 
 <!-- WHEELS-->
   <xacro:macro name="wheel" params="wheel_prefix flip parent *joint_pose">
 
-    <link name="${wheel_prefix}_wheel_link">
+    <link name="${wheel_prefix}_wheel">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 ${flip*pi/2}" />
         <geometry>
@@ -180,15 +177,11 @@
       </xacro:inertial_cylinder>
     </link>
 
-  <gazebo reference="{wheel_prefix}_wheel_link">
-    <material>Gazebo/Black</material>
-  </gazebo>
-
 
     <!-- rolling -->
-    <joint name="${wheel_prefix}_wheels" type="continuous">
+    <joint name="${wheel_prefix}_wheel_joint" type="continuous">
       <parent link="${parent}"/>
-      <child link="${wheel_prefix}_wheel_link"/>
+      <child link="${wheel_prefix}_wheel"/>
       <xacro:insert_block name="joint_pose"/>
       <axis xyz="0 0 1" rpy="0 0 0" />
     </joint>
@@ -197,7 +190,7 @@
     <joint name="${wheel_prefix}_wheel_steer" type="revolute">
       <limit effort="50" lower="-1.571" upper="1.571" velocity="30"/> 
       <parent link="${parent}"/>
-      <child link="${wheel_prefix}_wheel_link"/>
+      <child link="${wheel_prefix}_wheel"/>
       <xacro:insert_block name="joint_pose"/>
       <axis xyz="0 0 -1" rpy="0 0 0" />
     </joint>
@@ -205,18 +198,19 @@
   </xacro:macro>
 
 
-  <xacro:wheel wheel_prefix="front_left" flip="-1" parent="front_chassis">
+  <xacro:wheel wheel_prefix="${prefix}front_left" flip="-1" parent="${prefix}bogie">
     <origin xyz="0 ${-body_width/2} -.009" rpy="${pi/2} 0 0" />
   </xacro:wheel>
-  <xacro:wheel wheel_prefix="front_right" flip="1" parent="front_chassis">
+  <xacro:wheel wheel_prefix="${prefix}front_right" flip="1" parent="${prefix}bogie">
     <origin xyz="0 ${body_width/2} -.009" rpy="${pi/2} 0 0" />
   </xacro:wheel>
-  <xacro:wheel wheel_prefix="rear_left" flip="-1" parent="base_link">
+  <xacro:wheel wheel_prefix="${prefix}rear_left" flip="-1" parent="${prefix}chassis">
     <origin xyz="0 ${-body_width/2} -.009" rpy="${pi/2} 0 0" />
   </xacro:wheel>
-  <xacro:wheel wheel_prefix="rear_right" flip="1" parent="base_link">
+  <xacro:wheel wheel_prefix="${prefix}rear_right" flip="1" parent="${prefix}chassis">
     <origin xyz="0 ${body_width/2} -.009" rpy="${pi/2} 0 0" />
   </xacro:wheel>
 
 
+</xacro:macro>
 </robot>

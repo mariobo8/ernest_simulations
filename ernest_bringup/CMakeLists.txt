@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(ernest_description)
+project(ernest_bringup)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -18,9 +18,9 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(std_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
-
+find_package(pluginlib REQUIRED)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -34,18 +34,8 @@ if(BUILD_TESTING)
 endif()
 
 install(
-  DIRECTORY urdf launch config rviz meshes worlds gazebo
+  DIRECTORY  launch config 
   DESTINATION share/${PROJECT_NAME}
 )
-
-#add_executable(twist src/twist.cpp)
-# Link the executable with the necessary libraries
-#ament_target_dependencies(twist rclcpp geometry_msgs)
-
-# Install the executable
-#install(TARGETS
-
- # DESTINATION lib/${PROJECT_NAME}
-#)
 
 ament_package()
