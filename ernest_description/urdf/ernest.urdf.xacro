@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ernest">
 
-<xacro:macro name="ernest" params="prefix">
+<xacro:macro name="ernest" params="prefix"> 
   <link name="base_link">
   </link>
 

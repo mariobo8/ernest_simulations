@@ -177,15 +177,6 @@
       </xacro:inertial_cylinder>
     </link>
 
-
-    <!-- rolling -->
-    <joint name="${wheel_prefix}_wheel_joint" type="continuous">
-      <parent link="${parent}"/>
-      <child link="${wheel_prefix}_wheel"/>
-      <xacro:insert_block name="joint_pose"/>
-      <axis xyz="0 0 1" rpy="0 0 0" />
-    </joint>
-
     <!-- steering -->
     <joint name="${wheel_prefix}_wheel_steer" type="revolute">
       <limit effort="50" lower="-1.571" upper="1.571" velocity="30"/> 
@@ -193,6 +184,14 @@
       <child link="${wheel_prefix}_wheel"/>
       <xacro:insert_block name="joint_pose"/>
       <axis xyz="0 0 -1" rpy="0 0 0" />
+    </joint>
+    
+    <!-- rolling -->
+    <joint name="${wheel_prefix}_wheel_joint" type="continuous">
+      <parent link="${parent}"/>
+      <child link="${wheel_prefix}_wheel"/>
+      <xacro:insert_block name="joint_pose"/>
+      <axis xyz="0 0 1" rpy="0 0 0" />
     </joint>
 
   </xacro:macro>

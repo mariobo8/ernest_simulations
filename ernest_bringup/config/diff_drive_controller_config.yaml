@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 100  # Hz
+    update_rate: 1000  # Hz
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
@@ -10,8 +10,8 @@ controller_manager:
 
 diff_drive:
   ros__parameters:
-    left_wheel_names: ["rear_left_wheel_joint"]
-    right_wheel_names: ["rear_right_wheel_joint"]
+    left_wheel_names: [rear_left_wheel_steer, front_left_wheel_steer]
+    right_wheel_names: [rear_right_wheel_steer, rear_left_wheel_steer]
 
     wheel_separation: 0.807
     #wheels_per_side: 1  # actually 2, but both are controlled by 1 signal
