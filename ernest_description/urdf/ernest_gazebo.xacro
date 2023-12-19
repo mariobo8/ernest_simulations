@@ -4,7 +4,7 @@
 <xacro:macro name="ernest_gazebo" params="prefix">
   <gazebo>
       <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
-        <parameters>$(find ernest_bringup)/config/diff_drive_controller_config.yaml</parameters>
+        <parameters>$(find ernest_bringup)/config/joint_controller_config.yaml</parameters>
       </plugin>
   </gazebo>
 </xacro:macro>

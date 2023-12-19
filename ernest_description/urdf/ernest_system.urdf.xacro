@@ -9,7 +9,7 @@
   <xacro:include filename="$(find ernest_description)/urdf/robot_core.urdf.xacro" />
 
   <!-- Import stm ros2_control description -->
-  <xacro:include filename="$(find ernest_description)/urdf/diff_drive_control.xacro"/>
+  <xacro:include filename="$(find ernest_description)/urdf/joint_traj_controller.xacro"/>
   <xacro:include filename="$(find ernest_description)/urdf/ernest_gazebo.xacro" /> 
 
   <xacro:ernest_system

@@ -49,6 +49,14 @@ target_compile_definitions(ernest_controller PRIVATE "ERNEST_CONTROLLER_BUILDING
 target_compile_definitions(ernest_controller PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
 pluginlib_export_plugin_description_file(controller_interface ernest_plugin.xml)
 
+add_executable(joint_controller src/joint_traj_controller.cpp)
+ament_target_dependencies(joint_controller rclcpp trajectory_msgs)
+
+install(TARGETS
+  joint_controller
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 install(DIRECTORY include/
   DESTINATION include
 )
