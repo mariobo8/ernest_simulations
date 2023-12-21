@@ -62,7 +62,7 @@ install(DIRECTORY include/
 )
 
 install(
-  DIRECTORY  launch config
+  DIRECTORY  launch config matlab
   DESTINATION share/${PROJECT_NAME}
 )
 
