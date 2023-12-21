@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <ament_index_cpp/get_package_share_directory.hpp>
 
 using namespace std::chrono_literals;
 
@@ -58,7 +59,12 @@ public:
        
     // Open txt file
     void loadJointPositions() {
-        std::ifstream inputFile("/home/mariobo/ernest_ws/src/ernest_simulations/ernest_controller/matlab/steering_angles.txt");
+        std::string package_share_directory = ament_index_cpp::get_package_share_directory("controller");
+
+        // Construct the relative path
+        std::string full_path = package_share_directory + "/matlab/steering_angles.txt";
+        RCLCPP_INFO(this->get_logger(),"ss %s", full_path.c_str());
+        std::ifstream inputFile(full_path);
 
         if (!inputFile.is_open()) {
             std::cerr << "Error opening file." << std::endl;

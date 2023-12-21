@@ -24,13 +24,19 @@ def generate_launch_description():
         output='screen'
     )
 
+    load_velocity_controller_controller = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller', '--set-state', 'start',
+             'velocity_controller'],
+        output='screen'
+    )
+
 
     return LaunchDescription([
         load_joint_state_controller,
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=load_joint_state_controller,
-                on_exit=[load_joint_controller_controller],
+                on_exit=[load_velocity_controller_controller,load_joint_controller_controller],
             )
         ),
     ])

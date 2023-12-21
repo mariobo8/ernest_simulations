@@ -9,7 +9,7 @@ controller_manager:
       type: "joint_trajectory_controller/JointTrajectoryController"
 
     velocity_controller:
-      type: "joint_trajectory_controller/JointTrajectoryController"  
+      type: "velocity_controllers/JointGroupVelocityController"  
       
 joint_controller:
   ros__parameters:
@@ -35,3 +35,11 @@ joint_controller:
       constraints:
         stopped_velocity_tolerance: 0.001
         goal_time: 1.0
+
+velocity_controller:
+  ros__parameters:
+      joints:
+        - rear_left_wheel_joint
+        - rear_right_wheel_joint
+        
+
