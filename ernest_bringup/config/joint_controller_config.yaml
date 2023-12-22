@@ -5,13 +5,13 @@ controller_manager:
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-    joint_controller:
-      type: "joint_trajectory_controller/JointTrajectoryController"
+    position_controller:
+      type: "position_controllers/JointGroupPositionController" 
 
     velocity_controller:
       type: "velocity_controllers/JointGroupVelocityController"  
       
-joint_controller:
+position_controller:
   ros__parameters:
       joints:
         - front_left_steer_joint
@@ -20,21 +20,6 @@ joint_controller:
         - rear_right_steer_joint
         - pivot_joint
         
-      command_interfaces:
-        - position
-
-      state_interfaces:
-        - position
-        - velocity
-
-      state_publish_rate: 10000.0
-      action_monitor_rate: 10000.0
-
-      allow_partial_joints_goal: true
-      open_loop_control: true
-      constraints:
-        stopped_velocity_tolerance: 0.001
-        goal_time: 1.0
 
 velocity_controller:
   ros__parameters:

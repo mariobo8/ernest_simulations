@@ -26,22 +26,20 @@ find_package(ament_index_cpp REQUIRED)
 # Add the ament_index_cpp include directory
 include_directories(${ament_index_cpp_INCLUDE_DIRS})
 
-add_executable(velocity_controller src/backup.cpp)
-ament_target_dependencies(velocity_controller rclcpp trajectory_msgs)
+add_executable(trajectory_controller src/trajectory_controller.cpp)
+ament_target_dependencies(trajectory_controller rclcpp trajectory_msgs ament_index_cpp)
 
-add_executable(joint_controller src/joint_traj_controller.cpp)
-ament_target_dependencies(joint_controller rclcpp trajectory_msgs)
+#add_executable(joint_controller src/joint_traj_controller.cpp)
+#ament_target_dependencies(joint_controller rclcpp trajectory_msgs  ament_index_cpp)
 
 install(TARGETS
 
-  joint_controller
-  velocity_controller
+ # joint_controller
+  trajectory_controller
 
   DESTINATION lib/${PROJECT_NAME}
 )
 
-
-target_link_libraries(joint_controller ${ament_index_cpp_LIBRARIES})
 
 install(
   DIRECTORY   matlab
