@@ -17,24 +17,29 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(Eigen3 REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(trajectory_msgs REQUIRED)
 find_package(ament_index_cpp REQUIRED)
+#find_package(tf2_geometry_msgs REQUIRED)
 
 # Add the ament_index_cpp include directory
 include_directories(${ament_index_cpp_INCLUDE_DIRS})
 
 add_executable(trajectory_controller src/trajectory_controller.cpp)
-ament_target_dependencies(trajectory_controller rclcpp trajectory_msgs ament_index_cpp)
+ament_target_dependencies(trajectory_controller rclcpp trajectory_msgs nav_msgs ament_index_cpp)
 
-#add_executable(joint_controller src/joint_traj_controller.cpp)
-#ament_target_dependencies(joint_controller rclcpp trajectory_msgs  ament_index_cpp)
+add_executable(odom_subs src/subs.cpp)
+ament_target_dependencies(odom_subs rclcpp trajectory_msgs nav_msgs ament_index_cpp)
 
+target_link_libraries (odom_subs Eigen3::Eigen)
 install(TARGETS
 
  # joint_controller
+  odom_subs
   trajectory_controller
 
   DESTINATION lib/${PROJECT_NAME}

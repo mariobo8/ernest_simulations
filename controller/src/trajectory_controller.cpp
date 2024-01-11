@@ -1,5 +1,6 @@
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/float64_multi_array.hpp>
+#include <nav_msgs/msg/odometry.hpp> 
 #include <fstream>
 #include <ament_index_cpp/get_package_share_directory.hpp>
 
@@ -13,6 +14,10 @@ public:
             "/velocity_controller/commands", 10);
         steering_publisher_ = this->create_publisher<std_msgs::msg::Float64MultiArray>(
             "/position_controller/commands", 10);
+        // Create odometry subscriber
+        odometry_subscriber_ = this->create_subscription<nav_msgs::msg::Odometry>(
+            "/p3d/odom", 1000, std::bind(&TrajectoryPublisher::odometry_callback, this, std::placeholders::_1));
+
         // Set up a timer to publish velocity commands periodically
         timer_ = this->create_wall_timer(
             100ms, std::bind(&TrajectoryPublisher::timer_callback, this));
@@ -30,7 +35,7 @@ public:
             velocity_msg.data = {velocities_[current_index_], velocities_[current_index_]};
             steering_msg.data = {st_angles_[current_index_], st_angles_[current_index_], 0.0, 0.0, 0.0};
             // Publish the Float64MultiArray message
-            RCLCPP_INFO(this->get_logger(),"curent_index: %zu", current_index_);
+           // RCLCPP_INFO(this->get_logger(),"curent_index: %zu", current_index_);
             velocity_publisher_->publish(velocity_msg);
             steering_publisher_->publish(steering_msg);
 
@@ -42,6 +47,16 @@ public:
             timer_->cancel();
             rclcpp::shutdown();
         }
+    }
+
+    void odometry_callback(const nav_msgs::msg::Odometry::SharedPtr odometry_msg) {
+        // Handle odometry data here
+        std::cout << "Odometry callback invoked!" << std::endl;
+        RCLCPP_INFO(this->get_logger(), "Received odometry data: %f, %f, %f",
+                    odometry_msg->pose.pose.position.x,
+                    odometry_msg->pose.pose.position.y,
+                    odometry_msg->pose.pose.orientation.w);
+
     }
 
     void loadJointPositions() {
@@ -88,6 +103,7 @@ public:
 private:
     rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr velocity_publisher_;
     rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr steering_publisher_;
+    rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odometry_subscriber_;  // Added odometry subscriber
     rclcpp::TimerBase::SharedPtr timer_;
     std::vector<double> velocities_;
     std::vector<double> st_angles_;

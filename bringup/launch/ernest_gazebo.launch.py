@@ -30,8 +30,8 @@ from launch_ros.actions import Node
 import xacro
 
 def generate_launch_description():
-    pkg_box_bot_gazebo = get_package_share_directory('ernest_bringup')
-    description_package_name = "ernest_description"
+    pkg_box_bot_gazebo = get_package_share_directory('bringup')
+    description_package_name = "description"
     install_dir = get_package_prefix(description_package_name)
 
 # This is to find the models inside the models folder in my_box_bot_gazebo package
@@ -55,7 +55,7 @@ def generate_launch_description():
     gazebo = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(
                     get_package_share_directory('gazebo_ros'), 'launch'), '/gazebo.launch.py']),
-                    #launch_arguments={'model_path': PathJoinSubstitution([FindPackageShare("ernest_description"), "meshes"])}.items()
+                    #launch_arguments={'model_path': PathJoinSubstitution([FindPackageShare("description"), "meshes"])}.items()
              )
 
     # Get URDF via xacro
@@ -64,7 +64,7 @@ def generate_launch_description():
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
             PathJoinSubstitution(
-                [FindPackageShare("ernest_description"), "urdf", "ernest_system.urdf.xacro"]
+                [FindPackageShare("description"), "urdf", "ernest_system.urdf.xacro"]
             ),
             " ",
             "use_fake_hardware:=true",

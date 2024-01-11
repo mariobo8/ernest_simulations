@@ -5,12 +5,12 @@
   <xacro:arg name="use_gazebo" default="true" />
   <xacro:arg name="use_lowpoly" default="true" /> 
 
-  <xacro:include filename="$(find ernest_description)/urdf/ernest.urdf.xacro" /> 
-  <xacro:include filename="$(find ernest_description)/urdf/robot_core.urdf.xacro" />
+  <xacro:include filename="$(find description)/urdf/ernest.urdf.xacro" /> 
+  <xacro:include filename="$(find description)/urdf/robot_core.urdf.xacro" />
 
   <!-- Import stm ros2_control description -->
-  <xacro:include filename="$(find ernest_description)/urdf/joint_traj_controller.xacro"/>
-  <xacro:include filename="$(find ernest_description)/urdf/ernest_gazebo.xacro" /> 
+  <xacro:include filename="$(find description)/urdf/joint_traj_controller.xacro"/>
+  <xacro:include filename="$(find description)/urdf/ernest_gazebo.xacro" /> 
 
   <xacro:ernest_system
     name="ErnestSystem"

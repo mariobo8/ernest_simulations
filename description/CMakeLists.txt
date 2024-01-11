@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(ernest_description)
+project(description)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -34,7 +34,7 @@ if(BUILD_TESTING)
 endif()
 
 install(
-  DIRECTORY urdf launch config rviz meshes worlds 
+  DIRECTORY urdf launch rviz meshes worlds 
   DESTINATION share/${PROJECT_NAME}
 )
 
