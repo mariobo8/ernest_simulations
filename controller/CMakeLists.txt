@@ -35,10 +35,13 @@ ament_target_dependencies(trajectory_controller rclcpp trajectory_msgs nav_msgs 
 add_executable(odom_subs src/subs.cpp)
 ament_target_dependencies(odom_subs rclcpp trajectory_msgs nav_msgs ament_index_cpp)
 
+add_executable(pid_controller src/PID.cpp)
+ament_target_dependencies(pid_controller rclcpp trajectory_msgs nav_msgs ament_index_cpp)
+
 target_link_libraries (odom_subs Eigen3::Eigen)
 install(TARGETS
 
- # joint_controller
+  pid_controller
   odom_subs
   trajectory_controller
 

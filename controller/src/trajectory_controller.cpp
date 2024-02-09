@@ -3,6 +3,8 @@
 #include <nav_msgs/msg/odometry.hpp> 
 #include <fstream>
 #include <ament_index_cpp/get_package_share_directory.hpp>
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 using namespace std::chrono_literals;
 
@@ -11,12 +13,12 @@ public:
     TrajectoryPublisher() : Node("velocity_publisher"), current_index_(0) {
         // Create velocity publisher
         velocity_publisher_ = this->create_publisher<std_msgs::msg::Float64MultiArray>(
-            "/velocity_controller/commands", 10);
+            "/velocity_controller/commands", 40);
         steering_publisher_ = this->create_publisher<std_msgs::msg::Float64MultiArray>(
-            "/position_controller/commands", 10);
+            "/position_controller/commands", 40);
         // Create odometry subscriber
         odometry_subscriber_ = this->create_subscription<nav_msgs::msg::Odometry>(
-            "/p3d/odom", 1000, std::bind(&TrajectoryPublisher::odometry_callback, this, std::placeholders::_1));
+            "/p3d/odom", 40, std::bind(&TrajectoryPublisher::odometry_callback, this, std::placeholders::_1));
 
         // Set up a timer to publish velocity commands periodically
         timer_ = this->create_wall_timer(
@@ -49,14 +51,27 @@ public:
         }
     }
 
-    void odometry_callback(const nav_msgs::msg::Odometry::SharedPtr odometry_msg) {
+        void odometry_callback(const nav_msgs::msg::Odometry::SharedPtr odometry_msg) {
         // Handle odometry data here
-        std::cout << "Odometry callback invoked!" << std::endl;
-        RCLCPP_INFO(this->get_logger(), "Received odometry data: %f, %f, %f",
+        
+        RCLCPP_INFO(this->get_logger(), "Received odometry data: x=%f, y=%f",
                     odometry_msg->pose.pose.position.x,
-                    odometry_msg->pose.pose.position.y,
-                    odometry_msg->pose.pose.orientation.w);
+                    odometry_msg->pose.pose.position.y);
 
+        tf2::Quaternion q(
+          odometry_msg->pose.pose.orientation.x,
+          odometry_msg->pose.pose.orientation.y,
+          odometry_msg->pose.pose.orientation.z,
+          odometry_msg->pose.pose.orientation.w);
+
+        
+        tf2::Matrix3x3 m(q);
+        double roll, pitch, yaw;
+        m.getRPY(roll, pitch, yaw);
+
+        RCLCPP_INFO(this->get_logger(), "yaw=%f",
+                    yaw);
+        
     }
 
     void loadJointPositions() {
