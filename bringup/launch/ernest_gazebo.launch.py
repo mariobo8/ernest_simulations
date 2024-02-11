@@ -105,7 +105,7 @@ def generate_launch_description():
 
     spawn_entity = Node(package='gazebo_ros', executable='spawn_entity.py',
                         arguments=['-topic', 'robot_description',
-                                   '-entity', 'ernest'],
+                                   '-entity', 'ernest'],        # Set the initial yaw]
                         output='screen')
     
     return LaunchDescription([

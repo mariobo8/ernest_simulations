@@ -1,0 +1,28 @@
+[ 33%] Built target pid_controller
+[ 66%] Built target trajectory_controller
+[100%] Built target odom_subs
+-- Install configuration: ""
+-- Execute custom install script
+-- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/controller/lib/controller/pid_controller
+-- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/controller/lib/controller/odom_subs
+-- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/controller/lib/controller/trajectory_controller
+-- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/controller/share/controller/matlab/README.md
+-- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/controller/share/controller/matlab/prova.txt
+-- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/controller/share/controller/matlab/speed.txt
+-- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/controller/share/controller/matlab/steering_angles.txt
+-- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/controller/share/controller/matlab/traj_gen.m
+-- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/controller/share/ament_index/resource_index/package_run_dependencies/controller
+-- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/controller/share/ament_index/resource_index/parent_prefix_path/controller
+-- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/controller/share/controller/environment/ament_prefix_path.sh
+-- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/controller/share/controller/environment/ament_prefix_path.dsv
+-- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/controller/share/controller/environment/path.sh
+-- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/controller/share/controller/environment/path.dsv
+-- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/controller/share/controller/local_setup.bash
+-- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/controller/share/controller/local_setup.sh
+-- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/controller/share/controller/local_setup.zsh
+-- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/controller/share/controller/local_setup.dsv
+-- Symlinking: /home/mariobo/ernest_ws/src/ernest_simulations/install/controller/share/controller/package.dsv
+-- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/controller/share/ament_index/resource_index/packages/controller
+-- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/controller/share/controller/cmake/controllerConfig.cmake
+-- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/controller/share/controller/cmake/controllerConfig-version.cmake
+-- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/controller/share/controller/package.xml

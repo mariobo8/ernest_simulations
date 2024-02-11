@@ -2,14 +2,17 @@ import casadi as ca
 import numpy as np 
 
 # Shift function
-def shift_timestep(dt, t0, x0, u, f, f2, theta_0, theta_prev):
-    
+def shift_timestep( u, f2, theta_prev, X0):
+    dt = 0.1
     u = u.T
     u0 = ca.vertcat(
         u[1:, :],
         u[-1,:]
     )
-    theta = x0[3]
+    #print("pred_state")
+    #print(X0[:,1])
+    theta_0 = X0[3,0] 
+    theta = X0[3,1]
     rho = ca.DM.full(f2(theta))
     rho_prev = ca.DM.full(f2(theta_0))
     rho_prev_prev = ca.DM.full(f2(theta_prev))
@@ -34,10 +37,9 @@ def shift_timestep(dt, t0, x0, u, f, f2, theta_0, theta_prev):
                 [np.arctan(drho_dtheta).__float__()], 
                 [0.0]])
     xp0 = DM2Arr(xp0)
-    print("xp0", xp0)
-    t0 = t0 + dt
 
-    return t0, x0, u0, xp0, up0
+
+    return  u0, xp0, up0, theta, theta_0
 
 # change from  matrix to array  
 def DM2Arr(dm):

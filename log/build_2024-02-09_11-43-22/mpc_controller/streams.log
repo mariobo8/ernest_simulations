@@ -1,0 +1,21 @@
+[3.656s] Invoking command in '/home/mariobo/ernest_ws/src/ernest_simulations/build/mpc_controller': PYTHONPATH=/home/mariobo/ernest_ws/src/ernest_simulations/build/mpc_controller/prefix_override:/home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/mariobo/ernest_ws/src/ernest_simulations/build/mpc_controller/build --no-deps install_data
+[4.126s] running develop
+[4.496s] running egg_info
+[4.496s] writing mpc_controller.egg-info/PKG-INFO
+[4.502s] writing dependency_links to mpc_controller.egg-info/dependency_links.txt
+[4.502s] writing entry points to mpc_controller.egg-info/entry_points.txt
+[4.503s] writing requirements to mpc_controller.egg-info/requires.txt
+[4.503s] writing top-level names to mpc_controller.egg-info/top_level.txt
+[4.564s] reading manifest file 'mpc_controller.egg-info/SOURCES.txt'
+[4.565s] writing manifest file 'mpc_controller.egg-info/SOURCES.txt'
+[4.642s] running build_ext
+[4.643s] Creating /home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller/lib/python3.8/site-packages/mpc-controller.egg-link (link to .)
+[4.646s] Installing data script to /home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller/lib/mpc_controller
+[4.647s] Installing mpc script to /home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller/lib/mpc_controller
+[4.647s] Installing mpc_node script to /home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller/lib/mpc_controller
+[4.647s] Installing mpc_solve script to /home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller/lib/mpc_controller
+[4.648s] Installing utils script to /home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller/lib/mpc_controller
+[4.649s] 
+[4.649s] Installed /home/mariobo/ernest_ws/src/ernest_simulations/build/mpc_controller
+[4.649s] running install_data
+[4.713s] Invoked command in '/home/mariobo/ernest_ws/src/ernest_simulations/build/mpc_controller' returned '0': PYTHONPATH=/home/mariobo/ernest_ws/src/ernest_simulations/build/mpc_controller/prefix_override:/home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/mariobo/ernest_ws/src/ernest_simulations/build/mpc_controller/build --no-deps install_data

@@ -1,0 +1,70 @@
+[1.270s] Invoking command in '/home/mariobo/ernest_ws/src/ernest_simulations/build/bringup': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/mariobo/ernest_ws/install/mpc_controller:/opt/ros/foxy /usr/local/bin/cmake /home/mariobo/ernest_ws/src/ernest_simulations/bringup -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/mariobo/ernest_ws/src/ernest_simulations/install/bringup
+[2.185s] -- The C compiler identification is GNU 9.4.0
+[2.185s] -- The CXX compiler identification is GNU 9.4.0
+[2.186s] -- Detecting C compiler ABI info
+[2.186s] -- Detecting C compiler ABI info - done
+[2.186s] -- Check for working C compiler: /usr/bin/cc - skipped
+[2.187s] -- Detecting C compile features
+[2.188s] -- Detecting C compile features - done
+[2.188s] -- Detecting CXX compiler ABI info
+[2.189s] -- Detecting CXX compiler ABI info - done
+[2.189s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[2.189s] -- Detecting CXX compile features
+[2.189s] -- Detecting CXX compile features - done
+[2.189s] -- Found ament_cmake: 0.9.12 (/opt/ros/foxy/share/ament_cmake/cmake)
+[2.189s] -- Found PythonInterp: /usr/bin/python3 (found suitable version "3.8.10", minimum required is "3") 
+[2.190s] -- Using PYTHON_EXECUTABLE: /usr/bin/python3
+[2.310s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[2.351s] -- Found rclcpp: 2.4.3 (/opt/ros/foxy/share/rclcpp/cmake)
+[2.423s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[2.441s] -- Found rosidl_adapter: 1.3.1 (/opt/ros/foxy/share/rosidl_adapter/cmake)
+[2.554s] -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "1.1.1f")  
+[2.593s] -- Found FastRTPS: /opt/ros/foxy/include  
+[2.709s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[2.808s] -- Found rmw_implementation_cmake: 1.0.4 (/opt/ros/foxy/share/rmw_implementation_cmake/cmake)
+[2.811s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[2.816s] -- Looking for pthread.h
+[2.903s] -- Looking for pthread.h - found
+[2.903s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[3.001s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+[3.001s] -- Looking for pthread_create in pthreads
+[3.077s] -- Looking for pthread_create in pthreads - not found
+[3.077s] -- Looking for pthread_create in pthread
+[3.167s] -- Looking for pthread_create in pthread - found
+[3.169s] -- Found Threads: TRUE  
+[3.410s] -- Found sensor_msgs: 2.0.5 (/opt/ros/foxy/share/sensor_msgs/cmake)
+[3.578s] -- Found pluginlib: 2.5.4 (/opt/ros/foxy/share/pluginlib/cmake)
+[3.620s] -- Found ament_lint_auto: 0.9.8 (/opt/ros/foxy/share/ament_lint_auto/cmake)
+[3.775s] -- Added test 'copyright' to check source files copyright and LICENSE
+[3.779s] -- Added test 'flake8' to check Python code syntax and style conventions
+[3.780s] -- Added test 'lint_cmake' to check CMake code style
+[3.780s] -- Added test 'pep257' to check Python code against some of the style conventions in PEP 257
+[3.782s] -- Added test 'xmllint' to check XML markup files
+[3.784s] -- Configuring done
+[3.794s] -- Generating done
+[3.799s] -- Build files have been written to: /home/mariobo/ernest_ws/src/ernest_simulations/build/bringup
+[3.821s] Invoked command in '/home/mariobo/ernest_ws/src/ernest_simulations/build/bringup' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/mariobo/ernest_ws/install/mpc_controller:/opt/ros/foxy /usr/local/bin/cmake /home/mariobo/ernest_ws/src/ernest_simulations/bringup -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/mariobo/ernest_ws/src/ernest_simulations/install/bringup
+[3.826s] Invoking command in '/home/mariobo/ernest_ws/src/ernest_simulations/build/bringup': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/mariobo/ernest_ws/install/mpc_controller:/opt/ros/foxy /usr/local/bin/cmake --build /home/mariobo/ernest_ws/src/ernest_simulations/build/bringup -- -j8 -l8
+[3.869s] Invoked command in '/home/mariobo/ernest_ws/src/ernest_simulations/build/bringup' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/mariobo/ernest_ws/install/mpc_controller:/opt/ros/foxy /usr/local/bin/cmake --build /home/mariobo/ernest_ws/src/ernest_simulations/build/bringup -- -j8 -l8
+[3.909s] Invoking command in '/home/mariobo/ernest_ws/src/ernest_simulations/build/bringup': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/mariobo/ernest_ws/install/mpc_controller:/opt/ros/foxy /usr/local/bin/cmake --install /home/mariobo/ernest_ws/src/ernest_simulations/build/bringup
+[3.915s] -- Install configuration: ""
+[3.916s] -- Execute custom install script
+[3.916s] -- Symlinking: /home/mariobo/ernest_ws/src/ernest_simulations/install/bringup/share/bringup/launch/ernest_gazebo.launch.py
+[3.923s] -- Symlinking: /home/mariobo/ernest_ws/src/ernest_simulations/install/bringup/share/bringup/launch/joint_controller.launch.py
+[3.929s] -- Symlinking: /home/mariobo/ernest_ws/src/ernest_simulations/install/bringup/share/bringup/config/joint_controller_config.yaml
+[3.940s] -- Symlinking: /home/mariobo/ernest_ws/src/ernest_simulations/install/bringup/share/ament_index/resource_index/package_run_dependencies/bringup
+[3.941s] -- Symlinking: /home/mariobo/ernest_ws/src/ernest_simulations/install/bringup/share/ament_index/resource_index/parent_prefix_path/bringup
+[3.950s] -- Symlinking: /home/mariobo/ernest_ws/src/ernest_simulations/install/bringup/share/bringup/environment/ament_prefix_path.sh
+[3.969s] -- Symlinking: /home/mariobo/ernest_ws/src/ernest_simulations/install/bringup/share/bringup/environment/ament_prefix_path.dsv
+[3.969s] -- Symlinking: /home/mariobo/ernest_ws/src/ernest_simulations/install/bringup/share/bringup/environment/path.sh
+[3.969s] -- Symlinking: /home/mariobo/ernest_ws/src/ernest_simulations/install/bringup/share/bringup/environment/path.dsv
+[3.980s] -- Symlinking: /home/mariobo/ernest_ws/src/ernest_simulations/install/bringup/share/bringup/local_setup.bash
+[3.983s] -- Symlinking: /home/mariobo/ernest_ws/src/ernest_simulations/install/bringup/share/bringup/local_setup.sh
+[3.990s] -- Symlinking: /home/mariobo/ernest_ws/src/ernest_simulations/install/bringup/share/bringup/local_setup.zsh
+[3.991s] -- Symlinking: /home/mariobo/ernest_ws/src/ernest_simulations/install/bringup/share/bringup/local_setup.dsv
+[3.999s] -- Symlinking: /home/mariobo/ernest_ws/src/ernest_simulations/install/bringup/share/bringup/package.dsv
+[4.009s] -- Symlinking: /home/mariobo/ernest_ws/src/ernest_simulations/install/bringup/share/ament_index/resource_index/packages/bringup
+[4.035s] -- Symlinking: /home/mariobo/ernest_ws/src/ernest_simulations/install/bringup/share/bringup/cmake/bringupConfig.cmake
+[4.042s] -- Symlinking: /home/mariobo/ernest_ws/src/ernest_simulations/install/bringup/share/bringup/cmake/bringupConfig-version.cmake
+[4.054s] -- Symlinking: /home/mariobo/ernest_ws/src/ernest_simulations/install/bringup/share/bringup/package.xml
+[4.339s] Invoked command in '/home/mariobo/ernest_ws/src/ernest_simulations/build/bringup' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/mariobo/ernest_ws/install/mpc_controller:/opt/ros/foxy /usr/local/bin/cmake --install /home/mariobo/ernest_ws/src/ernest_simulations/build/bringup

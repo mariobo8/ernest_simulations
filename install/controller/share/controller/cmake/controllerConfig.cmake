@@ -1,0 +1,1 @@
+/home/mariobo/ernest_ws/src/ernest_simulations/build/controller/ament_cmake_core/controllerConfig.cmake

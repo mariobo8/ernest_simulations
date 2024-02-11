@@ -1,0 +1,7 @@
+[console_scripts]
+data = mpc_controller.data
+mpc = mpc_controller.pait:solve_mpc
+mpc_node = mpc_controller.mpc_node:main
+mpc_solve = models.pivot_4ws_kinematics
+utils = mpc_controller.utils
+

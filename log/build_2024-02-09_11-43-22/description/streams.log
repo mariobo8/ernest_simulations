@@ -1,0 +1,54 @@
+[1.438s] Invoking command in '/home/mariobo/ernest_ws/src/ernest_simulations/build/description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller:/home/mariobo/ernest_ws/install/mpc_controller:/opt/ros/foxy /usr/local/bin/cmake --build /home/mariobo/ernest_ws/src/ernest_simulations/build/description -- -j8 -l8
+[2.345s] Invoked command in '/home/mariobo/ernest_ws/src/ernest_simulations/build/description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller:/home/mariobo/ernest_ws/install/mpc_controller:/opt/ros/foxy /usr/local/bin/cmake --build /home/mariobo/ernest_ws/src/ernest_simulations/build/description -- -j8 -l8
+[2.431s] Invoking command in '/home/mariobo/ernest_ws/src/ernest_simulations/build/description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller:/home/mariobo/ernest_ws/install/mpc_controller:/opt/ros/foxy /usr/local/bin/cmake --install /home/mariobo/ernest_ws/src/ernest_simulations/build/description
+[2.460s] -- Install configuration: ""
+[2.460s] -- Execute custom install script
+[2.460s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/urdf/ernest.urdf.xacro
+[2.460s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/urdf/ernest_control.xacro
+[2.460s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/urdf/ernest_gazebo.xacro
+[2.460s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/urdf/ernest_system.urdf.xacro
+[2.460s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/urdf/inertial_macros.xacro
+[2.460s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/urdf/joint_traj_controller.xacro
+[2.461s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/urdf/robot_core.urdf.xacro
+[2.461s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/launch/view_ernest.launch.py
+[2.461s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/rviz/view_ernest.rviz
+[2.461s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/meshes/bogie.STL
+[2.461s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/meshes/bogie.dae
+[2.461s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/meshes/bogie_link.STL
+[2.462s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/meshes/chassis.STL
+[2.462s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/meshes/chassis.dae
+[2.462s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/meshes/front_left_steer.STL
+[2.462s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/meshes/front_left_steer.dae
+[2.462s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/meshes/front_left_wheel.STL
+[2.462s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/meshes/front_left_wheel.dae
+[2.463s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/meshes/front_right_steer.STL
+[2.463s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/meshes/front_right_steer.dae
+[2.463s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/meshes/front_right_wheel.STL
+[2.463s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/meshes/front_right_wheel.dae
+[2.463s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/meshes/pivot.STL
+[2.500s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/meshes/pivot.dae
+[2.502s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/meshes/rear_left_steer.STL
+[2.504s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/meshes/rear_left_steer.dae
+[2.504s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/meshes/rear_left_wheel.STL
+[2.504s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/meshes/rear_left_wheel.dae
+[2.505s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/meshes/rear_right_steer.STL
+[2.505s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/meshes/rear_right_steer.dae
+[2.506s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/meshes/rear_right_wheel.STL
+[2.506s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/meshes/rear_right_wheel.dae
+[2.506s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/worlds/empty.world
+[2.506s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/ament_index/resource_index/package_run_dependencies/description
+[2.508s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/ament_index/resource_index/parent_prefix_path/description
+[2.508s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/environment/ament_prefix_path.sh
+[2.509s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/environment/ament_prefix_path.dsv
+[2.509s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/environment/path.sh
+[2.510s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/environment/path.dsv
+[2.511s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/local_setup.bash
+[2.511s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/local_setup.sh
+[2.512s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/local_setup.zsh
+[2.512s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/local_setup.dsv
+[2.512s] -- Symlinking: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/package.dsv
+[2.513s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/ament_index/resource_index/packages/description
+[2.513s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/cmake/descriptionConfig.cmake
+[2.513s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/cmake/descriptionConfig-version.cmake
+[2.513s] -- Up-to-date symlink: /home/mariobo/ernest_ws/src/ernest_simulations/install/description/share/description/package.xml
+[2.829s] Invoked command in '/home/mariobo/ernest_ws/src/ernest_simulations/build/description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller:/home/mariobo/ernest_ws/install/mpc_controller:/opt/ros/foxy /usr/local/bin/cmake --install /home/mariobo/ernest_ws/src/ernest_simulations/build/description

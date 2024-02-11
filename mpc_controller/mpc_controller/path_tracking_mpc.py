@@ -5,7 +5,6 @@ from casadi import sin, cos, pi
 import math
 import matplotlib.pyplot as plt
 
-from simulation_code import simulate
 
  
 
@@ -294,7 +293,6 @@ if __name__ == '__main__':
             ca.reshape(X0, n_states*(N+1), 1),
             ca.reshape(u0, n_controls*N, 1)
         )
-
         sol = solver(
             x0=args['x0'],
             lbx=args['lbx'],
@@ -323,7 +321,8 @@ if __name__ == '__main__':
         ))
         
         t0, x0, u0, xp0, up0 = shift_timestep(dt, t0, x0, u, f, f2, theta_0, theta_prev)
-        
+        print("ref state")
+        print(up0)
         X0 = ca.horzcat(
             X0[:, 1:],
             ca.reshape(X0[:, -1], -1, 1)

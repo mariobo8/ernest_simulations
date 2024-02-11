@@ -65,7 +65,7 @@ virtual_v_min = 0
 def shift_timestep(dt, t0, x0, u, f, f2, theta_0, theta_prev):
     st = x0
     con = u[:, 0]
-    print("x0", x0)
+    #print("x0", x0)
     f_value = f(st, con)
     x0 = ca.DM.full(st + (dt * f_value))
     
@@ -99,7 +99,7 @@ def shift_timestep(dt, t0, x0, u, f, f2, theta_0, theta_prev):
                 [np.arctan(drho_dtheta).__float__()], 
                 [0.0]])
     xp0 = DM2Arr(xp0)
-    print("xp0", xp0)
+    #print("xp0", xp0)
     t0 = t0 + dt
 
     return t0, x0, u0, xp0, up0
@@ -134,9 +134,9 @@ controls = ca.vertcat(
 n_controls = controls.numel()
 
 #define the path
-mu = [6, 20, 5, 0.35];  
-rho = - mu[0] * np.log(mu[1] / (mu[2] - theta)) * sin(mu[3] * theta)
-
+#mu = [6, 20, 5, 0.35];  
+#rho = - mu[0] * np.log(mu[1] / (mu[2] - theta)) * sin(mu[3] * theta)
+rho = theta/6 + 5
 ## build matrices containg states and controls
 
 # matrix containing all states over all time steps +1 (each column is a state vector)
@@ -293,7 +293,7 @@ if __name__ == '__main__':
             ca.reshape(X0, n_states*(N+1), 1),
             ca.reshape(u0, n_controls*N, 1)
         )
-
+        print(type(args['ubg']))
         sol = solver(
             x0=args['x0'],
             lbx=args['lbx'],
@@ -330,8 +330,8 @@ if __name__ == '__main__':
 
         # xx ...
         t2 = time()
-        print(mpc_iter)
-        print(t2-t1)
+        #print(mpc_iter)
+        #print(t2-t1)
         times = np.vstack((
             times,
             t2-t1

@@ -1,0 +1,30 @@
+[2.039s] Invoking command in '/home/mariobo/ernest_ws/src/ernest_simulations/build/mpc_controller': PYTHONPATH=/home/mariobo/ernest_ws/src/ernest_simulations/build/mpc_controller/prefix_override:/home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/mariobo/ernest_ws/src/ernest_simulations/build/mpc_controller/build --no-deps install_data
+[2.473s] running develop
+[2.723s] running egg_info
+[2.723s] creating mpc_controller.egg-info
+[2.723s] writing mpc_controller.egg-info/PKG-INFO
+[2.723s] writing dependency_links to mpc_controller.egg-info/dependency_links.txt
+[2.724s] writing entry points to mpc_controller.egg-info/entry_points.txt
+[2.724s] writing requirements to mpc_controller.egg-info/requires.txt
+[2.724s] writing top-level names to mpc_controller.egg-info/top_level.txt
+[2.726s] writing manifest file 'mpc_controller.egg-info/SOURCES.txt'
+[2.798s] reading manifest file 'mpc_controller.egg-info/SOURCES.txt'
+[2.799s] writing manifest file 'mpc_controller.egg-info/SOURCES.txt'
+[2.874s] running build_ext
+[2.874s] Creating /home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller/lib/python3.8/site-packages/site.py
+[2.878s] Creating /home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller/lib/python3.8/site-packages/mpc-controller.egg-link (link to .)
+[2.879s] Installing data script to /home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller/lib/mpc_controller
+[2.880s] Installing mpc script to /home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller/lib/mpc_controller
+[2.880s] Installing mpc_node script to /home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller/lib/mpc_controller
+[2.880s] Installing mpc_solve script to /home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller/lib/mpc_controller
+[2.881s] Installing utils script to /home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller/lib/mpc_controller
+[2.881s] 
+[2.881s] Installed /home/mariobo/ernest_ws/src/ernest_simulations/build/mpc_controller
+[2.881s] running install_data
+[2.881s] creating /home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller/share/ament_index
+[2.882s] creating /home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller/share/ament_index/resource_index
+[2.882s] creating /home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller/share/ament_index/resource_index/packages
+[2.882s] copying resource/mpc_controller -> /home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller/share/ament_index/resource_index/packages
+[2.882s] copying package.xml -> /home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller/share/mpc_controller
+[2.883s] creating /home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller/share/mpc_controller/launch
+[2.945s] Invoked command in '/home/mariobo/ernest_ws/src/ernest_simulations/build/mpc_controller' returned '0': PYTHONPATH=/home/mariobo/ernest_ws/src/ernest_simulations/build/mpc_controller/prefix_override:/home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/mariobo/ernest_ws/src/ernest_simulations/build/mpc_controller/build --no-deps install_data
