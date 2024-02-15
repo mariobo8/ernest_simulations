@@ -34,6 +34,46 @@ class AckermannKinematics(object):
         dt = 0.1
         return N, dt
     
+    # Shift function
+    def shift_timestep( u, f2, theta_prev, X0):
+        dt = 0.1
+        u = u.T
+        u0 = ca.vertcat(
+            u[1:, :],
+            u[-1,:]
+        )
+        #print("pred_state")
+        #print(X0[:,1])
+        theta_0 = X0[3,0] 
+        theta = X0[3,1]
+        rho = ca.DM.full(f2(theta))
+        rho_prev = ca.DM.full(f2(theta_0))
+        rho_prev_prev = ca.DM.full(f2(theta_prev))
+        drho_dtheta = (rho - rho_prev)/ \
+                    (theta - theta_0)
+
+
+        d2rho_dtheta2 = (rho - 2 * (rho - rho_prev) + (rho - rho_prev_prev))/ \
+                        ((theta - theta_0)*(theta_0-theta_prev))
+        
+
+        
+        up0_1 = (theta-theta_0)/dt * np.sqrt(1+(drho_dtheta)**2)
+        up0_2 = np.arctan((1+(drho_dtheta**2)**(-3/2))*d2rho_dtheta2)
+        up0 = ca.DM([[up0_1.__float__()], 
+                    [up0_2.__float__()],
+                    [0.0]])
+        up0 = DM2Arr(up0)
+        
+        xp0 = ca.DM([[theta.__float__()],
+                    [rho.__float__()], 
+                    [np.arctan(drho_dtheta).__float__()], 
+                    [0.0]])
+        xp0 = DM2Arr(xp0)
+
+
+        return  u0, xp0, up0, theta, theta_0
+    
     def kin_model(self):
         [L, wheel_radius] = self.dimensions()
         # Define state variables
@@ -253,7 +293,7 @@ class AckermannKinematics(object):
         input = [inp[0], 0.0, inp[1], 0.0, 0.0]
         #input = np.array([1.0 ,0.5])
         #print(state)
-        [self.u0, new_xp0, new_up0, self.theta, self.theta_0] = shift_timestep(u, f2, theta_prev, self.X0)
+        [self.u0, new_xp0, new_up0, self.theta, self.theta_0] = self.shift_timestep(u, f2, theta_prev, self.X0)
         #print("theta-2 theta-1 theta")
         #print("reference position")
         #print(self.xp0)

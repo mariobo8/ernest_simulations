@@ -39,13 +39,12 @@ setup(
     entry_points={
         'console_scripts': [
             'mpc_node = mpc_controller.mpc_node:main',
-            'mpc = mpc_controller.pait:solve_mpc',
-          #  'mpc_solve = mpc_controller.path_tracking_mpc_node:mpc_solve',
-            'data = mpc_controller.data',
+            'mpc_node_demo = mpc_controller.mpc_node_carexample:main',
             'utils = mpc_controller.utils',
             'ackermann_solve = mpc_controller.ackermann_kinematics',
             'pivot_solve = mpc_controller.pivot_4ws_kinematics',
-            'stop_motors = mpc_controller.stop_motors:main'
+            'stop_motors = mpc_controller.stop_motors:main',
+            'test = mpc_controller.test_actuators:main',
         ],
     },
 )

@@ -1,14 +1,14 @@
 <?xml version="1.0" ?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ernest">
-
+<xacro:include filename="$(find description)/urdf/materials.xacro"/>
 <xacro:macro name="ernest" params="prefix"> 
   <link name="base_link">
   </link>
 
   <joint name="frame_joint" type="fixed">
-    <origin rpy="0 0 ${pi/2}" xyz="0 0 0.4"/>
+    <origin rpy="0 0 ${- pi/2}" xyz="-0.4 0 0.4"/>
     <parent link="base_link"/>
-    <child link="pivot"/>
+    <child link="chassis"/>
   </joint> 
 
   <link name="chassis">
@@ -20,18 +20,16 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://description/meshes/chassis.STL"/>
+        <mesh filename="$(find description)/meshes/chassis.STL"/>
       </geometry>
-      <material name="">
-        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1"/>
-      </material>
+      <material name="white"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://description/meshes/chassis.STL"/>
+        <mesh filename="$(find description)/meshes/chassis.STL"/>
       </geometry>
-    </collision>
+    </collision> 
   </link>
 
   <link name="pivot">
@@ -43,26 +41,26 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://description/meshes/pivot.STL"/>
+        <mesh filename="$(find description)/meshes/pivot.STL"/>
       </geometry>
-      <material name="">
-        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1"/>
-      </material>
+      <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://description/meshes/pivot.STL"/>
+        <mesh filename="$(find description)/meshes/pivot.STL"/>
       </geometry>
     </collision>
   </link>
 
-  <joint name="pivot_joint" type="continuous">
+  <joint name="pivot_joint" type="revolute">
+    <limit effort="0.001" lower="-0.8" upper="0.8" velocity="30"/>
     <origin rpy="0 0 3.13911747329568" xyz="0 0.4015 -0.00700000000000001"/>
-    <parent link="pivot"/>
-    <child link="chassis"/>
+    <parent link="chassis"/>
+    <child link="pivot"/>
     <axis xyz="0 0 -1"/>
   </joint>
+
 
   <link name="bogie">
     <inertial>
@@ -73,11 +71,9 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://description/meshes/bogie.STL"/>
+        <mesh filename="$(find description)/meshes/bogie.STL"/>
       </geometry>
-      <material name="">
-        <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1"/>
-      </material>
+      <material name="white"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -86,12 +82,14 @@
       </geometry>
     </collision>
   </link>
+
   <joint name="bogie_joint" type="continuous">
     <origin rpy="1.5707963267949 0.000529942236827729 0" xyz="0 -0.101800622452903 -0.0640000000000083"/>
     <parent link="pivot"/>
     <child link="bogie"/>
     <axis xyz="0 0 1"/>
   </joint>
+
   <link name="front_left_steer">
     <inertial>
       <origin rpy="0 0 0" xyz="-0.0214602071785041 -1.63416418175188E-08 -0.170809822421106"/>
@@ -103,9 +101,7 @@
       <geometry>
         <mesh filename="package://description/meshes/front_left_steer.STL"/>
       </geometry>
-      <material name="">
-        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1"/>
-      </material>
+      <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -132,15 +128,24 @@
       <geometry>
         <mesh filename="package://description/meshes/front_left_wheel.STL"/>
       </geometry>
-      <material name="">
-        <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1"/>
-      </material>
+      <material name="grey"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
         <mesh filename="package://description/meshes/front_left_wheel.STL"/>
       </geometry>
+      <friction>
+        <ode>
+          <mu>100000.0</mu>
+          <mu2>100000.0</mu2>
+        </ode>
+        </friction>
+        <contact>
+          <ode>
+            <min_depth>0.003</min_depth>
+          </ode>
+        </contact>
     </collision>
   </link>
   <joint name="front_left_wheel_joint" type="continuous">
@@ -160,9 +165,7 @@
       <geometry>
         <mesh filename="package://description/meshes/front_right_steer.STL"/>
       </geometry>
-      <material name="">
-        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1"/>
-      </material>
+      <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -189,9 +192,18 @@
       <geometry>
         <mesh filename="package://description/meshes/front_right_wheel.STL"/>
       </geometry>
-      <material name="">
-        <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1"/>
-      </material>
+      <friction>
+        <ode>
+          <mu>100000.0</mu>
+          <mu2>100000.0</mu2>
+        </ode>
+        </friction>
+        <contact>
+          <ode>
+            <min_depth>0.003</min_depth>
+          </ode>
+        </contact>
+      <material name="grey"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -217,9 +229,7 @@
       <geometry>
         <mesh filename="package://description/meshes/rear_right_steer.STL"/>
       </geometry>
-      <material name="">
-        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1"/>
-      </material>
+      <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -246,9 +256,18 @@
       <geometry>
         <mesh filename="package://description/meshes/rear_right_wheel.STL"/>
       </geometry>
-      <material name="">
-        <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1"/>
-      </material>
+      <friction>
+        <ode>
+          <mu>100000.0</mu>
+          <mu2>100000.0</mu2>
+        </ode>
+        </friction>
+        <contact>
+          <ode>
+            <min_depth>0.003</min_depth>
+          </ode>
+        </contact>
+      <material name="grey"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -274,9 +293,7 @@
       <geometry>
         <mesh filename="package://description/meshes/rear_left_steer.STL"/>
       </geometry>
-      <material name="">
-        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1"/>
-      </material>
+      <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -303,9 +320,18 @@
       <geometry>
         <mesh filename="package://description/meshes/rear_left_wheel.STL"/>
       </geometry>
-      <material name="">
-        <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1"/>
-      </material>
+      <friction>
+        <ode>
+          <mu>100000.0</mu>
+          <mu2>100000.0</mu2>
+        </ode>
+        </friction>
+        <contact>
+          <ode>
+            <min_depth>0.003</min_depth>
+          </ode>
+        </contact>
+      <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -321,8 +347,6 @@
     <axis xyz="0 0 1"/>
   </joint>
   
-  <!-- IMU sensor-->
-
 
 </xacro:macro>
 </robot>

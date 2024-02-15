@@ -10,7 +10,7 @@ class StopMotors(Node):
         super().__init__('stop_motors')
 
         self.set_subscribers_publishers()
-        
+        self.iter = 0
 
 
     # Callbacks Section
@@ -19,11 +19,11 @@ class StopMotors(Node):
 
         velocity_input = Float64MultiArray()
         steering_input = Float64MultiArray()
-        velocity_input.data = [0.0, 0.0,0.0, 0.0]
-        steering_input.data = [0.0, 0.0, 0.0, 0.0, 0.0]
+        velocity_input.data = [3.0, 3.0, 10.0, 10.0]
+        steering_input.data = [1.5, 1.5, 0.0, 0.0, 0.0]
         self.vel_pub.publish(velocity_input)
         self.steer_pub.publish(steering_input)
-        rclpy.shutdown()
+        self.iter += 1
  
 
 
