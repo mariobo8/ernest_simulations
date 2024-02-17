@@ -43,6 +43,7 @@ setup(
             'utils = mpc_controller.utils',
             'ackermann_solve = mpc_controller.ackermann_kinematics',
             'pivot_solve = mpc_controller.pivot_4ws_kinematics',
+            '4ws_solve = mpc_controller.fws_kinematics',
             'stop_motors = mpc_controller.stop_motors:main',
             'test = mpc_controller.test_actuators:main',
         ],

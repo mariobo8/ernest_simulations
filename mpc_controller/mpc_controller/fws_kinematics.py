@@ -11,7 +11,7 @@ import casadi as ca
 import numpy as np
 
 
-class AckermannKinematics(object):
+class fwsKinematics(object):
     def __init__(self):
         self.N = 10
         self.dt = 0.1
@@ -23,8 +23,11 @@ class AckermannKinematics(object):
         for jj in range(1, self.N + 1):
             self.xp0.extend([self.x_p[0], self.y_p[0], 0.0, 0.0])  # initial condition path
         self.xp0 = Arr2DM(self.xp0)
-        self.u0 = ca.DM.zeros((3, self.N))
-        self.up0 =ca.DM.zeros(self.N*3,1)
+        self.u0 = ca.DM.zeros((5, self.N))
+        self.up0 =ca.DM.zeros(self.N*5,1)
+        #print(ca.DM.size(self.up0))
+        #print(ca.DM.size(self.x0))
+        
         
 
     def dimensions(self):
@@ -32,6 +35,7 @@ class AckermannKinematics(object):
         l_r = 0.71
         wheel_radius = 0.161
         return l_f, l_r, wheel_radius
+
     
     def kin_model(self):
         [l_f, l_r, _] = self.dimensions()
@@ -49,24 +53,29 @@ class AckermannKinematics(object):
         n_states = states.numel()
 
         # Define control variables
+        v_f = ca.SX.sym('v_f')
         v_r = ca.SX.sym('v_r')
         delta_f = ca.SX.sym('delta_f')
+        delta_r = ca.SX.sym('delta_r')
         virtual_v = ca.SX.sym('virtual_v')
         controls = ca.vertcat(
+            v_f,
             v_r,
             delta_f,
+            delta_r,
             virtual_v
         )
         n_controls = controls.numel()
-
-        beta = np.arctan( l_r * (np.tan(delta_f)) / (l_f + l_r ))
-        v = v_r / (2 * cos(beta))
+        
+        beta = np.arctan((l_f * np.tan(delta_r) + l_r * np.tan(delta_f))\
+                        / (l_f + l_r))
+        v = (v_f * cos(delta_f) + v_r * cos(delta_r)) / (2 * cos(beta))
         # righthand-side function
         RHS = ca.vertcat(v*cos(psi + beta), v*sin(psi + beta),
-                         v * (np.tan(delta_f) * cos(beta)) 
-                               / (l_f + l_r),
+                         v * (np.tan(delta_f) * cos(beta) \
+                          - np.tan(delta_r) * cos(beta)) / (l_f + l_r),
                          virtual_v)
-
+        ## to change
         # maps controls from [input] to [states].T
         f = ca.Function('f', [states, controls], [RHS])
         return states, controls, n_states, n_controls ,f, s
@@ -83,21 +92,27 @@ class AckermannKinematics(object):
     def weighing_matrices(self, n_states, n_controls, N):
     # Weighing Matrices
         #states
-        Q_x = 8e6
-        Q_y = 2e6
-        Q_psi = 8e3
-        Q_theta = 0
+        Q_x = 9e6
+        Q_y = 9e6
+        Q_psi = 1e1
+        Q_s = 0
 
         #controls
-        R_v = 10e3
-        R_delta = 1e4
-        R_virt_v = 1
+        R_vf = 5e3
+        R_vr = 5e3
+        R_deltaf = 5e2
+        R_deltar = 5e2
+        R_virtv = 0
+        
 
-        #reate cannge input
-        W_v = 1e7
-        W_delta = 1e6
-        W_v_virt = 1
-
+        #rate change input
+        W_vf = 1e5
+        W_vr = 1e5
+        W_deltaf = 4e5
+        W_deltar = 4e5
+        W_virtv = 1e0
+        #anti drifting
+        m = 1e8
         #penalty
         eps = 1e3
         # matrix containing all states over all time steps +1 (each column is a state vector)
@@ -110,19 +125,19 @@ class AckermannKinematics(object):
         P = ca.SX.sym('P', n_states + n_states*N + n_controls*N)
 
         # state weights matrix (Q_X, Q_Y, Q_THETA)
-        Q = ca.diagcat(Q_x, Q_y, Q_psi, Q_theta)
+        Q = ca.diagcat(Q_x, Q_y, Q_psi, Q_s)
 
         # controls weights matrix
-        R = ca.diagcat(R_v, R_delta, R_virt_v)
+        R = ca.diagcat(R_vf, R_vr, R_deltaf, R_deltar, R_virtv)
 
         #rate changing matrix
-        W = ca.diagcat(W_v, W_delta, W_v_virt)
-
-        return X,U,P,Q,R,W,eps
+        W = ca.diagcat(W_vf, W_vr, W_deltaf, W_deltar, W_virtv)
+        
+        return X,U,P,Q,R,W,m,eps
 
     def cost_function(self):
-        [_, _, n_states, n_controls ,f,_] = self.kin_model()
-        [X,U,P,Q,R,W, eps] = self.weighing_matrices(n_states,n_controls, self.N)
+        [_, _, n_states, n_controls ,f, _] = self.kin_model()
+        [X,U,P,Q,R,W,m,eps] = self.weighing_matrices(n_states,n_controls, self.N)
         obj = 0  # cost function
         g = X[:, 0] - P[:n_states]  # constraints in the equation
 
@@ -131,25 +146,28 @@ class AckermannKinematics(object):
         for k in range(self.N):
             st = X[:, k]
             con = U[:, k]
+            vf = U[0,k]; vr = U[1,k]; d_f = U[2,k]; d_r = U[3,k]
+            #conn = np.array([U[4,k], U[4,k], 0, 0, 0, 0])
             i_state = slice((k*4+4), (k*4+8))
             i_control =  slice((self.N-1)*4+8+(k*n_controls),\
-                              (self.N-1)*4+8+(k*n_controls) + n_controls) #forse da aggiustare
+                                (self.N-1)*4+8+(k*n_controls) + n_controls)
             obj = obj \
                 + (st - P[i_state]).T @ Q @ (st - P[i_state]) \
                 + (con).T @ R @ (con) \
-                + (con - P[i_control]).T @ W @ (con - P[i_control])
+                + (con - P[i_control]).T @ W @ (con - P[i_control]) \
+                + m*(vf*cos(d_f)- vr*cos(d_r))**2
             st_next = X[:, k+1]
             f_value = f(st, con)
             st_next_euler = st + self.dt * f_value
             g = ca.vertcat(g, st_next - st_next_euler)
         obj = obj - eps/2*(st[3])**2
-        
+
         OPT_variables = ca.vertcat(
             X.reshape((-1, 1)),   # Example: 3x11 ---> 33x1 where 3=states, 11=N+1
             U.reshape((-1, 1))
         )
         print("Computed obj")
-        return obj,OPT_variables, g, P, n_states, n_controls,  f 
+        return obj,OPT_variables, g, P, n_states, n_controls,  f
  
     def constraints(self, n_states, n_controls, N):
         # Boundaries
@@ -165,23 +183,27 @@ class AckermannKinematics(object):
         lbx[0: n_states*(N+1): n_states] = -ca.inf         # X lower bound
         lbx[1: n_states*(N+1): n_states] = -ca.inf     # Y lower bound
         lbx[2: n_states*(N+1): n_states] = -ca.inf     # psi lower bound
-        lbx[3: n_states*(N+1): n_states] = -ca.inf          # theta lower bound
+        lbx[3: n_states*(N+1): n_states] = -ca.inf       # theta lower bound
 
 
         ubx[0: n_states*(N+1): n_states] = 0           # X upper bound
         ubx[1: n_states*(N+1): n_states] = ca.inf      # Y upper bound
         ubx[2: n_states*(N+1): n_states] = ca.inf      # theta upper bound
-        ubx[3: n_states*(N+1): n_states] = self.arc_length[-1]       #  theta lower bound
+        ubx[3: n_states*(N+1): n_states] = self.arc_length[-1]           # theta upper bound
 
         #input lower bound
         lbx[n_states*(N+1):n_states*(N+1)+n_controls*N:n_controls] = v_min                
-        lbx[n_states*(N+1)+1:n_states*(N+1)+n_controls*N:n_controls] = delta_min
-        lbx[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = virtual_v_min
-
+        lbx[n_states*(N+1)+1:n_states*(N+1)+n_controls*N:n_controls] = v_min
+        lbx[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = delta_min
+        lbx[n_states*(N+1)+3:n_states*(N+1)+n_controls*N:n_controls] = delta_min                
+        lbx[n_states*(N+1)+4:n_states*(N+1)+n_controls*N:n_controls] = virtual_v_min
+        
         #input upper bound
-        ubx[n_states*(N+1):n_states*(N+1)+n_controls*N-n_controls:n_controls] = v_max                                                                            # v upper bound for all V
-        ubx[n_states*(N+1)+1:n_states*(N+1)+n_controls*N-n_controls+1:n_controls] = delta_max   
-        ubx[n_states*(N+1)+2:n_states*(N+1)+n_controls*N-n_controls+2:n_controls] = virtual_v_max 
+        ubx[n_states*(N+1):n_states*(N+1)+n_controls*N:n_controls] = v_max                                                                            # v upper bound for all V
+        ubx[n_states*(N+1)+1:n_states*(N+1)+n_controls*N:n_controls] = v_max   
+        ubx[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = delta_max
+        ubx[n_states*(N+1)+3:n_states*(N+1)+n_controls*N:n_controls] = delta_max                                                                         # v upper bound for all V
+        ubx[n_states*(N+1)+4:n_states*(N+1)+n_controls*N:n_controls] = virtual_v_max  
         lbg = ca.DM.zeros((n_states*(N+1), 1))  # constraints lower bound
         ubg = ca.DM.zeros((n_states*(N+1), 1))  # constraints upper bound
         return lbg,ubg,lbx,ubx
@@ -195,6 +217,7 @@ class AckermannKinematics(object):
             'g': g,
             'p': P
         }
+        #print(ca.SX.size(OPT_variables))
         opts = {
             'ipopt': {
                 'max_iter': 6000,
@@ -214,8 +237,8 @@ class AckermannKinematics(object):
         }
 
         return solver, args, n_states, n_controls, f
-    
-        # Shift function
+
+    # Shift function
     def shift_timestep(self, u, X0, x_p, y_p, arc_length, input):
         u = u.T
         u0 = ca.vertcat(
@@ -250,29 +273,36 @@ class AckermannKinematics(object):
             ref.append([x_int, y_int, psi_int])
         
         xp0.extend([x_int, y_int, psi_int, 0])
+        #x_int = np.interp(s, arc_length, x_p)
+        #y_int = np.interp(s, arc_length, y_p)
+        ##print(x_int)
+        #x_int_prev = np.interp(s_prev, arc_length, x_p)
+        #y_int_prev = np.interp(s_prev, arc_length, y_p)
+        #psi_int = np.arctan2((y_int - y_int_prev), (x_int - x_int_prev))        
+       #
+        #for jj in range(1, self.N):
+#
+        #    xp0.extend([x_int, y_int, psi_int, 0])
+        #xp0.extend([x_int, y_int, psi_int, 0])
+        
         u0 = np.vstack((u[1:,:], u[-1,:]))
         
         #up0 = np.repeat(u0[:,0], self.N)
         up0 = np.vstack([input] * self.N)
         up0 = Arr2DM(up0)
-        xp0 = Arr2DM(xp0)
-        #print(xp0)
-        #print(input)
-        #print("prev input")
-        #print(up0)    
+        xp0 = Arr2DM(xp0) 
         return  u0, xp0, up0, s
+
 
     def solve_mpc(self, solver, state, args, n_states, n_controls, xp0, up0):
         state[3] = self.theta
-        #print(state)
-        #print(ca.DM.size(up0))
+
         args['p'] = ca.vertcat(
                     state,    # current state
                     xp0,   # target state
                     up0
                     )
-        #print(np.size(state))
-        #print(np.size(up0))
+
         # optimization variable current state
         args['x0'] = ca.vertcat(
             ca.reshape(self.X0, n_states*(self.N+1), 1),
@@ -291,22 +321,18 @@ class AckermannKinematics(object):
             ubg=args['ubg'],
             p=args['p']
         )
-
         u = ca.reshape(sol['x'][n_states * (self.N + 1):], n_controls, self.N)
         self.X0 = ca.reshape(sol['x'][: n_states * (self.N+1)], n_states, self.N+1)
-        #print(self.X0[0,0])
-        inp = DM2Arr(u[:, 0])
-        #print("state")
-        #print(state)
 
+        inp = DM2Arr(u[:, 0])
       
-        input = [float(inp[0]), float(inp[0]), float(inp[1]), 0.0, 0.0]
+        input = [float(inp[0]), float(inp[1]), float(inp[2]),
+                  float(inp[3]), 0.0]
        
         [self.u0, new_xp0, new_up0, self.theta] = \
             self.shift_timestep(u, self.X0, self.x_p, self.y_p, self.arc_length, inp)
-    
-        #print("ref state")
-        #print(new_xp0) 
+
         return input, new_xp0, new_up0
 
 
+    

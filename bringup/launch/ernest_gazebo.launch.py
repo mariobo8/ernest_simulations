@@ -56,6 +56,7 @@ def generate_launch_description():
                 PythonLaunchDescriptionSource([os.path.join(
                     get_package_share_directory('gazebo_ros'), 'launch'), '/gazebo.launch.py']),
                     #launch_arguments={'model_path': PathJoinSubstitution([FindPackageShare("description"), "meshes"])}.items()
+                    #launch_arguments={'world': PathJoinSubstitution([FindPackageShare("description"), "worlds"])}.items()             
              )
     
     load_joint_state_controller = ExecuteProcess(

@@ -21,6 +21,42 @@
     </plugin>
   </gazebo>
 
+   <gazebo reference="chassis">
+    <material>Gazebo/White</material>
+   </gazebo>
+
+   <gazebo reference="pivot">
+    <material>Gazebo/DarkGrey</material>
+   </gazebo>
+
+   <gazebo reference="bogie">
+    <material>Gazebo/White</material>
+   </gazebo>
+
+   <gazebo reference="front_left_steer">
+    <material>Gazebo/DarkGrey</material>
+   </gazebo>
+   <gazebo reference="rear_left_steer">
+    <material>Gazebo/DarkGrey</material>
+   </gazebo>
+   <gazebo reference="front_right_steer">
+    <material>Gazebo/DarkGrey</material>
+   </gazebo>
+   <gazebo reference="rear_right_steer">
+    <material>Gazebo/DarkGrey</material>
+   </gazebo>
+   <gazebo reference="front_left_wheel">
+    <material>Gazebo/Grey</material>
+   </gazebo>
+   <gazebo reference="front_right_wheel">
+    <material>Gazebo/Grey</material>
+   </gazebo>
+   <gazebo reference="rear_left_wheel">
+    <material>Gazebo/Grey</material>
+   </gazebo>
+   <gazebo reference="rear_right_wheel">
+    <material>Gazebo/Grey</material>
+   </gazebo>
 </xacro:macro>
 
 </robot>
