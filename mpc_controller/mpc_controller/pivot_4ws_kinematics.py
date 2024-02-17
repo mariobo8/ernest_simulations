@@ -96,34 +96,34 @@ class Pivot4wsKinematics(object):
     def weighing_matrices(self, n_states, n_controls, N):
     # Weighing Matrices
         #states
-        Q_x = 7e7
-        Q_y = 7e7
+        Q_x = 7e3
+        Q_y = 7e3
         Q_psi = 5e0
-        Q_s = 0
+        Q_s = 1e-2
 
         #controls
-        R_vf = 1e2
-        R_vr = 1e2
-        R_deltaf = 5e2
-        R_deltar = 5e2
-        R_alpha = 8e3
-        R_virtv = 1e1        
+        R_vf = 1e1
+        R_vr = 1e1
+        R_deltaf = 5e1
+        R_deltar = 5e1
+        R_alpha = 5e1
+        R_virtv = 1e0       
 
         #rate change input
-        W_vf = 5e5
-        W_vr = 5e5
-        W_deltaf = 1e6
-        W_deltar = 1e6
-        W_alpha = 5e8
-        W_virtv = 1e1
+        W_vf = 2e3
+        W_vr = 2e3
+        W_deltaf = 9e2
+        W_deltar = 9e2
+        W_alpha = 2e3
+        W_virtv = 5e0
 
         #penalty
-        eps = 5e2
+        eps = 5e1
 
         #orientation
-        gamma = 1e3
+        gamma = 1e4
         #anti drifting
-        m = 1e7
+        m = 1e4
         # matrix containing all states over all time steps +1 (each column is a state vector)
         X = ca.SX.sym('X', n_states, N + 1)
 
@@ -169,7 +169,7 @@ class Pivot4wsKinematics(object):
             f_value = f(st, con)
             st_next_euler = st + self.dt * f_value
             g = ca.vertcat(g, st_next - st_next_euler)
-        obj = obj - eps/2*(st[3])**2 + gamma/2*(st[2] - P[k*4+6])**2
+        obj = obj - eps/2*(st[3])**2 # gamma/2*(st[2] - P[k*4+6])**2
 
         OPT_variables = ca.vertcat(
             X.reshape((-1, 1)),   # Example: 3x11 ---> 33x1 where 3=states, 11=N+1
