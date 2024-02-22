@@ -1,1 +1,0 @@
-Invoking command in '/home/mariobo/ernest_ws/src/ernest_simulations/build/description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller:/home/mariobo/ernest_ws/install/mpc_controller:/opt/ros/foxy /usr/local/bin/cmake --build /home/mariobo/ernest_ws/src/ernest_simulations/build/description -- -j8 -l8

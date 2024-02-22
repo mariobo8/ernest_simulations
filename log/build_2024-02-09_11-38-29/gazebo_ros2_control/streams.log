@@ -1,3 +1,0 @@
-[1.099s] Invoking command in '/home/mariobo/ernest_ws/src/ernest_simulations/build/gazebo_ros2_control': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/mariobo/ernest_ws/src/ernest_simulations/install/mpc_controller:/home/mariobo/ernest_ws/install/mpc_controller:/opt/ros/foxy /usr/local/bin/cmake --build /home/mariobo/ernest_ws/src/ernest_simulations/build/gazebo_ros2_control -- -j8 -l8
-[1.848s] [100%] Built target gazebo_hardware_plugins
-[1.848s] [100%] Built target gazebo_ros2_control

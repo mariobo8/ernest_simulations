@@ -28,7 +28,7 @@ class Pivot4wsKinematics(object):
         self.up0 =ca.DM.zeros(6,1)
         self.pred = np.zeros((1,4))
         self.ref = np.zeros((1,3))
-        
+        self.set_jit()
 
     def dimensions(self):
         l_f = 0.16
@@ -97,29 +97,29 @@ class Pivot4wsKinematics(object):
         #states
         Q_x = 7e5
         Q_y = 7e5
-        Q_psi = 5e3
+        Q_psi = 5e2
         Q_s = 0
 
         #controls
-        R_vf = 5e1
-        R_vr = 5e1
-        R_deltaf = 0#5e2
-        R_deltar = 0#5e2
+        R_vf = 1e1
+        R_vr = 1e1
+        R_deltaf = 5e2
+        R_deltar = 5e2
         R_alpha = 1e4
-        R_virtv = 5e1       
+        R_virtv = 1e0       
 
         #rate change input
-        W_vf = 7e4
-        W_vr = 7e4
+        W_vf = 9e4
+        W_vr = 9e4
         W_deltaf = 9e5
         W_deltar = 9e5
         W_alpha = 2e5
         W_virtv = 5e0
 
         #penalty
-        eps = 5e3
+        eps = 5e2
         #orientation
-        gamma = 2e3
+        gamma = 1e4
         #anti drifting
         m = 5e6
         
@@ -143,10 +143,23 @@ class Pivot4wsKinematics(object):
         
         return X,U,P,Q,R,W,m,eps,gamma
 
+    def set_jit(self):
+
+        self.fun_options = {
+            "jit": True,
+            "jit_options": {'compiler': 'ccache gcc',
+                            'flags': ["-O2", "-pipe"]},
+            'compiler': 'shell',
+            'jit_temp_suffix': True
+        }
+
+
+
+        
     def cost_function(self):
         [_, _, n_states, n_controls ,f, _] = self.kin_model()
         [X,U,P,Q,R,W,m,eps,gamma] = self.weighing_matrices(n_states,n_controls, self.N)
-        obj = 0  # cost function
+        obj = ca.MX(0)  # cost function
         g1 = X[:, 0] - P[:n_states]  # constraints in the equation
         g2 = U[:, 0] - P[-6:]
 
@@ -159,12 +172,15 @@ class Pivot4wsKinematics(object):
             if k == (self.N-1): con_l = con
             else: con_l = U[:,k+1]
             i_state = slice((k*4+4), (k*4+8))
-
-            obj = obj \
-                + (st - P[i_state]).T @ Q @ (st - P[i_state]) \
+            
+            cost = (st - P[i_state]).T @ Q @ (st - P[i_state]) \
                 + (con).T @ R @ (con) \
                 + (con - con_l).T @ W @ (con - con_l) \
                 + m*(vf*cos(d_f + a) - vr*cos(d_r))**2 
+            
+            self.running = ca.Function('cost', [X,P,U], [cost], self.fun_options)
+            obj = obj + self.running(X,P,U)
+            
             
             st_next = X[:, k+1]
             f_value = f(st, con)
@@ -172,7 +188,9 @@ class Pivot4wsKinematics(object):
             g1 = ca.vertcat(g1, st_next - st_next_euler)
             if k == (self.N-1): g2 = ca.vertcat(g2, U[:,k] - U[:,k])
             else: g2 = ca.vertcat(g2, U[:,k] - U[:,k+1])
-        obj = obj - eps/2*(st[3])**2 # gamma/2*(st[2] - P[k*4+6])**2
+        pen = eps/2*(st[3])**2
+        self.penalty = ca.Function('pen', [X], [pen], self.fun_options)
+        obj = obj + self.penalty(X)  # gamma/2*(st[2] - P[k*4+6])**2
         
 
         g = ca.vertcat(g1, g2[:-6])
@@ -231,15 +249,15 @@ class Pivot4wsKinematics(object):
         #rate input change
         lbg[n_states*(N+1):n_states*(N+1)+n_controls*N:n_controls] = a_min                
         lbg[n_states*(N+1)+1:n_states*(N+1)+n_controls*N:n_controls] = a_min
-        lbg[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = w_min*0.3        
-        lbg[n_states*(N+1)+3:n_states*(N+1)+n_controls*N:n_controls] = w_min*0.3               
-        lbg[n_states*(N+1)+4:n_states*(N+1)+n_controls*N:n_controls] = w_min*0.3
+        lbg[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = w_min*0.25
+        lbg[n_states*(N+1)+3:n_states*(N+1)+n_controls*N:n_controls] = w_min*0.25                
+        lbg[n_states*(N+1)+4:n_states*(N+1)+n_controls*N:n_controls] = w_min*0.25
         lbg[n_states*(N+1)+5:n_states*(N+1)+n_controls*N:n_controls] = a_min
         ubg[n_states*(N+1):n_states*(N+1)+n_controls*N:n_controls] = a_max                                                                            # v upper bound for all V
         ubg[n_states*(N+1)+1:n_states*(N+1)+n_controls*N:n_controls] = a_max   
-        ubg[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = w_max*0.3        
-        ubg[n_states*(N+1)+3:n_states*(N+1)+n_controls*N:n_controls] = w_max*0.3                                                                       # v upper bound for all V
-        ubg[n_states*(N+1)+4:n_states*(N+1)+n_controls*N:n_controls] = w_max*0.3  
+        ubg[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = w_max*0.25
+        ubg[n_states*(N+1)+3:n_states*(N+1)+n_controls*N:n_controls] = w_max*0.25                                                                         # v upper bound for all V
+        ubg[n_states*(N+1)+4:n_states*(N+1)+n_controls*N:n_controls] = w_max*0.25   
         ubg[n_states*(N+1)+5:n_states*(N+1)+n_controls*N:n_controls] = a_max 
         return lbg,ubg,lbx,ubx
 

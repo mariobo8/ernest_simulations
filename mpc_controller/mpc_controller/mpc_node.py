@@ -22,9 +22,10 @@ class PathTrackingMPC(Node):
         super().__init__('path_tracking_MPC')
         self.mpc_inst = pfws_mpc()
         self.xp_0 = self.mpc_inst.start
-        self.input_sequence = [0.0, 0.0, 0.0, 0.0, 0.0]
+        self.input_sequence = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         self.state_sequence = [self.xp_0, 0.0, 0.0, 0.0]
         self.time_step = [0.0]
+        self.switch = False
         [self.solver, self.args, self.n_states, self.n_controls, self.f] \
             = self.mpc_inst.set_solver()
         self.set_subscribers_publishers()
@@ -45,8 +46,6 @@ class PathTrackingMPC(Node):
         
         
         self.mpc_inst.x0 = np.array([float(x),float(y),float(psi), float(0.0)])
-        
-        #self.get_logger().info("input received and dio %f" % self.state[0])
         [velocity_input, steering_input] = self.create_control_message()
 
         end_time = time.time()
@@ -57,6 +56,21 @@ class PathTrackingMPC(Node):
         self.time_step.append(elapsed_time)
         self.vel_pub.publish(velocity_input)
         self.steer_pub.publish(steering_input)
+        if self.switch: 
+            np.savetxt('pfwsinput.txt',
+                self.input_sequence, fmt='%f', delimiter='\t')
+            np.savetxt('pfwsstate.txt',
+                self.state_sequence, fmt='%f', delimiter='\t')
+            np.savetxt('pfwstime_step.txt',
+                self.time_step, fmt='%f', delimiter='\t')
+            np.savetxt('pfwstime_step.txt',
+                self.time_step, fmt='%f', delimiter='\t')
+            np.savetxt('pfwsref.txt',
+                self.mpc_inst.ref, fmt='%f', delimiter='\t')
+            np.savetxt('pfwspred.txt',
+                self.mpc_inst.pred, fmt='%f', delimiter='\t')
+            print("saved!")
+            rclpy.shutdown()
 
  
 
@@ -73,20 +87,9 @@ class PathTrackingMPC(Node):
         steering_input = Float64MultiArray()
         if self.mpc_inst.x0[0] >= -0.02:
             velocity_input.data = [0.0,0.0,0.0,0.0]
-            steering_input.data = [0.0,0.0,0.0,0.0,0.0]             
-            np.savetxt('pfwsinput.txt',
-                self.input_sequence, fmt='%f', delimiter='\t')
-            np.savetxt('pfwsstate.txt',
-                self.state_sequence, fmt='%f', delimiter='\t')
-            np.savetxt('pfwstime_step.txt',
-                self.time_step, fmt='%f', delimiter='\t')
-            np.savetxt('pfwstime_step.txt',
-                self.time_step, fmt='%f', delimiter='\t')
-            np.savetxt('pfwsref.txt',
-                self.mpc_inst.ref, fmt='%f', delimiter='\t')
-            np.savetxt('pfwspred.txt',
-                self.mpc_inst.pred, fmt='%f', delimiter='\t')
-
+            steering_input.data = [0.0,0.0,0.0,0.0,0.0] 
+            self.switch = True            
+            
         else:
             [input, new_xp0, new_up0] = self.mpc_inst.solve_mpc(self.solver, 
                                         self.mpc_inst.x0 , self.args, self.n_states, 

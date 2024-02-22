@@ -1,6 +1,0 @@
-[35m[1mConsolidate compiler generated dependencies of target pid_controller[0m
-[35m[1mConsolidate compiler generated dependencies of target odom_subs[0m
-[35m[1mConsolidate compiler generated dependencies of target trajectory_controller[0m
-[ 66%] Built target trajectory_controller
-[ 66%] Built target pid_controller
-[100%] Built target odom_subs

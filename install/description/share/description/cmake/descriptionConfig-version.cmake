@@ -1,1 +1,0 @@
-/home/mariobo/ernest_ws/src/ernest_simulations/build/description/ament_cmake_core/descriptionConfig-version.cmake

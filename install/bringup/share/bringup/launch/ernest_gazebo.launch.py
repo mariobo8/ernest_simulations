@@ -1,1 +1,0 @@
-/home/mariobo/ernest_ws/src/ernest_simulations/bringup/launch/ernest_gazebo.launch.py

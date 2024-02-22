@@ -30,12 +30,12 @@ from launch_ros.actions import Node
 import xacro
 
 def generate_launch_description():
-    pkg_box_bot_gazebo = get_package_share_directory('bringup')
+    pkg_box_bot_gazebo = get_package_share_directory('description')
     description_package_name = "description"
     install_dir = get_package_prefix(description_package_name)
 
 # This is to find the models inside the models folder in my_box_bot_gazebo package
-    gazebo_models_path = os.path.join(pkg_box_bot_gazebo, 'models')
+    gazebo_models_path = os.path.join(pkg_box_bot_gazebo, 'worlds')
     if 'GAZEBO_MODEL_PATH' in os.environ:
         os.environ['GAZEBO_MODEL_PATH'] = os.environ['GAZEBO_MODEL_PATH'] + \
             ':' + install_dir + '/share' + ':' + gazebo_models_path
@@ -56,8 +56,10 @@ def generate_launch_description():
                 PythonLaunchDescriptionSource([os.path.join(
                     get_package_share_directory('gazebo_ros'), 'launch'), '/gazebo.launch.py']),
                     #launch_arguments={'model_path': PathJoinSubstitution([FindPackageShare("description"), "meshes"])}.items()
-                    #launch_arguments={'world': PathJoinSubstitution([FindPackageShare("description"), "worlds"])}.items()             
+                    launch_arguments={'world': PathJoinSubstitution([FindPackageShare("description"), "worlds", "empty.sdf"])}.items()           
+    
              )
+    
     
     load_joint_state_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller', '--set-state', 'start',
