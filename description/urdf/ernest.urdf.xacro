@@ -346,8 +346,6 @@
     <child link="rear_left_wheel"/>
     <axis xyz="0 0 1"/>
   </joint>
-  
-
 
 </xacro:macro>
 </robot>

@@ -155,6 +155,7 @@ class Pivot4wsKinematics(object):
 
 
 
+
         
     def cost_function(self):
         [_, _, n_states, n_controls ,f, _] = self.kin_model()
@@ -275,7 +276,8 @@ class Pivot4wsKinematics(object):
                 'max_iter': 3000,
                 'print_level': 0,
                 'acceptable_tol': 1e-8,
-                'acceptable_obj_change_tol': 1e-6
+                'acceptable_obj_change_tol': 1e-6,
+                'jit': True,
             },
             'print_time': 0
         }

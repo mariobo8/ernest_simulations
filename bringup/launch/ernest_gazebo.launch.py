@@ -79,7 +79,6 @@ def generate_launch_description():
         output='screen'
     )
 
-
     # Get URDF via xacro
     robot_description_content = Command(
         [

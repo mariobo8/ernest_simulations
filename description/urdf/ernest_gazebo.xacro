@@ -21,7 +21,21 @@
     </plugin>
   </gazebo>
 
-
+  <gazebo reference="pivot_joint">
+    <provide_feedback>true</provide_feedback>
+    <sensor name="force_torque_sensor" type="force_torque">
+      <always_on>true</always_on>
+      <update_rate>100</update_rate>
+      <visualize>true</visualize>
+      <topic>force_torque</topic>
+      <enable_metrics>true</enable_metrics>
+      <pose>0 0 0 0 0 1.57</pose>
+      <force_torque>
+        <frame>sensor</frame>
+        <measure_direction>child_to_parent</measure_direction>
+      </force_torque> 
+    </sensor>
+  </gazebo>
             
   <gazebo reference="chassis">
     <material>Gazebo/White</material>

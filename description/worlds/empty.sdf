@@ -12,11 +12,9 @@
 
    
     <gazebo>
-      <plugin 
-        filename="ignition-gazebo-forcetorque-system" 
-        name="ignition::gazebo::systems::ForceTorque">
-      </plugin>
-    </gazebo> 
-    
+      <plugin filename="ignition-gazebo-forcetorque-system"
+      name="ignition::gazebo::systems::ForceTorque" />
+    </gazebo>
+
   </world>
 </sdf>

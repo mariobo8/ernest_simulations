@@ -40,10 +40,10 @@ class Pivot4wsKinematics(object):
     def kin_model(self):
         [l_f, l_r, _] = self.dimensions()
         # Define state variables
-        x = ca.MX.sym('x')
-        y = ca.MX.sym('y')
-        psi = ca.MX.sym('psi')
-        s = ca.MX.sym('s')
+        x = ca.SX.sym('x')
+        y = ca.SX.sym('y')
+        psi = ca.SX.sym('psi')
+        s = ca.SX.sym('s')
         states = ca.vertcat(
             x,
             y,
@@ -53,12 +53,12 @@ class Pivot4wsKinematics(object):
         n_states = states.numel()
 
         # Define control variables
-        v_f = ca.MX.sym('v_f')
-        v_r = ca.MX.sym('v_r')
-        delta_f = ca.MX.sym('delta_f')
-        delta_r = ca.MX.sym('delta_r')
-        alpha = ca.MX.sym('alpha')
-        virtual_v = ca.MX.sym('virtual_v')
+        v_f = ca.SX.sym('v_f')
+        v_r = ca.SX.sym('v_r')
+        delta_f = ca.SX.sym('delta_f')
+        delta_r = ca.SX.sym('delta_r')
+        alpha = ca.SX.sym('alpha')
+        virtual_v = ca.SX.sym('virtual_v')
         controls = ca.vertcat(
             v_f,
             v_r,
@@ -124,13 +124,13 @@ class Pivot4wsKinematics(object):
         m = 5e6
         
         # matrix containing all states over all time steps +1 (each column is a state vector)
-        X = ca.MX.sym('X', n_states, N + 1)
+        X = ca.SX.sym('X', n_states, N + 1)
 
         # matrix containing all control actions over all time steps (each column is an action vector)
-        U = ca.MX.sym('U', n_controls, N)
+        U = ca.SX.sym('U', n_controls, N)
 
         # coloumn vector for storing initial state and target state
-        P = ca.MX.sym('P', n_states + n_states*N + n_controls)
+        P = ca.SX.sym('P', n_states + n_states*N + n_controls)
 
         # state weights matrix (Q_X, Q_Y, Q_THETA)
         Q = ca.diagcat(Q_x, Q_y, Q_psi, Q_s)
