@@ -33,7 +33,7 @@ class Pivot4wsKinematics(object):
     def dimensions(self):
         l_f = 0.16
         l_r = 0.71
-        wheel_radius = 0.161
+        wheel_radius = 0.14
         return l_f, l_r, wheel_radius
 
     
@@ -95,33 +95,33 @@ class Pivot4wsKinematics(object):
     def weighing_matrices(self, n_states, n_controls, N):
     # Weighing Matrices
         #states
-        Q_x = 7e9
-        Q_y = 7e9
-        Q_psi = 5e8
+        Q_x = 9e6
+        Q_y = 9e6
+        Q_psi = 1e5
         Q_s = 0
 
         #controls
-        R_vf = 5e1
-        R_vr = 5e1
-        R_deltaf = 5e0
-        R_deltar = 5e0
-        R_alpha = 1e2
+        R_vf = 9e1
+        R_vr = 9e1
+        R_deltaf = 4e3
+        R_deltar = 4e3
+        R_alpha = 8e3
         R_virtv = 5e1       
 
         #rate change input
-        W_vf = 7e4
-        W_vr = 7e4
-        W_deltaf = 9e5
-        W_deltar = 9e5
-        W_alpha = 2e5
-        W_virtv = 5e2
+        W_vf = 1e2
+        W_vr = 1e2
+        W_deltaf = 8e3
+        W_deltar = 8e3
+        W_alpha = 9e4
+        W_virtv = 7e1
 
         #penalty
-        eps = 5e2
+        eps = 5e3
         #orientation
-        gamma = 2e3
+        gamma = 2e2
         #anti drifting
-        m = 5e6
+        m = 2e7
         
         # matrix containing all states over all time steps +1 (each column is a state vector)
         X = ca.SX.sym('X', n_states, N + 1)
@@ -185,16 +185,16 @@ class Pivot4wsKinematics(object):
  
     def constraints(self, n_states, n_controls, N):
         # Boundaries
-        v_max = 1
+        v_max = 0.7
         alpha_max = 0.5
-        delta_max = 1.05
-        virtual_v_max = 1
+        delta_max = 0.9
+        virtual_v_max = 0.65
         alpha_min = - 0.5
-        v_min = -1
-        delta_min = -1.05
+        v_min = -0.5
+        delta_min = -0.9
         virtual_v_min = 0
-        a_min = - 0.05
-        a_max = 0.05
+        a_min = - 0.04
+        a_max = 0.04
         w_min = - 0.1
         w_max = 0.1
         lbx = ca.DM.zeros((n_states*(N+1) + n_controls*N, 1))
@@ -231,15 +231,15 @@ class Pivot4wsKinematics(object):
         #rate input change
         lbg[n_states*(N+1):n_states*(N+1)+n_controls*N:n_controls] = a_min                
         lbg[n_states*(N+1)+1:n_states*(N+1)+n_controls*N:n_controls] = a_min
-        lbg[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = w_min*0.3        
-        lbg[n_states*(N+1)+3:n_states*(N+1)+n_controls*N:n_controls] = w_min*0.3               
-        lbg[n_states*(N+1)+4:n_states*(N+1)+n_controls*N:n_controls] = w_min*0.3
+        lbg[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = w_min*0.30        
+        lbg[n_states*(N+1)+3:n_states*(N+1)+n_controls*N:n_controls] = w_min*0.30               
+        lbg[n_states*(N+1)+4:n_states*(N+1)+n_controls*N:n_controls] = w_min*0.25
         lbg[n_states*(N+1)+5:n_states*(N+1)+n_controls*N:n_controls] = a_min
         ubg[n_states*(N+1):n_states*(N+1)+n_controls*N:n_controls] = a_max                                                                            # v upper bound for all V
         ubg[n_states*(N+1)+1:n_states*(N+1)+n_controls*N:n_controls] = a_max   
-        ubg[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = w_max*0.3        
-        ubg[n_states*(N+1)+3:n_states*(N+1)+n_controls*N:n_controls] = w_max*0.3                                                                       # v upper bound for all V
-        ubg[n_states*(N+1)+4:n_states*(N+1)+n_controls*N:n_controls] = w_max*0.3  
+        ubg[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = w_max*0.30        
+        ubg[n_states*(N+1)+3:n_states*(N+1)+n_controls*N:n_controls] = w_max*0.30                                                                      # v upper bound for all V
+        ubg[n_states*(N+1)+4:n_states*(N+1)+n_controls*N:n_controls] = w_max*0.25 
         ubg[n_states*(N+1)+5:n_states*(N+1)+n_controls*N:n_controls] = a_max 
         return lbg,ubg,lbx,ubx
 
