@@ -83,7 +83,8 @@
     </collision>
   </link>
 
-  <joint name="bogie_joint" type="continuous">
+  <joint name="bogie_joint" type="revolute">
+    <limit effort="0.001" lower="-1" upper="1" velocity="30"/>
     <origin rpy="1.5707963267949 0.000529942236827729 0" xyz="0 -0.101800622452903 -0.0640000000000083"/>
     <parent link="pivot"/>
     <child link="bogie"/>
@@ -110,6 +111,7 @@
       </geometry>
     </collision>
   </link>
+
   <joint name="front_left_steer_joint" type="revolute">
     <limit effort="50" lower="-0.8" upper="0.8" velocity="30"/>
     <origin rpy="-1.5707963267949 0.0208107531087718 0" xyz="0.399593578400315 0.05 0.0507993775470971"/>
@@ -117,6 +119,7 @@
     <child link="front_left_steer"/>
     <axis xyz="0 0 -1"/>
   </joint>
+
   <link name="front_left_wheel">
     <inertial>
       <origin rpy="0 0 0" xyz="-3.33066907387547E-16 4.05231403988182E-15 -0.0103428040717592"/>
@@ -131,21 +134,10 @@
       <material name="grey"/>
     </visual>
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <origin rpy="0 0 0" xyz="0 0 -0.012"/>
       <geometry>
-        <mesh filename="package://description/meshes/front_left_wheel.STL"/>
-      </geometry>
-      <friction>
-        <ode>
-          <mu>100000.0</mu>
-          <mu2>100000.0</mu2>
-        </ode>
-        </friction>
-        <contact>
-          <ode>
-            <min_depth>0.003</min_depth>
-          </ode>
-        </contact>
+          <cylinder length="0.112" radius="0.14" />
+        </geometry>
     </collision>
   </link>
   <joint name="front_left_wheel_joint" type="continuous">
@@ -192,23 +184,12 @@
       <geometry>
         <mesh filename="package://description/meshes/front_right_wheel.STL"/>
       </geometry>
-      <friction>
-        <ode>
-          <mu>100000.0</mu>
-          <mu2>100000.0</mu2>
-        </ode>
-        </friction>
-        <contact>
-          <ode>
-            <min_depth>0.003</min_depth>
-          </ode>
-        </contact>
       <material name="grey"/>
     </visual>
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <origin rpy="0 0 0" xyz="0 0 -0.012"/>
       <geometry>
-        <mesh filename="package://description/meshes/front_right_wheel.STL"/>
+        <cylinder length="0.112" radius="0.14" />
       </geometry>
     </collision>
   </link>
@@ -256,23 +237,12 @@
       <geometry>
         <mesh filename="package://description/meshes/rear_right_wheel.STL"/>
       </geometry>
-      <friction>
-        <ode>
-          <mu>100000.0</mu>
-          <mu2>100000.0</mu2>
-        </ode>
-        </friction>
-        <contact>
-          <ode>
-            <min_depth>0.003</min_depth>
-          </ode>
-        </contact>
       <material name="grey"/>
     </visual>
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <origin rpy="0 0 0" xyz="0 0 -0.012"/>
       <geometry>
-        <mesh filename="package://description/meshes/rear_right_wheel.STL"/>
+        <cylinder length="0.112" radius="0.14" />
       </geometry>
     </collision>
   </link>
@@ -309,6 +279,7 @@
     <child link="rear_left_steer"/>
     <axis xyz="0 0 -1"/>
   </joint>
+
   <link name="rear_left_wheel">
     <inertial>
       <origin rpy="0 0 0" xyz="1.66533453693773E-16 -2.77555756156289E-16 -0.0103428040717607"/>
@@ -320,23 +291,12 @@
       <geometry>
         <mesh filename="package://description/meshes/rear_left_wheel.STL"/>
       </geometry>
-      <friction>
-        <ode>
-          <mu>100000.0</mu>
-          <mu2>100000.0</mu2>
-        </ode>
-        </friction>
-        <contact>
-          <ode>
-            <min_depth>0.003</min_depth>
-          </ode>
-        </contact>
       <material name="grey"/>
     </visual>
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <origin rpy="0 0 0" xyz="0 0 -0.012"/>
       <geometry>
-        <mesh filename="package://description/meshes/rear_left_wheel.STL"/>
+        <cylinder length="0.112" radius="0.14" />
       </geometry>
     </collision>
   </link>

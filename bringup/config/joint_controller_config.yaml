@@ -19,12 +19,7 @@ position_controller:
         - rear_left_steer_joint
         - rear_right_steer_joint
         - pivot_joint
-      gains :
-        front_left_steer_joint: {p: 0.0, i: 0.0, d: 0.0}   
-        front_right_steer_joint: {p: 0.0, i: 0.0, d: 0.0} 
-        rear_left_steer_joint: {p: 0.0, i: 0.0, d: 0.0} 
-        rear_right_steer_joint: {p: 0.0, i: 0.0, d: 0.0} 
-        pivot_joint: {p: 0.0, i: 0.0, d: 0.0} 
+
 
 
 velocity_controller:
@@ -34,10 +29,5 @@ velocity_controller:
         - front_right_wheel_joint
         - rear_left_wheel_joint
         - rear_right_wheel_joint
-      gains :
-        rear_left_wheel_joint: {p: 0.0, i: 0.0, d: 0.0}   
-        rear_right_wheel_joint: {p: 0.0, i: 0.0, d: 0.0} 
-        front_left_wheel_joint: {p: 0.0, i: 0.0, d: 0.0}   
-        front_right_wheel_joint: {p: 0.0, i: 0.0, d: 0.0} 
 
 

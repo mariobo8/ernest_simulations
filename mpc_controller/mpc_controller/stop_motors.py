@@ -19,11 +19,11 @@ class StopMotors(Node):
 
         velocity_input = Float64MultiArray()
         steering_input = Float64MultiArray()
-        velocity_input.data = [0.0, 0.0,0.0, 0.0]
+        velocity_input.data = [0.0, 0.0, 0.0, 0.0]
         steering_input.data = [0.0, 0.0, 0.0, 0.0, 0.0]
+
         print("manthan")
-        self.vel_pub.publish(velocity_input)
-        self.steer_pub.publish(steering_input)
+        self.steer_pub.publish(velocity_input)
  
 
 

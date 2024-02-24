@@ -21,21 +21,6 @@
     </plugin>
   </gazebo>
 
-  <gazebo reference="pivot_joint">
-    <provide_feedback>true</provide_feedback>
-    <sensor name="force_torque_sensor" type="force_torque">
-      <always_on>true</always_on>
-      <update_rate>100</update_rate>
-      <visualize>true</visualize>
-      <topic>force_torque</topic>
-      <enable_metrics>true</enable_metrics>
-      <pose>0 0 0 0 0 1.57</pose>
-      <force_torque>
-        <frame>sensor</frame>
-        <measure_direction>child_to_parent</measure_direction>
-      </force_torque> 
-    </sensor>
-  </gazebo>
             
   <gazebo reference="chassis">
     <material>Gazebo/White</material>
@@ -58,21 +43,82 @@
   <gazebo reference="front_right_steer">
   <material>Gazebo/DarkGrey</material>
   </gazebo>
+  
   <gazebo reference="rear_right_steer">
   <material>Gazebo/DarkGrey</material>
   </gazebo>
+  
   <gazebo reference="front_left_wheel">
-  <material>Gazebo/Grey</material>
+    <material>Gazebo/Grey</material>
+    <mu1>1000000.0</mu1>
+    <mu2>1000000.0</mu2>
+    <kp>1000000.0</kp>
+    <kd>100000.0</kd>
+    <slip1>0</slip1>
+    <slip2>0</slip2>
+    <minDepth>0.001</minDepth>
+    <maxVel>0</maxVel>
+    <torsional>
+      <ode>
+        <coefficient>1000</coefficient>
+        <slip>0</slip>
+      </ode>
+    </torsional>
   </gazebo>
+
   <gazebo reference="front_right_wheel">
-  <material>Gazebo/Grey</material>
+    <material>Gazebo/Grey</material>
+    <mu1>1000000.0</mu1>
+    <mu2>1000000.0</mu2>
+    <kp>1000000.0</kp>
+    <kd>100000.0</kd>
+    <slip1>0</slip1>
+    <slip2>0</slip2>
+    <minDepth>0.001</minDepth>
+    <maxVel>0</maxVel>
+    <torsional>
+      <ode>
+        <coefficient>1000</coefficient>
+        <slip>0</slip>
+      </ode>
+    </torsional>
   </gazebo>
+
   <gazebo reference="rear_left_wheel">
-  <material>Gazebo/Grey</material>
+    <material>Gazebo/Grey</material>
+    <mu1>1000000.0</mu1>
+    <mu2>1000000.0</mu2>
+    <kp>1000000.0</kp>
+    <kd>100000.0</kd>
+    <slip1>0</slip1>
+    <slip2>0</slip2>
+    <minDepth>0.001</minDepth>
+    <maxVel>0</maxVel>
+    <torsional>
+      <ode>
+        <coefficient>1000</coefficient>
+        <slip>0</slip>
+      </ode>
+    </torsional>
   </gazebo>
+  
   <gazebo reference="rear_right_wheel">
-  <material>Gazebo/Grey</material>
-  </gazebo>
+    <material>Gazebo/Grey</material>
+    <mu1>1000000.0</mu1>
+    <mu2>1000000.0</mu2>
+    <kp>1000000.0</kp>
+    <kd>100000.0</kd>
+    <slip1>0</slip1>
+    <slip2>0</slip2>
+    <minDepth>0.001</minDepth>
+    <maxVel>0</maxVel>
+    <torsional>
+      <ode>
+        <coefficient>1000</coefficient>
+        <slip>0</slip>
+      </ode>
+    </torsional>
+  </gazebo>    
 </xacro:macro>
 
 </robot>

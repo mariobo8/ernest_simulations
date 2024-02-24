@@ -6,15 +6,31 @@
     <include>
       <uri>model://sun</uri>
     </include>
+
     <include>
       <uri>model://ground_plane</uri>
     </include>
 
-   
-    <gazebo>
-      <plugin filename="ignition-gazebo-forcetorque-system"
-      name="ignition::gazebo::systems::ForceTorque" />
-    </gazebo>
-
+    <model name="box">
+      <static>true</static>
+      <pose>-2 0 0.1 0.2 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>40.0 40.0 .5</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>40.0 40.0 .5</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+    
   </world>
 </sdf>

@@ -95,17 +95,17 @@ class Pivot4wsKinematics(object):
     def weighing_matrices(self, n_states, n_controls, N):
     # Weighing Matrices
         #states
-        Q_x = 7e5
-        Q_y = 7e5
-        Q_psi = 5e3
+        Q_x = 7e9
+        Q_y = 7e9
+        Q_psi = 5e8
         Q_s = 0
 
         #controls
         R_vf = 5e1
         R_vr = 5e1
-        R_deltaf = 0#5e2
-        R_deltar = 0#5e2
-        R_alpha = 1e4
+        R_deltaf = 5e0
+        R_deltar = 5e0
+        R_alpha = 1e2
         R_virtv = 5e1       
 
         #rate change input
@@ -114,10 +114,10 @@ class Pivot4wsKinematics(object):
         W_deltaf = 9e5
         W_deltar = 9e5
         W_alpha = 2e5
-        W_virtv = 5e0
+        W_virtv = 5e2
 
         #penalty
-        eps = 5e3
+        eps = 5e2
         #orientation
         gamma = 2e3
         #anti drifting
@@ -172,7 +172,7 @@ class Pivot4wsKinematics(object):
             g1 = ca.vertcat(g1, st_next - st_next_euler)
             if k == (self.N-1): g2 = ca.vertcat(g2, U[:,k] - U[:,k])
             else: g2 = ca.vertcat(g2, U[:,k] - U[:,k+1])
-        obj = obj - eps/2*(st[3])**2 # gamma/2*(st[2] - P[k*4+6])**2
+        obj = obj - eps/2*(st[3])**2 + gamma/2*(st[2] - P[k*4+6])**2
         
 
         g = ca.vertcat(g1, g2[:-6])

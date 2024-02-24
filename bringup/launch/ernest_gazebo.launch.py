@@ -56,7 +56,7 @@ def generate_launch_description():
                 PythonLaunchDescriptionSource([os.path.join(
                     get_package_share_directory('gazebo_ros'), 'launch'), '/gazebo.launch.py']),
                     #launch_arguments={'model_path': PathJoinSubstitution([FindPackageShare("description"), "meshes"])}.items()
-                    launch_arguments={'world': PathJoinSubstitution([FindPackageShare("description"), "worlds", "empty.sdf"])}.items()           
+                    launch_arguments={'world': PathJoinSubstitution([FindPackageShare("description"), "worlds", "rugged.sdf"])}.items()           
     
              )
     
@@ -72,7 +72,11 @@ def generate_launch_description():
              'position_controller'],
         output='screen'
     )
-
+    load_position_controller_controller_wheel = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller', '--set-state', 'start',
+             'position_controller_wheel'],
+        output='screen'
+    )
     load_velocity_controller_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller', '--set-state', 'start',
              'velocity_controller'],
@@ -107,7 +111,7 @@ def generate_launch_description():
 
     spawn_entity = Node(package='gazebo_ros', executable='spawn_entity.py',
                         arguments=['-topic', 'robot_description',
-                                   '-entity', 'ernest'],        # Set the initial yaw]
+                                   '-entity', 'ernest','-z','0.5'],        # Set the initial yaw]
                         output='screen')
     
     return LaunchDescription([

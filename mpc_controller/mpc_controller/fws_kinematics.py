@@ -17,6 +17,7 @@ class fwsKinematics(object):
         self.dt = 0.1
         self.theta = 0
         [self.x_p, self.y_p, self.arc_length] = self.path()
+        self.start = self.x_p[0]
         self.x0 = ca.DM([self.x_p[0], self.y_p[0], 0.0, self.theta])  
         self.X0 = ca.repmat(self.x0, 1, self.N+1)     
         self.xp0 = []
@@ -24,10 +25,9 @@ class fwsKinematics(object):
             self.xp0.extend([self.x_p[0], self.y_p[0], 0.0, 0.0])  # initial condition path
         self.xp0 = Arr2DM(self.xp0)
         self.u0 = ca.DM.zeros((5, self.N))
-        self.up0 =ca.DM.zeros(self.N*5,1)
-        #print(ca.DM.size(self.up0))
-        #print(ca.DM.size(self.x0))
-        
+        self.up0 =ca.DM.zeros(5,1)
+        self.pred = np.zeros((1,4))
+        self.ref = np.zeros((1,3))
         
 
     def dimensions(self):
@@ -82,7 +82,7 @@ class fwsKinematics(object):
     
     def path(self):
         path = os.path.dirname(os.path.realpath(__file__))
-        s_shape_path = np.loadtxt(str(path) + '/s_shape_path.txt')
+        s_shape_path = np.loadtxt(str(path) + '/std_path.txt')
         x_p = s_shape_path[:,0]
         y_p = s_shape_path[:,1]
         arc_length = s_shape_path[:,2]
@@ -113,6 +113,8 @@ class fwsKinematics(object):
         W_virtv = 1e0
         #anti drifting
         m = 1e8
+        #orientation
+        gamma = 2e3
         #penalty
         eps = 1e3
         # matrix containing all states over all time steps +1 (each column is a state vector)
@@ -122,7 +124,7 @@ class fwsKinematics(object):
         U = ca.SX.sym('U', n_controls, N)
 
         # coloumn vector for storing initial state and target state
-        P = ca.SX.sym('P', n_states + n_states*N + n_controls*N)
+        P = ca.SX.sym('P', n_states + n_states*N + n_controls)
 
         # state weights matrix (Q_X, Q_Y, Q_THETA)
         Q = ca.diagcat(Q_x, Q_y, Q_psi, Q_s)
@@ -133,13 +135,14 @@ class fwsKinematics(object):
         #rate changing matrix
         W = ca.diagcat(W_vf, W_vr, W_deltaf, W_deltar, W_virtv)
         
-        return X,U,P,Q,R,W,m,eps
+        return X,U,P,Q,R,W,m,eps,gamma
 
     def cost_function(self):
         [_, _, n_states, n_controls ,f, _] = self.kin_model()
-        [X,U,P,Q,R,W,m,eps] = self.weighing_matrices(n_states,n_controls, self.N)
+        [X,U,P,Q,R,W,m,eps,gamma] = self.weighing_matrices(n_states,n_controls, self.N)
         obj = 0  # cost function
-        g = X[:, 0] - P[:n_states]  # constraints in the equation
+        g1 = X[:, 0] - P[:n_states]  # constraints in the equation
+        g2 = U[:, 0] - P[-5:]
 
 
         # Multiple shooting
@@ -147,21 +150,24 @@ class fwsKinematics(object):
             st = X[:, k]
             con = U[:, k]
             vf = U[0,k]; vr = U[1,k]; d_f = U[2,k]; d_r = U[3,k]
-            #conn = np.array([U[4,k], U[4,k], 0, 0, 0, 0])
+            if k == (self.N-1): con_l = con
+            else: con_l = U[:,k+1]
             i_state = slice((k*4+4), (k*4+8))
-            i_control =  slice((self.N-1)*4+8+(k*n_controls),\
-                                (self.N-1)*4+8+(k*n_controls) + n_controls)
+
             obj = obj \
                 + (st - P[i_state]).T @ Q @ (st - P[i_state]) \
                 + (con).T @ R @ (con) \
-                + (con - P[i_control]).T @ W @ (con - P[i_control]) \
+                + (con - con_l).T @ W @ (con - con_l) \
                 + m*(vf*cos(d_f)- vr*cos(d_r))**2
             st_next = X[:, k+1]
             f_value = f(st, con)
             st_next_euler = st + self.dt * f_value
-            g = ca.vertcat(g, st_next - st_next_euler)
-        obj = obj - eps/2*(st[3])**2
+            g1 = ca.vertcat(g1, st_next - st_next_euler)
+            if k == (self.N-1): g2 = ca.vertcat(g2, U[:,k] - U[:,k])
+            else: g2 = ca.vertcat(g2, U[:,k] - U[:,k+1])
+        obj = obj - eps/2*(st[3])**2 + gamma/2*(st[2] - P[k*4+6])**2
 
+        g = ca.vertcat(g1, g2[:-5])
         OPT_variables = ca.vertcat(
             X.reshape((-1, 1)),   # Example: 3x11 ---> 33x1 where 3=states, 11=N+1
             U.reshape((-1, 1))
@@ -177,6 +183,10 @@ class fwsKinematics(object):
         v_min = -1
         delta_min = -1.05
         virtual_v_min = 0
+        a_min = - 0.05
+        a_max = 0.05
+        w_min = - 0.1
+        w_max = 0.1        
         lbx = ca.DM.zeros((n_states*(N+1) + n_controls*N, 1))
         ubx = ca.DM.zeros((n_states*(N+1) + n_controls*N, 1))
 
@@ -204,8 +214,20 @@ class fwsKinematics(object):
         ubx[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = delta_max
         ubx[n_states*(N+1)+3:n_states*(N+1)+n_controls*N:n_controls] = delta_max                                                                         # v upper bound for all V
         ubx[n_states*(N+1)+4:n_states*(N+1)+n_controls*N:n_controls] = virtual_v_max  
-        lbg = ca.DM.zeros((n_states*(N+1), 1))  # constraints lower bound
-        ubg = ca.DM.zeros((n_states*(N+1), 1))  # constraints upper bound
+        lbg = ca.DM.zeros((n_states*(N+1)+n_controls*N, 1))  # constraints lower bound
+        ubg = ca.DM.zeros((n_states*(N+1)+n_controls*N, 1))  # constraints upper bound
+    
+        #rate input change
+        lbg[n_states*(N+1):n_states*(N+1)+n_controls*N:n_controls] = a_min                
+        lbg[n_states*(N+1)+1:n_states*(N+1)+n_controls*N:n_controls] = a_min
+        lbg[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = w_min*0.3        
+        lbg[n_states*(N+1)+3:n_states*(N+1)+n_controls*N:n_controls] = w_min*0.3               
+        lbg[n_states*(N+1)+4:n_states*(N+1)+n_controls*N:n_controls] = a_min
+        ubg[n_states*(N+1):n_states*(N+1)+n_controls*N:n_controls] = a_max                                                                            # v upper bound for all V
+        ubg[n_states*(N+1)+1:n_states*(N+1)+n_controls*N:n_controls] = a_max   
+        ubg[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = w_max*0.3        
+        ubg[n_states*(N+1)+3:n_states*(N+1)+n_controls*N:n_controls] = w_max*0.3                                                                       # v upper bound for all V
+        ubg[n_states*(N+1)+4:n_states*(N+1)+n_controls*N:n_controls] = a_max   
         return lbg,ubg,lbx,ubx
 
 
@@ -220,7 +242,7 @@ class fwsKinematics(object):
         #print(ca.SX.size(OPT_variables))
         opts = {
             'ipopt': {
-                'max_iter': 6000,
+                'max_iter': 3000,
                 'print_level': 0,
                 'acceptable_tol': 1e-8,
                 'acceptable_obj_change_tol': 1e-6
@@ -273,24 +295,9 @@ class fwsKinematics(object):
             ref.append([x_int, y_int, psi_int])
         
         xp0.extend([x_int, y_int, psi_int, 0])
-        #x_int = np.interp(s, arc_length, x_p)
-        #y_int = np.interp(s, arc_length, y_p)
-        ##print(x_int)
-        #x_int_prev = np.interp(s_prev, arc_length, x_p)
-        #y_int_prev = np.interp(s_prev, arc_length, y_p)
-        #psi_int = np.arctan2((y_int - y_int_prev), (x_int - x_int_prev))        
-       #
-        #for jj in range(1, self.N):
-#
-        #    xp0.extend([x_int, y_int, psi_int, 0])
-        #xp0.extend([x_int, y_int, psi_int, 0])
         
-        u0 = np.vstack((u[1:,:], u[-1,:]))
-        
-        #up0 = np.repeat(u0[:,0], self.N)
-        up0 = np.vstack([input] * self.N)
-        up0 = Arr2DM(up0)
-        xp0 = Arr2DM(xp0) 
+        up0 = u[1,:].T
+        xp0 = Arr2DM(xp0)
         return  u0, xp0, up0, s
 
 
@@ -300,7 +307,7 @@ class fwsKinematics(object):
         args['p'] = ca.vertcat(
                     state,    # current state
                     xp0,   # target state
-                    up0
+                    up0,
                     )
 
         # optimization variable current state
@@ -308,10 +315,6 @@ class fwsKinematics(object):
             ca.reshape(self.X0, n_states*(self.N+1), 1),
             ca.reshape(self.u0, n_controls*self.N, 1)
         )
-        #print(ca.DM.size(args['p']))
-        #print("Argument types and values:") 
-        #for key, value in args.items():
-        #    print(f"{key}: {type(value)}, {value}")
 
         sol = solver(
             x0=args['x0'],
@@ -327,7 +330,7 @@ class fwsKinematics(object):
         inp = DM2Arr(u[:, 0])
       
         input = [float(inp[0]), float(inp[1]), float(inp[2]),
-                  float(inp[3]), 0.0]
+                  float(inp[3]), 0.0, float(inp[4])]
        
         [self.u0, new_xp0, new_up0, self.theta] = \
             self.shift_timestep(u, self.X0, self.x_p, self.y_p, self.arc_length, inp)
