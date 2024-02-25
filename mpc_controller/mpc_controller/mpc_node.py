@@ -20,7 +20,7 @@ class PathTrackingMPC(Node):
 
     def __init__(self):
         super().__init__('path_tracking_MPC')
-        self.mpc_inst = pfws_mpc()
+        self.mpc_inst = fws_mpc()
         self.xp_0 = self.mpc_inst.start
         self.input_sequence = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         self.state_sequence = [self.xp_0, 0.0, 0.0, 0.0]
@@ -57,17 +57,17 @@ class PathTrackingMPC(Node):
         self.vel_pub.publish(velocity_input)
         self.steer_pub.publish(steering_input)
         if self.switch: 
-            np.savetxt('pfwsinput.txt',
+            np.savetxt('fwsinput.txt',
                 self.input_sequence, fmt='%f', delimiter='\t')
-            np.savetxt('pfwsstate.txt',
+            np.savetxt('fwsstate.txt',
                 self.state_sequence, fmt='%f', delimiter='\t')
-            np.savetxt('pfwstime_step.txt',
+            np.savetxt('fwstime_step.txt',
                 self.time_step, fmt='%f', delimiter='\t')
-            np.savetxt('pfwstime_step.txt',
+            np.savetxt('fwstime_step.txt',
                 self.time_step, fmt='%f', delimiter='\t')
-            np.savetxt('pfwsref.txt',
+            np.savetxt('fwsref.txt',
                 self.mpc_inst.ref, fmt='%f', delimiter='\t')
-            np.savetxt('pfwspred.txt',
+            np.savetxt('fwspred.txt',
                 self.mpc_inst.pred, fmt='%f', delimiter='\t')
             print("saved!")
             rclpy.shutdown()
@@ -97,8 +97,8 @@ class PathTrackingMPC(Node):
             self.mpc_inst.xp0 = new_xp0
             self.mpc_inst.up0 = new_up0
 
-            input_1 = input[0]/0.165
-            input_2 = input[1]/0.165
+            input_1 = input[0]/0.14
+            input_2 = input[1]/0.14
             self.input_sequence = np.vstack([self.input_sequence, input])
             self.state_sequence = np.vstack([self.state_sequence, self.mpc_inst.x0])
 

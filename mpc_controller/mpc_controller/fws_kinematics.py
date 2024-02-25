@@ -33,7 +33,7 @@ class fwsKinematics(object):
     def dimensions(self):
         l_f = 0.16
         l_r = 0.71
-        wheel_radius = 0.161
+        wheel_radius = 0.14
         return l_f, l_r, wheel_radius
 
     
@@ -92,31 +92,31 @@ class fwsKinematics(object):
     def weighing_matrices(self, n_states, n_controls, N):
     # Weighing Matrices
         #states
-        Q_x = 9e6
-        Q_y = 9e6
-        Q_psi = 1e1
+        Q_x = 7e8
+        Q_y = 7e8
+        Q_psi = 4e7
         Q_s = 0
 
         #controls
-        R_vf = 5e3
-        R_vr = 5e3
-        R_deltaf = 5e2
-        R_deltar = 5e2
+        R_vf = 6e2
+        R_vr = 6e2
+        R_deltaf = 9e3
+        R_deltar = 9e3
         R_virtv = 0
         
 
         #rate change input
-        W_vf = 1e5
-        W_vr = 1e5
-        W_deltaf = 4e5
-        W_deltar = 4e5
-        W_virtv = 1e0
+        W_vf = 1e2
+        W_vr = 1e2
+        W_deltaf = 7e3
+        W_deltar = 7e3
+        W_virtv = 7e1
         #anti drifting
-        m = 1e8
+        m = 5e9
         #orientation
-        gamma = 2e3
+        gamma = 2e2
         #penalty
-        eps = 1e3
+        eps = 5e3
         # matrix containing all states over all time steps +1 (each column is a state vector)
         X = ca.SX.sym('X', n_states, N + 1)
 
@@ -177,14 +177,14 @@ class fwsKinematics(object):
  
     def constraints(self, n_states, n_controls, N):
         # Boundaries
-        v_max = 1
-        delta_max = 1.05
-        virtual_v_max = 1
-        v_min = -1
-        delta_min = -1.05
+        v_max = 0.7
+        delta_max = 0.9
+        virtual_v_max = 0.65
+        v_min = -0.5
+        delta_min = -0.9
         virtual_v_min = 0
-        a_min = - 0.05
-        a_max = 0.05
+        a_min = - 0.04
+        a_max = 0.04
         w_min = - 0.1
         w_max = 0.1        
         lbx = ca.DM.zeros((n_states*(N+1) + n_controls*N, 1))
@@ -292,8 +292,8 @@ class fwsKinematics(object):
             s_prev = s_0 + max((jj - 1), 0) * delta_s
 
             xp0.extend([x_int, y_int, psi_int, 0])
-            ref.append([x_int, y_int, psi_int])
-        
+            ref.append([float(x_int), float(y_int), float(psi_int)])
+        self.ref = np.vstack([self.ref, ref])
         xp0.extend([x_int, y_int, psi_int, 0])
         
         up0 = u[1,:].T
@@ -328,7 +328,8 @@ class fwsKinematics(object):
         self.X0 = ca.reshape(sol['x'][: n_states * (self.N+1)], n_states, self.N+1)
 
         inp = DM2Arr(u[:, 0])
-      
+        self.pred = np.vstack([self.pred, self.X0.T])
+        
         input = [float(inp[0]), float(inp[1]), float(inp[2]),
                   float(inp[3]), 0.0, float(inp[4])]
        

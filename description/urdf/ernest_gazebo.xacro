@@ -50,74 +50,74 @@
   
   <gazebo reference="front_left_wheel">
     <material>Gazebo/Grey</material>
-    <mu1>1000000.0</mu1>
-    <mu2>1000000.0</mu2>
-    <kp>1000000.0</kp>
-    <kd>100000.0</kd>
+<!--    <mu1>10.0</mu1>
+    <mu2>10.0</mu2>
+    <kp>10000000.0</kp>
+    <kd>1000.0</kd>
     <slip1>0</slip1>
     <slip2>0</slip2>
-    <minDepth>0.001</minDepth>
+    <minDepth>0.00001</minDepth>
     <maxVel>0</maxVel>
     <torsional>
       <ode>
-        <coefficient>1000</coefficient>
+        <coefficient>10</coefficient>
         <slip>0</slip>
       </ode>
-    </torsional>
+    </torsional> -->
   </gazebo>
 
   <gazebo reference="front_right_wheel">
     <material>Gazebo/Grey</material>
-    <mu1>1000000.0</mu1>
-    <mu2>1000000.0</mu2>
-    <kp>1000000.0</kp>
-    <kd>100000.0</kd>
+<!--    <mu1>10.0</mu1>
+    <mu2>10.0</mu2>
+    <kp>10000000.0</kp>
+    <kd>1000.0</kd>
     <slip1>0</slip1>
     <slip2>0</slip2>
-    <minDepth>0.001</minDepth>
+    <minDepth>0.00001</minDepth>
     <maxVel>0</maxVel>
     <torsional>
       <ode>
-        <coefficient>1000</coefficient>
+        <coefficient>10</coefficient>
         <slip>0</slip>
       </ode>
-    </torsional>
+    </torsional> -->
   </gazebo>
 
   <gazebo reference="rear_left_wheel">
     <material>Gazebo/Grey</material>
-    <mu1>1000000.0</mu1>
-    <mu2>1000000.0</mu2>
-    <kp>1000000.0</kp>
-    <kd>100000.0</kd>
+  <!--  <mu1>10.0</mu1>
+    <mu2>10.0</mu2>
+    <kp>10000000.0</kp>
+    <kd>1000.0</kd>
     <slip1>0</slip1>
     <slip2>0</slip2>
-    <minDepth>0.001</minDepth>
+    <minDepth>0.00001</minDepth>
     <maxVel>0</maxVel>
     <torsional>
       <ode>
-        <coefficient>1000</coefficient>
+        <coefficient>10</coefficient>
         <slip>0</slip>
       </ode>
-    </torsional>
+    </torsional> -->
   </gazebo>
   
   <gazebo reference="rear_right_wheel">
     <material>Gazebo/Grey</material>
-    <mu1>1000000.0</mu1>
-    <mu2>1000000.0</mu2>
-    <kp>1000000.0</kp>
-    <kd>100000.0</kd>
+  <!--  <mu1>10.0</mu1>
+    <mu2>10.0</mu2>
+    <kp>10000000.0</kp>
+    <kd>1000.0</kd>
     <slip1>0</slip1>
     <slip2>0</slip2>
-    <minDepth>0.001</minDepth>
+    <minDepth>0.00001</minDepth>
     <maxVel>0</maxVel>
     <torsional>
       <ode>
-        <coefficient>1000</coefficient>
+        <coefficient>10</coefficient>
         <slip>0</slip>
       </ode>
-    </torsional>
+    </torsional> -->
   </gazebo>    
 </xacro:macro>
 
