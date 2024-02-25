@@ -339,7 +339,7 @@ class Pivot4wsKinematics(object):
         self.pred = np.vstack([self.pred, self.X0.T])
         inp = DM2Arr(u[:, 0])
 
-      
+            
         input = [float(inp[0]), float(inp[1]), float(inp[2]),
                   float(inp[3]), float(inp[4]), float(inp[5])]
        

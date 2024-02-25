@@ -20,11 +20,13 @@ class PathTrackingMPC(Node):
 
     def __init__(self):
         super().__init__('path_tracking_MPC')
-        self.mpc_inst = fws_mpc()
+        self.mpc_inst = pfws_mpc()
         self.xp_0 = self.mpc_inst.start
+        self.alpha_0 = 0.0 
         self.input_sequence = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         self.state_sequence = [self.xp_0, 0.0, 0.0, 0.0]
         self.time_step = [0.0]
+        self.b = 0.4
         self.switch = False
         [self.solver, self.args, self.n_states, self.n_controls, self.f] \
             = self.mpc_inst.set_solver()
@@ -96,14 +98,18 @@ class PathTrackingMPC(Node):
                                         self.n_controls, self.mpc_inst.xp0, self.mpc_inst.up0)
             self.mpc_inst.xp0 = new_xp0
             self.mpc_inst.up0 = new_up0
-
+            alpha_dot = input[5] - self.alpha_0
+            self.alpha_0 = input[5]
             input_1 = input[0]/0.14
             input_2 = input[1]/0.14
+            v_fr = input_1 + alpha_dot / self.b
+            v_fl = input_1 - alpha_dot / self.b
             self.input_sequence = np.vstack([self.input_sequence, input])
             self.state_sequence = np.vstack([self.state_sequence, self.mpc_inst.x0])
 
-            velocity_input.data = [float(input_1), float(input_1), float(input_2), float(input_2)]
-            steering_input.data = [float(-input[2]), float(-input[2]), float(-input[3]), float(-input[3]), float(-input[4])]
+            velocity_input.data = [float(v_fl), float(v_fr), float(input_2), float(input_2)]
+            steering_input.data = [float(-input[2]), float(-input[2]), float(-input[3]), 
+                                   float(-input[3]), float(-input[4])]
             print("publishig %f" % float(input_1) )
         return velocity_input, steering_input
     
