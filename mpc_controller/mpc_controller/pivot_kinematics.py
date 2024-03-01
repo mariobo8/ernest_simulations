@@ -29,6 +29,7 @@ class Pivot4wsKinematics(object):
         self.pred = np.zeros((1,4))
         self.ref = np.zeros((1,3))
         self.b = 0.4 #[m]
+        self.x_r = ([self.x_p[0], self.y_p[0], 0.0, 0.0])
         
 
  
@@ -132,7 +133,7 @@ class Pivot4wsKinematics(object):
         U = ca.SX.sym('U', n_controls, N)
 
         # coloumn vector for storing initial state and target state
-        P = ca.SX.sym('P', n_states + n_states*N + n_controls)
+        P = ca.SX.sym('P', n_states + n_states + n_controls)
 
         # state weights matrix (Q_X, Q_Y, Q_THETA)
         Q = ca.diagcat(Q_x, Q_y, Q_psi, Q_s)
@@ -160,7 +161,7 @@ class Pivot4wsKinematics(object):
             vf = U[0,k]; vr = U[1,k];  a = U[2,k]
             if k == (self.N-1): con_l = con
             else: con_l = U[:,k+1]
-            i_state = slice((k*4+4), (k*4+8))
+            i_state = slice(4, 8)
 
             obj = obj \
                 + (st - P[i_state]).T @ Q @ (st - P[i_state]) \
@@ -174,7 +175,7 @@ class Pivot4wsKinematics(object):
             g1 = ca.vertcat(g1, st_next - st_next_euler)
             if k == (self.N-1): g2 = ca.vertcat(g2, U[:,k] - U[:,k])
             else: g2 = ca.vertcat(g2, U[:,k] - U[:,k+1])
-        obj = obj - eps/2*(st[3])**2 + gamma/2*(st[2] - P[k*4+6])**2
+        obj = obj - eps/2*(st[3])**2 + gamma/2*(st[2] - P[6])**2
         
 
         g = ca.vertcat(g1, g2[:- n_controls])
@@ -300,15 +301,16 @@ class Pivot4wsKinematics(object):
         xp0.extend([x_int, y_int, psi_int, 0])        
         up0 = u[1,:].T
         xp0 = Arr2DM(xp0)
+        x_r = ([x_int, y_int, psi_int, 0])
  
-        return  u0, xp0, up0, s
+        return  u0, xp0, up0, s, x_r
 
 
-    def solve_mpc(self, solver, state, args, n_states, n_controls, xp0, up0):
+    def solve_mpc(self, solver, state, args, n_states, n_controls, x_r, up0):
         state[3] = self.theta
         args['p'] = ca.vertcat(
                     state,    # current state
-                    xp0,   # target state
+                    x_r,   # target state
                     up0,
                     )
         # optimization variable current state
@@ -338,10 +340,10 @@ class Pivot4wsKinematics(object):
 
         input = [v_fl, v_fr, v_rl, v_rr, 0.0, 0.0, float(inp[2]), float(inp[3])]
        
-        [self.u0, new_xp0, new_up0, self.theta] = \
+        [self.u0, new_xp0, new_up0, self.theta, new_x_r] = \
             self.shift_timestep(u, self.X0, self.x_p, self.y_p, self.arc_length, inp)
 
-        return input, new_xp0, new_up0
+        return input, new_x_r, new_up0,
 
 
     

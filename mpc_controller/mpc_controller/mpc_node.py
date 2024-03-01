@@ -99,8 +99,8 @@ class PathTrackingMPC(Node):
         else:
             [input, new_xp0, new_up0] = self.mpc_inst.solve_mpc(self.solver, 
                                         self.mpc_inst.x0 , self.args, self.n_states, 
-                                        self.n_controls, self.mpc_inst.xp0, self.mpc_inst.up0)
-            self.mpc_inst.xp0 = new_xp0
+                                        self.n_controls, self.mpc_inst.x_r, self.mpc_inst.up0)
+            self.mpc_inst.x_r = new_xp0
             self.mpc_inst.up0 = new_up0
             #alpha_dot = input[4] - self.alpha_0
             #self.alpha_0 = input[4]
