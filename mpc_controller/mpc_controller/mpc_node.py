@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+import os
 import time
 import numpy as np
 
@@ -7,6 +7,7 @@ from rclpy.node import Node
 
 import csv
 from .pivot_4ws_kinematics import Pivot4wsKinematics as pfws_mpc
+from .pivot_kinematics import Pivot4wsKinematics as p_mpc
 from .fws_kinematics import fwsKinematics as fws_mpc
 from .ackermann_kinematics import AckermannKinematics as ack_mpc
 
@@ -20,10 +21,10 @@ class PathTrackingMPC(Node):
 
     def __init__(self):
         super().__init__('path_tracking_MPC')
-        self.mpc_inst = pfws_mpc()
+        self.mpc_inst = p_mpc()
         self.xp_0 = self.mpc_inst.start
         self.alpha_0 = 0.0 
-        self.input_sequence = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        self.input_sequence = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         self.state_sequence = [self.xp_0, 0.0, 0.0, 0.0]
         self.time_step = [0.0]
         self.b = 0.4
@@ -31,7 +32,22 @@ class PathTrackingMPC(Node):
         [self.solver, self.args, self.n_states, self.n_controls, self.f] \
             = self.mpc_inst.set_solver()
         self.set_subscribers_publishers()
-        
+    
+    def save_data(self):
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        relative_folder_path = "../results/pivot"
+        np.savetxt(os.path.join(current_dir, relative_folder_path, 'input.txt'),
+            self.input_sequence, fmt='%f', delimiter='\t')
+        np.savetxt(os.path.join(current_dir, relative_folder_path, 'state.txt'),
+            self.state_sequence, fmt='%f', delimiter='\t')
+        np.savetxt(os.path.join(current_dir, relative_folder_path, 'time_step.txt'),
+            self.time_step, fmt='%f', delimiter='\t')
+        np.savetxt(os.path.join(current_dir, relative_folder_path, 'reference.txt'),
+            self.mpc_inst.ref, fmt='%f', delimiter='\t')
+        np.savetxt(os.path.join(current_dir, relative_folder_path, 'prediction.txt'),
+            self.mpc_inst.pred, fmt='%f', delimiter='\t')
+        print("saved!")
+
 
     # Callbacks Section
     def pose_sub_cb(self, msg):
@@ -59,19 +75,7 @@ class PathTrackingMPC(Node):
         self.vel_pub.publish(velocity_input)
         self.steer_pub.publish(steering_input)
         if self.switch: 
-            np.savetxt('fwsinput.txt',
-                self.input_sequence, fmt='%f', delimiter='\t')
-            np.savetxt('fwsstate.txt',
-                self.state_sequence, fmt='%f', delimiter='\t')
-            np.savetxt('fwstime_step.txt',
-                self.time_step, fmt='%f', delimiter='\t')
-            np.savetxt('fwstime_step.txt',
-                self.time_step, fmt='%f', delimiter='\t')
-            np.savetxt('fwsref.txt',
-                self.mpc_inst.ref, fmt='%f', delimiter='\t')
-            np.savetxt('fwspred.txt',
-                self.mpc_inst.pred, fmt='%f', delimiter='\t')
-            print("saved!")
+            self.save_data()
             rclpy.shutdown()
 
  
@@ -88,8 +92,8 @@ class PathTrackingMPC(Node):
         velocity_input = Float64MultiArray()
         steering_input = Float64MultiArray()
         if self.mpc_inst.x0[0] >= -0.02:
-            velocity_input.data = [0.0,0.0,0.0,0.0]
-            steering_input.data = [0.0,0.0,0.0,0.0,0.0] 
+            velocity_input.data = [0.0, 0.0, 0.0, 0.0]
+            steering_input.data = [0.0, 0.0, 0.0, 0.0, 0.0] 
             self.switch = True            
             
         else:
@@ -98,19 +102,15 @@ class PathTrackingMPC(Node):
                                         self.n_controls, self.mpc_inst.xp0, self.mpc_inst.up0)
             self.mpc_inst.xp0 = new_xp0
             self.mpc_inst.up0 = new_up0
-            alpha_dot = input[5] - self.alpha_0
-            self.alpha_0 = input[5]
-            input_1 = input[0]/0.14
-            input_2 = input[1]/0.14
-            v_fr = input_1 + alpha_dot / self.b
-            v_fl = input_1 - alpha_dot / self.b
+            #alpha_dot = input[4] - self.alpha_0
+            #self.alpha_0 = input[4]
+
+
             self.input_sequence = np.vstack([self.input_sequence, input])
             self.state_sequence = np.vstack([self.state_sequence, self.mpc_inst.x0])
 
-            velocity_input.data = [float(v_fl), float(v_fr), float(input_2), float(input_2)]
-            steering_input.data = [float(-input[2]), float(-input[2]), float(-input[3]), 
-                                   float(-input[3]), float(-input[4])]
-            print("publishig %f" % float(input_1) )
+            velocity_input.data = [input[0]/0.14, input[1]/0.14, input[2]/0.14, input[3]/0.14] 
+            steering_input.data = [-input[4], -input[4], -input[5], -input[5], -input[6]]
         return velocity_input, steering_input
     
 

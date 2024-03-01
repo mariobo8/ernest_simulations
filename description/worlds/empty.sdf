@@ -10,5 +10,7 @@
     <include>
       <uri>model://ground_plane</uri>
     </include>
+
+
   </world>
 </sdf>

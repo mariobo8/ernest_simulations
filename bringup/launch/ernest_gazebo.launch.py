@@ -1,17 +1,3 @@
-# Copyright 2020 Open Source Robotics Foundation, Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 import os
 
 from ament_index_python.packages import get_package_share_directory
@@ -55,7 +41,6 @@ def generate_launch_description():
     gazebo = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(
                     get_package_share_directory('gazebo_ros'), 'launch'), '/gazebo.launch.py']),
-                    #launch_arguments={'model_path': PathJoinSubstitution([FindPackageShare("description"), "meshes"])}.items()
                     launch_arguments={'world': PathJoinSubstitution([FindPackageShare("description"), "worlds", "empty.sdf"])}.items()           
     
              )
@@ -63,7 +48,7 @@ def generate_launch_description():
     
     load_joint_state_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller', '--set-state', 'start',
-             'joint_state_broadcaster'],
+             'joint_state'],
         output='screen'
     )
 
@@ -72,11 +57,7 @@ def generate_launch_description():
              'position_controller'],
         output='screen'
     )
-    load_position_controller_controller_wheel = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'start',
-             'position_controller_wheel'],
-        output='screen'
-    )
+
     load_velocity_controller_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller', '--set-state', 'start',
              'velocity_controller'],
@@ -91,12 +72,6 @@ def generate_launch_description():
             PathJoinSubstitution(
                 [FindPackageShare("description"), "urdf", "ernest_system.urdf.xacro"]
             ),
-            " ",
-            "use_fake_hardware:=true",
-            " ",
-            "use_gazebo:=true",
-            " ",
-            "use_lowpoly:=false",
         ]
     )
     robot_description = {"robot_description": robot_description_content}
@@ -111,7 +86,7 @@ def generate_launch_description():
 
     spawn_entity = Node(package='gazebo_ros', executable='spawn_entity.py',
                         arguments=['-topic', 'robot_description',
-                                   '-entity', 'ernest','-z','0.5'],        # Set the initial yaw]
+                                   '-entity', 'ernest'],        # Set the initial yaw]
                         output='screen')
     
     return LaunchDescription([

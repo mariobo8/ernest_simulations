@@ -1,7 +1,8 @@
 <?xml version="1.0" ?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ernest">
 <xacro:include filename="$(find description)/urdf/materials.xacro"/>
-<xacro:macro name="ernest" params="prefix"> 
+
+<xacro:macro name="ernest"> 
   <link name="base_link">
   </link>
 
@@ -166,6 +167,7 @@
       </geometry>
     </collision>
   </link>
+
   <joint name="front_right_steer_joint" type="revolute">
     <limit effort="50" lower="-0.8" upper="0.8" velocity="30"/>
     <origin rpy="-1.57079632679545 -1.56850410535828 0" xyz="-0.399593578400314 0.05 0.0507993775470972"/>
@@ -173,6 +175,7 @@
     <child link="front_right_steer"/>
     <axis xyz="0 0 -1"/>
   </joint>
+
   <link name="front_right_wheel">
     <inertial>
       <origin rpy="0 0 0" xyz="3.33066907387547E-16 2.77555756156289E-16 -0.0103428040717612"/>
@@ -193,6 +196,7 @@
       </geometry>
     </collision>
   </link>
+  
   <joint name="front_right_wheel_joint" type="continuous">
     <origin rpy="1.5707963267949 1.23836412201798 0" xyz="0 0 -0.214560184613926"/>
     <parent link="front_right_steer"/>

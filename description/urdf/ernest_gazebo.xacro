@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-<xacro:macro name="ernest_gazebo" params="prefix">
+<xacro:macro name="ernest_gazebo">
   <gazebo>
       <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
         <parameters>$(find bringup)/config/joint_controller_config.yaml</parameters>
@@ -17,9 +17,80 @@
       <frame_name>map</frame_name>
       <body_name>base_link</body_name>
       <update_rate>100.0</update_rate>
-      <gaussian_noise>0.01</gaussian_noise>
+      <gaussian_noise>0.0</gaussian_noise>
     </plugin>
   </gazebo>
+
+  <gazebo reference="front_left_wheel_joint">
+    <provideFeedback>true</provideFeedback>
+  </gazebo>
+  <gazebo reference="front_right_steer_joint">
+    <provideFeedback>true</provideFeedback>
+  </gazebo>
+  <gazebo reference="front_right_wheel_joint">
+    <provideFeedback>true</provideFeedback>
+  </gazebo>
+  <gazebo reference="rear_right_wheel_joint">
+    <provideFeedback>true</provideFeedback>
+  </gazebo>
+  <gazebo reference="rear_left_wheel_joint">
+    <provideFeedback>true</provideFeedback>
+  </gazebo>
+  <gazebo reference="pivot_joint">
+    <provideFeedback>true</provideFeedback>
+  </gazebo>
+
+  <!-- The ft_sensor plugin -->  
+  <gazebo>
+      <plugin name="fr_wheel_sensor" filename="libgazebo_ros_ft_sensor.so">
+        <ros>
+          <remapping>wrench:=fr_wheel_sensor</remapping>
+        </ros>
+        <joint_name>front_right_wheel_joint</joint_name>
+        <updateRate>1000.0</updateRate>
+      </plugin>
+
+      <plugin name="fl_wheel_sensor" filename="libgazebo_ros_ft_sensor.so">
+        <ros>
+          <remapping>wrench:=fl_wheel_sensor</remapping>
+        </ros>
+        <joint_name>front_left_wheel_joint</joint_name>
+        <updateRate>1000.0</updateRate>
+      </plugin>
+
+      <plugin name="rr_wheel_sensor" filename="libgazebo_ros_ft_sensor.so">
+        <ros>
+          <remapping>wrench:=rr_wheel_sensor</remapping>
+        </ros>
+        <joint_name>rear_right_wheel_joint</joint_name>
+        <updateRate>1000.0</updateRate>
+      </plugin>
+
+      <plugin name="rl_wheel_sensor" filename="libgazebo_ros_ft_sensor.so">
+        <ros>
+          <remapping>wrench:=rl_wheel_sensor</remapping>
+        </ros>
+        <joint_name>rear_left_wheel_joint</joint_name>
+        <updateRate>1000.0</updateRate>
+      </plugin>
+
+      <plugin name="pivot_sensor" filename="libgazebo_ros_ft_sensor.so">
+        <ros>
+          <remapping>wrench:=pivot_sensor</remapping>
+        </ros>
+        <joint_name>pivot_joint</joint_name>
+        <updateRate>1000.0</updateRate>
+      </plugin>
+
+      <plugin name="steer_sensor" filename="libgazebo_ros_ft_sensor.so">
+        <ros>
+          <remapping>wrench:=steer_sensor</remapping>
+        </ros>
+        <joint_name>front_right_steer_joint</joint_name>
+        <updateRate>1000.0</updateRate>
+      </plugin>
+  </gazebo>
+
 
             
   <gazebo reference="chassis">
@@ -50,12 +121,12 @@
   
   <gazebo reference="front_left_wheel">
     <material>Gazebo/Grey</material>
-<!--    <mu1>10.0</mu1>
-    <mu2>10.0</mu2>
+    <mu1>30.0</mu1>
+    <mu2>30.0</mu2>
     <kp>10000000.0</kp>
     <kd>1000.0</kd>
-    <slip1>0</slip1>
-    <slip2>0</slip2>
+    <slip1>0.01</slip1>
+    <slip2>0.01</slip2>
     <minDepth>0.00001</minDepth>
     <maxVel>0</maxVel>
     <torsional>
@@ -63,17 +134,17 @@
         <coefficient>10</coefficient>
         <slip>0</slip>
       </ode>
-    </torsional> -->
+    </torsional> 
   </gazebo>
 
   <gazebo reference="front_right_wheel">
     <material>Gazebo/Grey</material>
-<!--    <mu1>10.0</mu1>
-    <mu2>10.0</mu2>
+    <mu1>30.0</mu1>
+    <mu2>30.0</mu2>
     <kp>10000000.0</kp>
     <kd>1000.0</kd>
-    <slip1>0</slip1>
-    <slip2>0</slip2>
+    <slip1>0.01</slip1>
+    <slip2>0.01</slip2>
     <minDepth>0.00001</minDepth>
     <maxVel>0</maxVel>
     <torsional>
@@ -81,17 +152,17 @@
         <coefficient>10</coefficient>
         <slip>0</slip>
       </ode>
-    </torsional> -->
+    </torsional> 
   </gazebo>
 
   <gazebo reference="rear_left_wheel">
     <material>Gazebo/Grey</material>
-  <!--  <mu1>10.0</mu1>
-    <mu2>10.0</mu2>
+    <mu1>30.0</mu1>
+    <mu2>30.0</mu2>
     <kp>10000000.0</kp>
     <kd>1000.0</kd>
-    <slip1>0</slip1>
-    <slip2>0</slip2>
+    <slip1>0.01</slip1>
+    <slip2>0.01</slip2>
     <minDepth>0.00001</minDepth>
     <maxVel>0</maxVel>
     <torsional>
@@ -99,17 +170,17 @@
         <coefficient>10</coefficient>
         <slip>0</slip>
       </ode>
-    </torsional> -->
+    </torsional> 
   </gazebo>
   
   <gazebo reference="rear_right_wheel">
     <material>Gazebo/Grey</material>
-  <!--  <mu1>10.0</mu1>
-    <mu2>10.0</mu2>
+    <mu1>30.0</mu1>
+    <mu2>30.0</mu2>
     <kp>10000000.0</kp>
     <kd>1000.0</kd>
-    <slip1>0</slip1>
-    <slip2>0</slip2>
+    <slip1>0.01</slip1>
+    <slip2>0.01</slip2>
     <minDepth>0.00001</minDepth>
     <maxVel>0</maxVel>
     <torsional>
@@ -117,7 +188,7 @@
         <coefficient>10</coefficient>
         <slip>0</slip>
       </ode>
-    </torsional> -->
+    </torsional> 
   </gazebo>    
 </xacro:macro>
 

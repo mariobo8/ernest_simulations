@@ -16,7 +16,7 @@ class Pivot4wsKinematics(object):
         self.N = 10
         self.dt = 0.1
         self.theta = 0
-        [self.x_p, self.y_p, self.arc_length] = self.path()
+        [self.x_p, self.y_p, self.arc_length] = self.path(file_name = "std_path.txt")
         self.start = self.x_p[0]
         self.x0 = ca.DM([self.x_p[0], self.y_p[0], 0.0, self.theta])  
         self.X0 = ca.repmat(self.x0, 1, self.N+1)     
@@ -24,21 +24,29 @@ class Pivot4wsKinematics(object):
         for jj in range(1, self.N + 1):
             self.xp0.extend([self.x_p[0], self.y_p[0], 0.0, 0.0])  # initial condition path
         self.xp0 = Arr2DM(self.xp0)
-        self.u0 = ca.DM.zeros((6, self.N))
-        self.up0 =ca.DM.zeros(6,1)
+        self.u0 = ca.DM.zeros((4, self.N))
+        self.up0 =ca.DM.zeros(4,1)
         self.pred = np.zeros((1,4))
         self.ref = np.zeros((1,3))
+        self.b = 0.4 #[m]
         
 
-    def dimensions(self):
-        l_f = 0.16
-        l_r = 0.71
-        wheel_radius = 0.14
-        return l_f, l_r, wheel_radius
+ 
+        self.l_f = 0.16
+        self.l_r = 0.71
+        self.wheel_radius = 0.14
 
-    
+
+    def make_vel(self, vf, vr, alpha, b):
+        beta = np.arctan(( self.l_r * sin(alpha)) / (self.l_f + self.l_r * cos(alpha)))
+        R = (self.l_f + self.l_r) / (sin(beta) + sin(alpha - beta)) 
+        v_fl = vf*(1 - b / (R * cos(alpha - beta)))
+        v_fr = vf*(1 + b / (R * cos(alpha - beta)))
+        v_rl = vr*(1 - b / (R * cos(beta)))
+        v_rr = vr*(1 + b / (R * cos(beta)))
+        return v_fl, v_fr, v_rl, v_rr
+
     def kin_model(self):
-        [l_f, l_r, _] = self.dimensions()
         # Define state variables
         x = ca.SX.sym('x')
         y = ca.SX.sym('y')
@@ -55,36 +63,33 @@ class Pivot4wsKinematics(object):
         # Define control variables
         v_f = ca.SX.sym('v_f')
         v_r = ca.SX.sym('v_r')
-        delta_f = ca.SX.sym('delta_f')
-        delta_r = ca.SX.sym('delta_r')
         alpha = ca.SX.sym('alpha')
         virtual_v = ca.SX.sym('virtual_v')
         controls = ca.vertcat(
             v_f,
             v_r,
-            delta_f,
-            delta_r,
             alpha,
             virtual_v
         )
         n_controls = controls.numel()
         
-        beta = np.arctan((l_f * np.tan(delta_r) + l_r * (np.tan(delta_f) * cos(alpha) \
-                          + sin(alpha))) / (l_f + l_r * (cos(alpha) - np.tan(delta_f) * sin(alpha))))
-        v = (v_f * cos(delta_f + alpha) + v_r * cos(delta_r)) / (2 * cos(beta))
+        beta = np.arctan(( self.l_r * sin(alpha)) / (self.l_f + self.l_r * cos(alpha)))
+        v = (v_f * cos(alpha) + v_r) / (2 * cos(beta))
         # righthand-side function
         RHS = ca.vertcat(v*cos(psi + beta), v*sin(psi + beta),
-                         v * (np.tan(delta_f) * cos(alpha + beta) + sin(beta) + \
-                         sin(alpha - beta) - np.tan(delta_r) * cos(beta)) / (l_f + l_r),
+                         v * (sin(beta) + sin(alpha - beta)) \
+                         / (self.l_f + self.l_r),
                          virtual_v)
         ## to change
         # maps controls from [input] to [states].T
         f = ca.Function('f', [states, controls], [RHS])
         return states, controls, n_states, n_controls ,f, s
     
-    def path(self):
-        path = os.path.dirname(os.path.realpath(__file__))
-        s_shape_path = np.loadtxt(str(path) + '/std_path.txt')
+    def path(self, file_name):
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        relative_path = "../path"
+        file_path = os.path.join(current_dir, relative_path, file_name)
+        s_shape_path = np.loadtxt(file_path)
         x_p = s_shape_path[:,0]
         y_p = s_shape_path[:,1]
         arc_length = s_shape_path[:,2]
@@ -95,34 +100,30 @@ class Pivot4wsKinematics(object):
     def weighing_matrices(self, n_states, n_controls, N):
     # Weighing Matrices
         #states
-        Q_x = 9e6
-        Q_y = 9e6
-        Q_psi = 1e5
+        Q_x = 9e1
+        Q_y = 9e1
+        Q_psi = 1e1
         Q_s = 0
 
         #controls
         R_vf = 9e1
         R_vr = 9e1
-        R_deltaf = 4e3
-        R_deltar = 4e3
-        R_alpha = 8e3
-        R_virtv = 5e1       
+        R_alpha = 8e1
+        R_virtv = 0     
 
         #rate change input
         
-        W_vf = 1e2
-        W_vr = 1e2
-        W_deltaf = 8e3
-        W_deltar = 8e3
-        W_alpha = 9e4
-        W_virtv = 7e1
+        W_vf = 1e0
+        W_vr = 1e0
+        W_alpha = 1e2
+        W_virtv = 1
 
         #penalty
         eps = 5e3
         #orientation
         gamma = 2e2
         #anti drifting
-        m = 2e7
+        m = 2e2
         
         # matrix containing all states over all time steps +1 (each column is a state vector)
         X = ca.SX.sym('X', n_states, N + 1)
@@ -137,10 +138,10 @@ class Pivot4wsKinematics(object):
         Q = ca.diagcat(Q_x, Q_y, Q_psi, Q_s)
 
         # controls weights matrix
-        R = ca.diagcat(R_vf, R_vr, R_deltaf, R_deltar, R_alpha, R_virtv)
+        R = ca.diagcat(R_vf, R_vr, R_alpha, R_virtv)
 
         #rate changing matrix
-        W = ca.diagcat(W_vf, W_vr, W_deltaf, W_deltar, W_alpha, W_virtv)
+        W = ca.diagcat(W_vf, W_vr, W_alpha, W_virtv)
         
         return X,U,P,Q,R,W,m,eps,gamma
 
@@ -149,14 +150,14 @@ class Pivot4wsKinematics(object):
         [X,U,P,Q,R,W,m,eps,gamma] = self.weighing_matrices(n_states,n_controls, self.N)
         obj = 0  # cost function
         g1 = X[:, 0] - P[:n_states]  # constraints in the equation
-        g2 = U[:, 0] - P[-6:]
+        g2 = U[:, 0] - P[-n_controls:]
 
 
         # Multiple shooting
         for k in range(self.N):
             st = X[:, k]
             con = U[:, k]
-            vf = U[0,k]; vr = U[1,k]; d_f = U[2,k]; d_r = U[3,k]; a = U[4,k]
+            vf = U[0,k]; vr = U[1,k];  a = U[2,k]
             if k == (self.N-1): con_l = con
             else: con_l = U[:,k+1]
             i_state = slice((k*4+4), (k*4+8))
@@ -165,7 +166,7 @@ class Pivot4wsKinematics(object):
                 + (st - P[i_state]).T @ Q @ (st - P[i_state]) \
                 + (con).T @ R @ (con) \
                 + (con - con_l).T @ W @ (con - con_l) \
-                + m*(vf*cos(d_f + a) - vr*cos(d_r))**2 
+                + m*(vf*cos(a) - vr)**2 
             
             st_next = X[:, k+1]
             f_value = f(st, con)
@@ -176,7 +177,7 @@ class Pivot4wsKinematics(object):
         obj = obj - eps/2*(st[3])**2 + gamma/2*(st[2] - P[k*4+6])**2
         
 
-        g = ca.vertcat(g1, g2[:-6])
+        g = ca.vertcat(g1, g2[:- n_controls])
         OPT_variables = ca.vertcat(
             X.reshape((-1, 1)),   # Example: 3x11 ---> 33x1 where 3=states, 11=N+1
             U.reshape((-1, 1))
@@ -188,11 +189,9 @@ class Pivot4wsKinematics(object):
         # Boundaries
         v_max = 0.7
         alpha_max = 0.5
-        delta_max = 0.9
         virtual_v_max = 0.65
         alpha_min = - 0.5
         v_min = -0.5
-        delta_min = -0.9
         virtual_v_min = 0
         a_min = - 0.04
         a_max = 0.04
@@ -214,34 +213,27 @@ class Pivot4wsKinematics(object):
         #input lower bound
         lbx[n_states*(N+1):n_states*(N+1)+n_controls*N:n_controls] = v_min                
         lbx[n_states*(N+1)+1:n_states*(N+1)+n_controls*N:n_controls] = v_min
-        lbx[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = delta_min
-        lbx[n_states*(N+1)+3:n_states*(N+1)+n_controls*N:n_controls] = delta_min                
-        lbx[n_states*(N+1)+4:n_states*(N+1)+n_controls*N:n_controls] = alpha_min
-        lbx[n_states*(N+1)+5:n_states*(N+1)+n_controls*N:n_controls] = virtual_v_min
+        lbx[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = alpha_min
+        lbx[n_states*(N+1)+3:n_states*(N+1)+n_controls*N:n_controls] = virtual_v_min
         
         #input upper bound
         ubx[n_states*(N+1):n_states*(N+1)+n_controls*N:n_controls] = v_max                                                                            # v upper bound for all V
         ubx[n_states*(N+1)+1:n_states*(N+1)+n_controls*N:n_controls] = v_max   
-        ubx[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = delta_max
-        ubx[n_states*(N+1)+3:n_states*(N+1)+n_controls*N:n_controls] = delta_max                                                                         # v upper bound for all V
-        ubx[n_states*(N+1)+4:n_states*(N+1)+n_controls*N:n_controls] = alpha_max   
-        ubx[n_states*(N+1)+5:n_states*(N+1)+n_controls*N:n_controls] = virtual_v_max 
+        ubx[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = alpha_max   
+        ubx[n_states*(N+1)+3:n_states*(N+1)+n_controls*N:n_controls] = virtual_v_max 
+        
         lbg = ca.DM.zeros((n_states*(N+1)+n_controls*N, 1))  # constraints lower bound
         ubg = ca.DM.zeros((n_states*(N+1)+n_controls*N, 1))  # constraints upper bound
     
         #rate input change
         lbg[n_states*(N+1):n_states*(N+1)+n_controls*N:n_controls] = a_min                
-        lbg[n_states*(N+1)+1:n_states*(N+1)+n_controls*N:n_controls] = a_min
-        lbg[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = w_min*0.30        
-        lbg[n_states*(N+1)+3:n_states*(N+1)+n_controls*N:n_controls] = w_min*0.30               
-        lbg[n_states*(N+1)+4:n_states*(N+1)+n_controls*N:n_controls] = w_min*0.25
-        lbg[n_states*(N+1)+5:n_states*(N+1)+n_controls*N:n_controls] = a_min
+        lbg[n_states*(N+1)+1:n_states*(N+1)+n_controls*N:n_controls] = a_min            
+        lbg[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = w_min*0.25
+        lbg[n_states*(N+1)+3:n_states*(N+1)+n_controls*N:n_controls] = a_min
         ubg[n_states*(N+1):n_states*(N+1)+n_controls*N:n_controls] = a_max                                                                            # v upper bound for all V
-        ubg[n_states*(N+1)+1:n_states*(N+1)+n_controls*N:n_controls] = a_max   
-        ubg[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = w_max*0.30        
-        ubg[n_states*(N+1)+3:n_states*(N+1)+n_controls*N:n_controls] = w_max*0.30                                                                      # v upper bound for all V
-        ubg[n_states*(N+1)+4:n_states*(N+1)+n_controls*N:n_controls] = w_max*0.25 
-        ubg[n_states*(N+1)+5:n_states*(N+1)+n_controls*N:n_controls] = a_max 
+        ubg[n_states*(N+1)+1:n_states*(N+1)+n_controls*N:n_controls] = a_max                                   # v upper bound for all V
+        ubg[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = w_max*0.25 
+        ubg[n_states*(N+1)+3:n_states*(N+1)+n_controls*N:n_controls] = a_max 
         return lbg,ubg,lbx,ubx
 
 
@@ -340,9 +332,11 @@ class Pivot4wsKinematics(object):
         self.pred = np.vstack([self.pred, self.X0.T])
         inp = DM2Arr(u[:, 0])
 
-            
-        input = [float(inp[0]), float(inp[1]), float(inp[2]),
-                  float(inp[3]), float(inp[4]), float(inp[5])]
+        v_f = float(inp[0]); v_r = float(inp[1]); alpha = float(inp[3])
+        
+        [v_fl, v_fr, v_rl, v_rr] = self.make_vel(v_f, v_r, alpha, self.b)
+
+        input = [v_fl, v_fr, v_rl, v_rr, 0.0, 0.0, float(inp[2]), float(inp[3])]
        
         [self.u0, new_xp0, new_up0, self.theta] = \
             self.shift_timestep(u, self.X0, self.x_p, self.y_p, self.arc_length, inp)

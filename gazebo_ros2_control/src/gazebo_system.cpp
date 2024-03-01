@@ -19,7 +19,7 @@
 #include <utility>
 #include <vector>
 
-#include "gazebo/sensors/ForceTorqueSensor.hh"
+#include "gazebo_ros2_control/ForceTorqueSensor.hh"
 #include "gazebo/sensors/ImuSensor.hh"
 #include "gazebo/sensors/SensorManager.hh"
 #include "gazebo_ros2_control/gazebo_system.hpp"
