@@ -98,7 +98,7 @@ for k = 1:size(predict,1)
     if (N+1)*k < size(predict,1) % plot prediction
         plot(predict(1+(k-1)*(N+1):(N+1)*k,1),predict(1+(k-1)*(N+1):k*(N+1),2),'r--*') %pred
         hold on
-        plot(ref(2+(k-1)*(N-1):k*(N-1),1),ref(2+(k-1)*(N-1):(N-1)*k,2), 'g--*') %ref
+        plot(ref(k,1),ref(k,2), 'g--*') %ref
     end
 
     hold on

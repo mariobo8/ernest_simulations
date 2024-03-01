@@ -104,13 +104,13 @@ class Pivot4wsKinematics(object):
         Q_x = 9e1
         Q_y = 9e1
         Q_psi = 1e1
-        Q_s = 0
+        Q_s = 5
 
         #controls
         R_vf = 9e1
         R_vr = 9e1
         R_alpha = 8e1
-        R_virtv = 0     
+        R_virtv = 9e1     
 
         #rate change input
         
@@ -295,7 +295,7 @@ class Pivot4wsKinematics(object):
             s_prev = s_0 + max((jj - 1), 0) * delta_s
 
             xp0.extend([x_int, y_int, psi_int, 0])
-            ref.append([float(x_int), float(y_int), float(psi_int)])
+        ref.append([float(x_int), float(y_int), float(psi_int)])
         self.ref = np.vstack([self.ref, ref])
         
         xp0.extend([x_int, y_int, psi_int, 0])        

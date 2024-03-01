@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+import os
 import time
 import numpy as np
 
@@ -11,102 +11,110 @@ from std_msgs.msg import Float64MultiArray
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import WrenchStamped
 from sensor_msgs.msg import JointState
+from mpc_controller.mpc_node import PathTrackingMPC as mpc
 
 
 class TorqueSensing(Node):
 
     def __init__(self):
         super().__init__('torque_sensing')
-
+        self.mpc = mpc()
         self.time_step = [0.0]
-        self.force_fr = [0.0]
         self.velocity_input = Float64MultiArray()
         self.steering_input = Float64MultiArray()
-        self.switch = False
         self.time = time.time()
         self.set_subscribers_publishers()
         self.i = 0
-        self.speed_fr = [0.0]
-        self.force_n = [0.0]
+        #define forces
+        self.fl_steer_force = [0.0]; self.fr_steer_force = [0.0]
+        self.rl_steer_force = [0.0]; self.rr_steer_force = [0.0]
+        self.pivot_force = [0.0]
+        self.fl_wheel_force = [0.0]; self.fr_wheel_force = [0.0]
+        self.rl_wheel_force = [0.0]; self.rr_wheel_force = [0.0]
         
-    # Callbacks Section
-    def fr_velocity_cb(self, msg):
-
-        #self.torque_fl
-        # .append()
-        index = msg.name.index("front_right_wheel_joint")
-        speed = msg.velocity[index-1]
-        self.speed_fr.append(speed)
-        print(speed)
-
-    # Callbacks Section
-    def fl_wheel_cb(self, msg):
-        return
     
-    def steer_cb(self, msg):
-        force_n = msg.wrench.force.z
-        self.force_n.append(force_n)
-
-
-
     # Callbacks Section
-    def fr_wheel_cb(self, msg):
-
-        force_fr = msg.wrench.force.z
-        self.force_fr.append(force_fr)
-
-
-        self.velocity_input.data = [1/0.14, 1/0.14]
-        self.steering_input.data = [-1.0, -1.0, 0.0, 0.0, 0.0]
-        self.vel_pub.publish(self.velocity_input)
-        self.steer_pub.publish(self.steering_input)
-        print("publishing %f" %self.i)
-        self.i = self.i + 1
-        if self.i*0.001 > 1/0.14: 
-            np.savetxt('fr_force.txt',
-                self.force_fr, fmt='%f', delimiter='\t')
-            np.savetxt('n_force.txt',
-                self.force_n, fmt='%f', delimiter='\t')
-            np.savetxt('fr_vel.txt',
-                self.speed_fr, fmt='%f', delimiter='\t')
-                 
-            print("saved!")
-            self.velocity_input.data = [0.0, 0.0]
-            self.steering_input.data = [0.0, 0.0, 0.0, 0.0, 0.0]
-            self.vel_pub.publish(self.velocity_input)
-            self.steer_pub.publish(self.steering_input)
-            rclpy.shutdown()
-                        
-        
-    # Callbacks Section
-    def rl_wheel_cb(self, msg):
-        #self.torque_fl.append()
-        torque_rl = msg.wrench.torque.x
-
-
-        
-    def rr_wheel_cb(self, msg):
-
-        #self.torque_fl.append()
-        torque_rr = msg.wrench.torque.x
-                        
-
-
-
-        
+    # STEER CALLBACKS
+    def fl_steer_cb(self, msg):
+        # Front Left steer 
+        Mz = msg.wrench.torque.z
+        self.fl_steer_force.append(Mz)
+    def fr_steer_cb(self, msg):
+        # Front Right steer 
+        Mz = msg.wrench.torque.z
+        self.fr_steer_force.append(Mz)
+    def rl_steer_cb(self, msg):
+        # Rear Left steer 
+        Mz = msg.wrench.torque.z
+        self.rl_steer_force.append(Mz)
+    def rr_steer_cb(self, msg):
+        # Rear Right steer 
+        Mz = msg.wrench.torque.z
+        self.rr_steer_force.append(Mz)
     def pivot_cb(self, msg):
+        # Front Right steer 
+        Mz = msg.wrench.torque.z
+        self.pivot_force.append(Mz)
+    # WHEEL CALLBACKS        
+    def fl_wheel_cb(self, msg):
+        # Front Left wheel 
+        Mz = msg.wrench.torque.z
+        self.fl_wheel_force.append(Mz)
+    def fr_wheel_cb(self, msg):
+        # Front Right wheel 
+        Mz = msg.wrench.torque.z
+        self.fr_wheel_force.append(Mz)
+    def rl_wheel_cb(self, msg):
+        # Rear Left wheel 
+        Mz = msg.wrench.torque.z
+        self.rl_wheel_force.append(Mz)
+    def rr_wheel_cb(self, msg):
+        # Rear Right wheel 
+        Mz = msg.wrench.torque.z
+        self.rr_wheel_force.append(Mz)
+        self.check_run()
 
-        #self.torque_fl.append()
-        torque_pivot = msg.wrench.torque.x
+    def check_run(self):
+        print(mpc.switch)
+        if mpc.switch:
+            self.save()
+            rclpy.shutdown()
+
+    
+
+    # Callbacks Section
+    def save(self):
+        steer_force = np.column_stack((self.fl_steer_force,
+                                       self.fr_steer_force,
+                                       self.rl_steer_force,
+                                       self.rr_steer_force,
+                                       self.pivot_force))
+        wheel_force = np.column_stack((self.fl_wheel_force,
+                                       self.fr_wheel_force,
+                                       self.rl_wheel_force,
+                                       self.rr_wheel_force))
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        relative_folder_path = "../results/"
+        np.savetxt(os.path.join(current_dir, relative_folder_path, 'steer_torque.txt'),
+            steer_force, fmt='%f', delimiter='\t')
+        np.savetxt(os.path.join(current_dir, relative_folder_path, 'wheel_torque.txt'),
+            wheel_force, fmt='%f', delimiter='\t')
+        print("saved!")
                         
-        #print(torque_pivot)#, torque_fr, torque_rl, torque_rr)
-       # if self.switch: 
-        #    np.savetxt('fwsinput.txt',
-         #       self.input_sequence, fmt='%f', delimiter='\t')
-         #   print("saved!")
+
+      
+
+                        
 
  
-
+ #  def fr_velocity_cb(self, msg):
+ #       # Front Right Wheel Velocity
+        #self.torque_fl
+        # .append()
+  ##      index = msg.name.index("front_right_wheel_joint")
+     #   speed = msg.velocity[index-1]
+    #    self.speed_fr.append(speed)
+     #   print(speed)
 
     # End: Callbacks Section
 
@@ -115,16 +123,13 @@ class TorqueSensing(Node):
         self.fr_wheel_sub = self.create_subscription(WrenchStamped, '/fr_wheel_sensor', self.fr_wheel_cb, 10)
         self.rl_wheel_sub = self.create_subscription(WrenchStamped, '/rl_wheel_sensor', self.rl_wheel_cb, 10)
         self.rr_wheel_sub = self.create_subscription(WrenchStamped, '/rr_wheel_sensor', self.rr_wheel_cb, 10)
-        self.fl_velociy_sub = self.create_subscription(JointState, '/joint_states', self.fr_velocity_cb, 10)
         self.pivot_sub = self.create_subscription(WrenchStamped, '/pivot_sensor', self.pivot_cb, 10)
-        self.steer_sub = self.create_subscription(WrenchStamped, '/steer_sensor', self.steer_cb, 10)
-        
-        
-        self.vel_pub = self.create_publisher(Float64MultiArray, '/velocity_controller/commands', 10)
-        self.steer_pub = self.create_publisher(Float64MultiArray, '/position_controller/commands', 10)
+        self.fl_steer_sub = self.create_subscription(WrenchStamped, '/fl_steer_sensor', self.fl_steer_cb, 10)
+        self.fr_steer_sub = self.create_subscription(WrenchStamped, '/fr_steer_sensor', self.fr_steer_cb, 10)
+        self.rl_steer_sub = self.create_subscription(WrenchStamped, '/rl_steer_sensor', self.rl_steer_cb, 10)
+        self.rr_steer_sub = self.create_subscription(WrenchStamped, '/rr_steer_sensor', self.rr_steer_cb, 10)
 
-   
-    
+
 
 def main(args=None):
     rclpy.init(args=args)

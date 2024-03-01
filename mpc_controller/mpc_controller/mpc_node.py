@@ -76,7 +76,8 @@ class PathTrackingMPC(Node):
         self.steer_pub.publish(steering_input)
         if self.switch: 
             self.save_data()
-            rclpy.shutdown()
+            time.sleep(2)
+            #rclpy.shutdown()
 
  
 

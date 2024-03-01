@@ -24,16 +24,25 @@
   <gazebo reference="front_left_wheel_joint">
     <provideFeedback>true</provideFeedback>
   </gazebo>
-  <gazebo reference="front_right_steer_joint">
+  <gazebo reference="front_left_steer_joint">
     <provideFeedback>true</provideFeedback>
   </gazebo>
   <gazebo reference="front_right_wheel_joint">
     <provideFeedback>true</provideFeedback>
   </gazebo>
-  <gazebo reference="rear_right_wheel_joint">
+  <gazebo reference="front_right_steer_joint">
     <provideFeedback>true</provideFeedback>
   </gazebo>
   <gazebo reference="rear_left_wheel_joint">
+    <provideFeedback>true</provideFeedback>
+  </gazebo>
+  <gazebo reference="rear_left_steer_joint">
+    <provideFeedback>true</provideFeedback>
+  </gazebo>
+  <gazebo reference="rear_right_wheel_joint">
+    <provideFeedback>true</provideFeedback>
+  </gazebo>
+  <gazebo reference="rear_right_steer_joint">
     <provideFeedback>true</provideFeedback>
   </gazebo>
   <gazebo reference="pivot_joint">
@@ -82,9 +91,33 @@
         <updateRate>1000.0</updateRate>
       </plugin>
 
-      <plugin name="steer_sensor" filename="libgazebo_ros_ft_sensor.so">
+      <plugin name="fl_steer_sensor" filename="libgazebo_ros_ft_sensor.so">
         <ros>
-          <remapping>wrench:=steer_sensor</remapping>
+          <remapping>wrench:=fl_steer_sensor</remapping>
+        </ros>
+        <joint_name>front_right_steer_joint</joint_name>
+        <updateRate>1000.0</updateRate>
+      </plugin>
+
+        <plugin name="fr_steer_sensor" filename="libgazebo_ros_ft_sensor.so">
+        <ros>
+          <remapping>wrench:=fr_steer_sensor</remapping>
+        </ros>
+        <joint_name>front_right_steer_joint</joint_name>
+        <updateRate>1000.0</updateRate>
+      </plugin>
+
+        <plugin name="rl_steer_sensor" filename="libgazebo_ros_ft_sensor.so">
+        <ros>
+          <remapping>wrench:=rl_steer_sensor</remapping>
+        </ros>
+        <joint_name>front_right_steer_joint</joint_name>
+        <updateRate>1000.0</updateRate>
+      </plugin>
+
+        <plugin name="rr_steer_sensor" filename="libgazebo_ros_ft_sensor.so">
+        <ros>
+          <remapping>wrench:=rr_steer_sensor</remapping>
         </ros>
         <joint_name>front_right_steer_joint</joint_name>
         <updateRate>1000.0</updateRate>
