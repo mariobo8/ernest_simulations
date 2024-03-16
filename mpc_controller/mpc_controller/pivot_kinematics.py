@@ -31,11 +31,9 @@ class Pivot4wsKinematics(object):
         self.b = 0.4 #[m]
         self.x_r = ([self.x_p[0], self.y_p[0], 0.0, 0.0])
         
-
- 
         self.l_f = 0.16
         self.l_r = 0.71
-        self.wheel_radius = 0.14
+        self.wheel_radius = 0.15
 
 
     def make_vel(self, vf, vr, alpha, b):
@@ -334,11 +332,11 @@ class Pivot4wsKinematics(object):
         self.pred = np.vstack([self.pred, self.X0.T])
         inp = DM2Arr(u[:, 0])
 
-        v_f = float(inp[0]); v_r = float(inp[1]); alpha = float(inp[3])
+        v_f = float(inp[0]); v_r = float(inp[1]); alpha = float(inp[2])
         
         [v_fl, v_fr, v_rl, v_rr] = self.make_vel(v_f, v_r, alpha, self.b)
 
-        input = [v_fl, v_fr, v_rl, v_rr, 0.0, 0.0, float(inp[2]), float(inp[3])]
+        input = [v_fl, v_fr, v_rl, v_rr, 0.0, 0.0, alpha, float(inp[3])]
        
         [self.u0, new_xp0, new_up0, self.theta, new_x_r] = \
             self.shift_timestep(u, self.X0, self.x_p, self.y_p, self.arc_length, inp)

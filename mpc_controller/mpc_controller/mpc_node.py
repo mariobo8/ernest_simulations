@@ -21,7 +21,7 @@ class PathTrackingMPC(Node):
 
     def __init__(self):
         super().__init__('path_tracking_MPC')
-        self.mpc_inst = p_mpc()
+        self.mpc_inst = pfws_mpc()
         self.xp_0 = self.mpc_inst.start
         self.alpha_0 = 0.0 
         self.input_sequence = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]

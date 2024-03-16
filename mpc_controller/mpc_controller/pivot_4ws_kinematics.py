@@ -16,7 +16,7 @@ class Pivot4wsKinematics(object):
         self.N = 10
         self.dt = 0.1
         self.theta = 0
-        [self.x_p, self.y_p, self.arc_length] = self.path()
+        [self.x_p, self.y_p, self.arc_length] = self.path(file_name = "std_path.txt")
         self.start = self.x_p[0]
         self.x0 = ca.DM([self.x_p[0], self.y_p[0], 0.0, self.theta])  
         self.X0 = ca.repmat(self.x0, 1, self.N+1)     
@@ -27,9 +27,25 @@ class Pivot4wsKinematics(object):
         self.u0 = ca.DM.zeros((6, self.N))
         self.up0 =ca.DM.zeros(6,1)
         self.pred = np.zeros((1,4))
-        self.ref = np.zeros((1,3))
         
+        self.ref = np.zeros((1,3))
+        self.b = 0.4 #[m]
+        self.x_r = ([self.x_p[0], self.y_p[0], 0.0, 0.0])
 
+        self.l_f = 0.16
+        self.l_r = 0.71
+        self.wheel_radius = 0.15
+
+
+    def make_vel(self, vf, vr, alpha, b):
+        beta = np.arctan(( self.l_r * sin(alpha)) / (self.l_f + self.l_r * cos(alpha)))
+        R = (self.l_f + self.l_r) / (sin(beta) + sin(alpha - beta)) 
+        v_fl = vf*(1 - b / (R * cos(alpha - beta)))
+        v_fr = vf*(1 + b / (R * cos(alpha - beta)))
+        v_rl = vr*(1 - b / (R * cos(beta)))
+        v_rr = vr*(1 + b / (R * cos(beta)))
+        return v_fl, v_fr, v_rl, v_rr
+    
     def dimensions(self):
         l_f = 0.16
         l_r = 0.71
@@ -82,15 +98,16 @@ class Pivot4wsKinematics(object):
         f = ca.Function('f', [states, controls], [RHS])
         return states, controls, n_states, n_controls ,f, s
     
-    def path(self):
-        path = os.path.dirname(os.path.realpath(__file__))
-        s_shape_path = np.loadtxt(str(path) + '/std_path.txt')
+    def path(self, file_name):
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        relative_path = "../path"
+        file_path = os.path.join(current_dir, relative_path, file_name)
+        s_shape_path = np.loadtxt(file_path)
         x_p = s_shape_path[:,0]
         y_p = s_shape_path[:,1]
         arc_length = s_shape_path[:,2]
         #define the path
         return x_p, y_p, arc_length
-    
         
     def weighing_matrices(self, n_states, n_controls, N):
     # Weighing Matrices
@@ -341,9 +358,13 @@ class Pivot4wsKinematics(object):
         inp = DM2Arr(u[:, 0])
 
             
-        input = [float(inp[0]), float(inp[1]), float(inp[2]),
-                  float(inp[3]), float(inp[4]), float(inp[5])]
-       
+        v_f = float(inp[0]); v_r = float(inp[1]); alpha = float(inp[4])
+
+        [v_fl, v_fr, v_rl, v_rr] = self.make_vel(v_f, v_r, alpha, self.b)
+
+        input = [v_fl, v_fr, v_rl, v_rr, float(inp[2]),
+                 float(inp[3]), alpha, float(inp[5])]
+        
         [self.u0, new_xp0, new_up0, self.theta] = \
             self.shift_timestep(u, self.X0, self.x_p, self.y_p, self.arc_length, inp)
 

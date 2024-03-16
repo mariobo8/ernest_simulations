@@ -11,22 +11,19 @@ from std_msgs.msg import Float64MultiArray
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import WrenchStamped
 from sensor_msgs.msg import JointState
-from mpc_controller.mpc_node import PathTrackingMPC as mpc
-from .test_actuators import TestActuators as test
 
 
 class TorqueSensing(Node):
 
     def __init__(self):
         super().__init__('torque_sensing')
-        self.mpc = mpc()
-        self.test = test()
         self.time_step = [0.0]
         self.velocity_input = Float64MultiArray()
         self.steering_input = Float64MultiArray()
         self.time = time.time()
         self.set_subscribers_publishers()
         self.i = 0
+        self.iter = 0.0
         #define forces
         self.fl_steer_force = [0.0]; self.fr_steer_force = [0.0]
         self.rl_steer_force = [0.0]; self.rr_steer_force = [0.0]
@@ -74,27 +71,28 @@ class TorqueSensing(Node):
         # Rear Right wheel 
         Mz = msg.wrench.torque.z
         self.rr_wheel_force.append(Mz)
-        self.check_run()
-
-    def check_run(self):
-        print(self.stop.iter)
-        if self.stop.iter > 1.5:
-            self.save()
-            rclpy.shutdown()
-
-    
 
     # Callbacks Section
     def save(self):
-        steer_force = np.column_stack((self.fl_steer_force,
-                                       self.fr_steer_force,
-                                       self.rl_steer_force,
-                                       self.rr_steer_force,
-                                       self.pivot_force))
-        wheel_force = np.column_stack((self.fl_wheel_force,
-                                       self.fr_wheel_force,
-                                       self.rl_wheel_force,
-                                       self.rr_wheel_force))
+        A = [len(self.fl_steer_force), len(self.fr_steer_force),
+             len(self.rl_steer_force), len(self.rr_steer_force),
+             len(self.pivot_force)]  
+        length_a = min(A)
+        fl_steer = self.fl_steer_force[1:length_a]; fr_steer = self.fr_steer_force[1:length_a]
+        rl_steer = self.rl_steer_force[1:length_a]; rr_steer = self.rr_steer_force[1:length_a]
+        pivot = self.pivot_force[1:length_a]
+        steer_force = np.column_stack((fl_steer, fr_steer,
+                                       rl_steer, rr_steer,
+                                       pivot))
+        
+        B = [len(self.fl_wheel_force), len(self.fr_wheel_force),
+             len(self.rl_wheel_force), len(self.rr_wheel_force),
+             len(self.pivot_force)]  
+        length_b = min(B)
+        fl_wheel = self.fl_wheel_force[1:length_b]; fr_wheel = self.fr_wheel_force[1:length_b]
+        rl_wheel = self.rl_wheel_force[1:length_b]; rr_wheel = self.rr_wheel_force[1:length_b]
+        wheel_force = np.column_stack((fl_wheel, fr_wheel,
+                                       rl_wheel, rr_wheel))
         current_dir = os.path.dirname(os.path.realpath(__file__))
         relative_folder_path = "../results/"
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'steer_torque.txt'),
@@ -104,23 +102,28 @@ class TorqueSensing(Node):
         print("saved!")
                         
 
-      
+    def pose_sub_cb(self, msg):
 
-                        
 
+        velocity_input = Float64MultiArray()
+        steering_input = Float64MultiArray()
+        #velocity_input.data = [1.0, 1.0, 1.0, 1.0]
+        steering_input.data = [0.0, 0.0, 0.0, 0.0, self.iter]
+        #self.vel_pub.publish(velocity_input)
+        self.steer_pub.publish(steering_input)
+        self.iter += 0.0001
+
+        if self.iter > 0.8: 
+            print('saving')
+            self.save()
+            print('saved')
+            rclpy.shutdown()
  
- #  def fr_velocity_cb(self, msg):
- #       # Front Right Wheel Velocity
-        #self.torque_fl
-        # .append()
-  ##      index = msg.name.index("front_right_wheel_joint")
-     #   speed = msg.velocity[index-1]
-    #    self.speed_fr.append(speed)
-     #   print(speed)
-
-    # End: Callbacks Section
 
     def set_subscribers_publishers(self):
+        self.pose_sub = self.create_subscription(Odometry, '/p3d/odom', self.pose_sub_cb, 10)
+        self.vel_pub = self.create_publisher(Float64MultiArray, '/velocity_controller/commands', 10)
+        self.steer_pub = self.create_publisher(Float64MultiArray, '/position_controller/commands', 10)
         self.fl_wheel_sub = self.create_subscription(WrenchStamped, '/fl_wheel_sensor', self.fl_wheel_cb, 10)
         self.fr_wheel_sub = self.create_subscription(WrenchStamped, '/fr_wheel_sensor', self.fr_wheel_cb, 10)
         self.rl_wheel_sub = self.create_subscription(WrenchStamped, '/rl_wheel_sensor', self.rl_wheel_cb, 10)

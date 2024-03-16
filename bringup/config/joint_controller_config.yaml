@@ -10,6 +10,9 @@ controller_manager:
 
     velocity_controller:
       type: "velocity_controllers/JointGroupVelocityController"  
+
+    effort_controller:
+      type: effort_controllers/JointGroupPositionController
    
 position_controller:
   ros__parameters:
@@ -20,6 +23,10 @@ position_controller:
         - rear_right_steer_joint
         - pivot_joint
 
+effort_controller:
+  ros__parameters:
+    joints:
+      - bogie_joint
 
 
 velocity_controller:
@@ -30,8 +37,5 @@ velocity_controller:
         - rear_left_wheel_joint
         - rear_right_wheel_joint
 
-joint_state:
-  ros__parameters:
-      joints: 
-        - bogie_joint
+
 

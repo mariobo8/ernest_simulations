@@ -23,7 +23,7 @@ class StopMotors(Node):
         steering_input.data = [0.0, 0.0, 0.0, 0.0, 0.0]
 
         print("manthan")
-        self.vel_pub.publish(velocity_input)
+        self.steer_pub.publish(velocity_input)
  
 
 

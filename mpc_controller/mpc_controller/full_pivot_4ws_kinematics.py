@@ -28,6 +28,11 @@ class Pivot4wsKinematics(object):
         self.up0 =ca.DM.zeros(8,1)
         self.pred = np.zeros((1,4))
         self.ref = np.zeros((1,3))
+
+        self.b = 0.4 #[m]
+        self.l_f = 0.16
+        self.l_r = 0.71
+        self.wheel_radius = 0.15
         
 
     def dimensions(self):
@@ -36,6 +41,15 @@ class Pivot4wsKinematics(object):
         wheel_radius = 0.15
         return l_f, l_r, wheel_radius
 
+
+    def make_vel(self, vf, vr, alpha, b):
+        beta = np.arctan(( self.l_r * sin(alpha)) / (self.l_f + self.l_r * cos(alpha)))
+        R = (self.l_f + self.l_r) / (sin(beta) + sin(alpha - beta)) 
+        v_fl = vf*(1 - b / (R * cos(alpha - beta)))
+        v_fr = vf*(1 + b / (R * cos(alpha - beta)))
+        v_rl = vr*(1 - b / (R * cos(beta)))
+        v_rr = vr*(1 + b / (R * cos(beta)))
+        return v_fl, v_fr, v_rl, v_rr
     
     def kin_model(self):
         [l_f, l_r, _] = self.dimensions()
@@ -357,10 +371,13 @@ class Pivot4wsKinematics(object):
         self.pred = np.vstack([self.pred, self.X0.T])
         inp = DM2Arr(u[:, 0])
 
-      
-        input = [float(inp[0]), float(inp[1]), float(inp[2]),
+        v_f = float(inp[0]); v_r = float(inp[1]); alpha = float(inp[6])
+
+        [v_fl, v_fr, v_rl, v_rr] = self.make_vel(v_f, v_r, alpha, self.b)
+
+        input = [v_fl, v_fr, v_rl, v_rr, float(inp[2]),
                  float(inp[3]), float(inp[4]), float(inp[5]),
-                 float(inp[6]), float(inp[7])]
+                 alpha, float(inp[7])]
        
         [self.u0, new_xp0, new_up0, self.theta] = \
             self.shift_timestep(u, self.X0, self.x_p, self.y_p, self.arc_length, inp)
