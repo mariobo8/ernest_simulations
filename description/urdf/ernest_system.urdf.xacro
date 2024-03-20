@@ -4,11 +4,11 @@
   <!-- Import model -->
   <xacro:include filename="$(find description)/urdf/ernest.urdf.xacro"/> 
   <!-- Import controller -->
-  <xacro:include filename="$(find description)/urdf/joint_traj_controller.xacro"/>
+  <xacro:include filename="$(find description)/urdf/effort_joint.xacro"/>
   <!-- Import gazebo references + pose -->
   <xacro:include filename="$(find description)/urdf/ernest_gazebo.xacro" /> 
 
   <xacro:ernest_gazebo/>
   <xacro:ernest/>
-  <xacro:joint_traj_controller/>
+  <xacro:effort_joint/>
 </robot>

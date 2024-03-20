@@ -331,6 +331,7 @@ class Pivot4wsKinematics(object):
 
     def solve_mpc(self, solver, state, args, n_states, n_controls, xp0, up0):
         state[3] = self.theta
+        
         args['p'] = ca.vertcat(
                     state,    # current state
                     xp0,   # target state

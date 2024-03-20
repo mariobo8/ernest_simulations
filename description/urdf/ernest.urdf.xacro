@@ -56,7 +56,7 @@
   </link>
 
   <joint name="pivot_joint" type="revolute">
-    <limit effort="5.0" lower="-0.8" upper="0.8" velocity="2"/>
+    <limit effort="100.0" lower="-0.8" upper="0.8" velocity="2"/>
     <origin rpy="0 0 3.13911747329568" xyz="0 0.4015 -0.00700000000000001"/>
     <parent link="chassis"/>
     <child link="pivot"/>
@@ -87,7 +87,7 @@
   </link>
 
   <joint name="bogie_joint" type="revolute">
-    <limit effort="1000" lower="-1" upper="1" velocity="30"/>
+    <limit effort="100" lower="-1" upper="1" velocity="30"/>
     <origin rpy="1.5707963267949 0.000529942236827729 0" xyz="0 -0.101800622452903 -0.0640000000000083"/>
     <parent link="pivot"/>
     <child link="bogie"/>
@@ -116,7 +116,7 @@
   </link>
 
   <joint name="front_left_steer_joint" type="revolute">
-    <limit effort="50" lower="-0.8" upper="0.8" velocity="30"/>
+    <limit effort="100" lower="-1.57" upper="1.57" velocity="30"/>
     <origin rpy="-1.5707963267949 0.0208107531087718 0" xyz="0.399593578400315 0.05 0.0507993775470971"/>
     <parent link="bogie"/>
     <child link="front_left_steer"/>
@@ -171,7 +171,7 @@
   </link>
 
   <joint name="front_right_steer_joint" type="revolute">
-    <limit effort="50" lower="-0.8" upper="0.8" velocity="30"/>
+    <limit effort="100" lower="-1.57" upper="1.57" velocity="30"/>
     <origin rpy="-1.57079632679545 -1.56850410535828 0" xyz="-0.399593578400314 0.05 0.0507993775470972"/>
     <parent link="bogie"/>
     <child link="front_right_steer"/>
@@ -226,7 +226,7 @@
     </collision>
   </link>
   <joint name="rear_right_steer_joint" type="revolute">
-    <limit effort="50" lower="-0.8" upper="0.8" velocity="30"/>
+    <limit effort="100" lower="-1.57" upper="1.57" velocity="30"/>
     <origin rpy="0 0 0" xyz="0.4038086578651 -0.313808657865102 -0.01666"/>
     <parent link="chassis"/>
     <child link="rear_right_steer"/>
@@ -279,7 +279,7 @@
     </collision>
   </link>
   <joint name="rear_left_steer_joint" type="revolute">
-    <limit effort="50" lower="-0.8" upper="0.8" velocity="30"/>
+    <limit effort="100" lower="-1.57" upper="1.57" velocity="30"/>
     <origin rpy="0 0 -1.56733797587802" xyz="-0.403808657865099 -0.313808657865101 -0.01666"/>
     <parent link="chassis"/>
     <child link="rear_left_steer"/>

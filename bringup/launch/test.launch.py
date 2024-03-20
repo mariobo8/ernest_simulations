@@ -54,12 +54,17 @@ def generate_launch_description():
 
 
 
-    load_velocity_controller_controller = ExecuteProcess(
+    load_wheel_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller', '--set-state', 'start',
-             'velocity_controller'],
+             'wheel_controller'],
         output='screen'
     )
 
+    load_steer_controller = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller', '--set-state', 'start',
+             'steer_controller'],
+        output='screen'
+    )
     # Get URDF via xacro
     robot_description_content = Command(
         [
@@ -93,7 +98,7 @@ def generate_launch_description():
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=load_joint_state_controller,
-                on_exit=[load_velocity_controller_controller],
+                on_exit=[load_wheel_controller, load_steer_controller],
             )
         ),      
     ])

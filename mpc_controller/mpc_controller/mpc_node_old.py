@@ -6,6 +6,7 @@ import rclpy
 from rclpy.node import Node
 
 import csv
+from .pid_node import PidMotor 
 from .pivot_4ws_kinematics import Pivot4wsKinematics as pfws_mpc
 from .pivot_kinematics import Pivot4wsKinematics as p_mpc
 from .fws_kinematics import fwsKinematics as fws_mpc
@@ -13,7 +14,6 @@ from .ackermann_kinematics import AckermannKinematics as ack_mpc
 
 import math
 from .utils import *
-from sensor_msgs.msg import JointState
 from std_msgs.msg import Float64MultiArray
 from nav_msgs.msg import Odometry
 
@@ -23,6 +23,7 @@ class PathTrackingMPC(Node):
     def __init__(self):
         super().__init__('path_tracking_MPC')
         self.mpc_inst = pfws_mpc()
+        self.pid_motor = PidMotor()
         self.xp_0 = self.mpc_inst.start
         self.alpha_0 = 0.0 
         self.input_sequence = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
@@ -33,7 +34,7 @@ class PathTrackingMPC(Node):
         [self.solver, self.args, self.n_states, self.n_controls, self.f] \
             = self.mpc_inst.set_solver()
         self.set_subscribers_publishers()
-
+        self.torque_pid()
     
     def save_data(self):
         current_dir = os.path.dirname(os.path.realpath(__file__))
@@ -48,12 +49,13 @@ class PathTrackingMPC(Node):
             self.mpc_inst.ref, fmt='%f', delimiter='\t')
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'prediction.txt'),
             self.mpc_inst.pred, fmt='%f', delimiter='\t')
-        self.get_logger().info("saved")
+        print("saved!")
 
 
+    # Callbacks Section
     def pose_sub_cb(self, msg):
         start_time = time.time()
-        print("callback padre ")
+
         #self.pose_ts = msg.header.stamp.sec + 1e-9 * msg.header.stamp.nanosec
         x = msg.pose.pose.position.x + self.xp_0
         y = msg.pose.pose.position.y 
@@ -66,10 +68,6 @@ class PathTrackingMPC(Node):
         
         self.mpc_inst.x0 = np.array([float(x),float(y),float(psi), float(0.0)])
         [self.velocity_input, self.steering_input] = self.create_control_message()
-        #self.velocity_input = Float64MultiArray()
-        #self.steering_input = Float64MultiArray()
-        #self.velocity_input.data = [0.0, 0.0, 0.0, 0.0]
-        #self.steering_input.data = [0.0, 0.0, 0.0, 0.0, 0.0]
 
         end_time = time.time()
         elapsed_time = end_time - start_time
@@ -77,26 +75,20 @@ class PathTrackingMPC(Node):
         if elapsed_time > 0.1:time.sleep(0.0)
         else: time.sleep(0.1 - elapsed_time)
         self.time_step.append(elapsed_time)
-        print("Publishing ref")
-        self.ref_vel_pub.publish(self.velocity_input)
-        self.ref_steer_pub.publish(self.steering_input)
-
-        #self.get_logger().info('Switch value: %s' %self.switch)
+        self.vel_pub.publish(self.velocity_input)
+        self.steer_pub.publish(self.steering_input)
         if self.switch: 
-            self.get_logger().info("saving")
             self.save_data()
             time.sleep(2)
-            rclpy.shutdown()
-        
+            #rclpy.shutdown()
 
-
+ 
     # End: Callbacks Section
 
     def set_subscribers_publishers(self):
-        self.pose_sub = self.create_subscription(Odometry, '/odom', self.pose_sub_cb, 10)
-        self.ref_vel_pub = self.create_publisher(Float64MultiArray, '/ref_vel_commands',10)
-        self.ref_steer_pub = self.create_publisher(Float64MultiArray, '/ref_steer_commands',10)
-
+        self.pose_sub = self.create_subscription(Odometry, '/p3d/odom', self.pose_sub_cb, 10)
+        self.vel_pub = self.create_publisher(Float64MultiArray, '/velocity_controller/commands', 10)
+        self.steer_pub = self.create_publisher(Float64MultiArray, '/position_controller/commands', 10)
 
     def create_control_message(self):
         velocity_input = Float64MultiArray()
@@ -118,18 +110,18 @@ class PathTrackingMPC(Node):
 
             self.input_sequence = np.vstack([self.input_sequence, input])
             self.state_sequence = np.vstack([self.state_sequence, self.mpc_inst.x0])
-            
+
             velocity_input.data = [input[0]/0.14, input[1]/0.14, input[2]/0.14, input[3]/0.14] 
-            print(velocity_input.data)
             steering_input.data = [-input[4], -input[4], -input[5], -input[5], -input[6]]
         return velocity_input, steering_input
     
 
 def main(args=None):
     rclpy.init(args=args)
-    mpc = PathTrackingMPC()
-    rclpy.spin(mpc)
-    mpc.destroy_node()
+    dmpc = PathTrackingMPC()
+
+    rclpy.spin(dmpc)
+    dmpc.destroy_node()
     rclpy.shutdown()
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 
 
 # Import sub.py
-from ..mpc_controller.mpc_node import *
+from ..mpc_controller.mpc_node_old import *
 
 
 #if __name__ == "__main__":
