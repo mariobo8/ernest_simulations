@@ -7,7 +7,7 @@ from rclpy.node import Node
 
 import csv
 import math
-from std_msgs.msg import Float64MultiArray
+from std_msgs.msg import Float64MultiArray, Bool
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import WrenchStamped
 from sensor_msgs.msg import JointState
@@ -18,8 +18,6 @@ class TorqueSensing(Node):
     def __init__(self):
         super().__init__('torque_sensing')
         self.time_step = [0.0]
-        self.velocity_input = Float64MultiArray()
-        self.steering_input = Float64MultiArray()
         self.time = time.time()
         self.set_subscribers_publishers()
         self.i = 0
@@ -71,6 +69,12 @@ class TorqueSensing(Node):
         # Rear Right wheel 
         Mz = msg.wrench.torque.z
         self.rr_wheel_force.append(Mz)
+        self.iter += 1
+        if self.iter > 1000:
+            self.save()
+            print('saved')
+            rclpy.shutdown()
+
         
 
     # Callbacks Section
@@ -100,18 +104,19 @@ class TorqueSensing(Node):
             steer_force, fmt='%f', delimiter='\t')
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'wheel_torque.txt'),
             wheel_force, fmt='%f', delimiter='\t')
-        print("saved!")
+        self.get_logger().info("torque saved")
                         
 
-
-        if self.iter > 0.8: 
+    def switch_cb(self, msg):
+        if msg.data: 
             print('saving')
             self.save()
             print('saved')
             rclpy.shutdown()
- 
+
 
     def set_subscribers_publishers(self):
+        self.switch_sub = self.create_subscription(Bool, '/switch_status', self.switch_cb, 10)
         self.fl_wheel_sub = self.create_subscription(WrenchStamped, '/fl_wheel_sensor', self.fl_wheel_cb, 10)
         self.fr_wheel_sub = self.create_subscription(WrenchStamped, '/fr_wheel_sensor', self.fr_wheel_cb, 10)
         self.rl_wheel_sub = self.create_subscription(WrenchStamped, '/rl_wheel_sensor', self.rl_wheel_cb, 10)
@@ -126,9 +131,9 @@ class TorqueSensing(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    dmpc = TorqueSensing()
-    rclpy.spin(dmpc)
-    dmpc.destroy_node()
+    torque = TorqueSensing()
+    rclpy.spin(torque)
+    torque.destroy_node()
     rclpy.shutdown()
 
 if __name__ == "__main__":

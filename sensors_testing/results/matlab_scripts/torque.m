@@ -1,7 +1,7 @@
 clearvars; clc; close all;
 %% loading
-steer_torque = fullfile(pwd, '../steer_torque.txt'); % Paths Folder
-wheel_torque = fullfile(pwd, '../wheel_torque.txt'); 
+steer_torque = fullfile(pwd, '../../../mpc_controller/results/steer_torque.txt'); % Paths Folder
+wheel_torque = fullfile(pwd, '../../../mpc_controller/results/wheel_torque.txt'); 
 load(steer_torque)
 load(wheel_torque)
 time = 0:0.001:.799;
@@ -18,7 +18,7 @@ rl_wheel = wheel_torque(:,3);
 rr_wheel = wheel_torque(:,4);
 %% plot
 figure
-plot(fl_steer-mean(fr_steer))
+plot(fl_steer)
 figure
 plot(fr_steer)
 figure

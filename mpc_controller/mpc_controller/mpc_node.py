@@ -14,7 +14,7 @@ from .ackermann_kinematics import AckermannKinematics as ack_mpc
 import math
 from .utils import *
 from sensor_msgs.msg import JointState
-from std_msgs.msg import Float64MultiArray
+from std_msgs.msg import Float64MultiArray, Bool
 from nav_msgs.msg import Odometry
 
 
@@ -30,6 +30,7 @@ class PathTrackingMPC(Node):
         self.time_step = [0.0]
         self.b = 0.4
         self.switch = False
+        #self.switch = False
         [self.solver, self.args, self.n_states, self.n_controls, self.f] \
             = self.mpc_inst.set_solver()
         self.set_subscribers_publishers()
@@ -37,7 +38,7 @@ class PathTrackingMPC(Node):
     
     def save_data(self):
         current_dir = os.path.dirname(os.path.realpath(__file__))
-        relative_folder_path = "../results/pivot"
+        relative_folder_path = "../results/4ws_pivot"
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'input.txt'),
             self.input_sequence, fmt='%f', delimiter='\t')
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'state.txt'),
@@ -80,12 +81,14 @@ class PathTrackingMPC(Node):
         print("Publishing ref")
         self.ref_vel_pub.publish(self.velocity_input)
         self.ref_steer_pub.publish(self.steering_input)
-
-        #self.get_logger().info('Switch value: %s' %self.switch)
+        #publish the status of the switch on a topic
+        self.get_logger().info("saved %s" % type(self.switch))
+        self.switch_pub.publish(Bool(data=self.switch))
+        self.get_logger().info('Switch value: %s' %self.switch)
         if self.switch: 
             self.get_logger().info("saving")
             self.save_data()
-            time.sleep(2)
+            time.sleep(3)
             rclpy.shutdown()
         
 
@@ -96,6 +99,7 @@ class PathTrackingMPC(Node):
         self.pose_sub = self.create_subscription(Odometry, '/odom', self.pose_sub_cb, 10)
         self.ref_vel_pub = self.create_publisher(Float64MultiArray, '/ref_vel_commands',10)
         self.ref_steer_pub = self.create_publisher(Float64MultiArray, '/ref_steer_commands',10)
+        self.switch_pub = self.create_publisher(Bool, '/switch_status',10)
 
 
     def create_control_message(self):
