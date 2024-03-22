@@ -9,6 +9,7 @@ import time
 import os 
 import casadi as ca
 import numpy as np
+import rclpy
 
 
 class fwsKinematics(object):
@@ -16,7 +17,7 @@ class fwsKinematics(object):
         self.N = 10
         self.dt = 0.1
         self.theta = 0
-        [self.x_p, self.y_p, self.arc_length] = self.path()
+        [self.x_p, self.y_p, self.arc_length] = self.path(file_name = "std_path.txt")
         self.start = self.x_p[0]
         self.x0 = ca.DM([self.x_p[0], self.y_p[0], 0.0, self.theta])  
         self.X0 = ca.repmat(self.x0, 1, self.N+1)     
@@ -27,18 +28,24 @@ class fwsKinematics(object):
         self.u0 = ca.DM.zeros((5, self.N))
         self.up0 =ca.DM.zeros(5,1)
         self.pred = np.zeros((1,4))
-        self.ref = np.zeros((1,3))
         
+        self.ref = np.zeros((1,3))
+        self.x_r = ([self.x_p[0], self.y_p[0], 0.0, 0.0])
+        self.b = 0.4 #[m]
+        self.l_f = 0.16
+        self.l_r = 0.71
+        self.wheel_radius = 0.15
 
-    def dimensions(self):
-        l_f = 0.16
-        l_r = 0.71
-        wheel_radius = 0.14
-        return l_f, l_r, wheel_radius
-
-    
+    def make_vel(self, vf, vr, alpha, b):
+        beta = np.arctan(( self.l_r * sin(alpha)) / (self.l_f + self.l_r * cos(alpha)))
+        #R = (self.l_f + self.l_r) / (sin(beta) + sin(alpha - beta)) 
+        v_fl = vf
+        v_fr = vf
+        v_rl = vr
+        v_rr = vr
+        return v_fl, v_fr, v_rl, v_rr
+        
     def kin_model(self):
-        [l_f, l_r, _] = self.dimensions()
         # Define state variables
         x = ca.SX.sym('x')
         y = ca.SX.sym('y')
@@ -67,22 +74,24 @@ class fwsKinematics(object):
         )
         n_controls = controls.numel()
         
-        beta = np.arctan((l_f * np.tan(delta_r) + l_r * np.tan(delta_f))\
-                        / (l_f + l_r))
+        beta = np.arctan((self.l_f * np.tan(delta_r) + self.l_r * np.tan(delta_f))\
+                        / (self.l_f + self.l_r))
         v = (v_f * cos(delta_f) + v_r * cos(delta_r)) / (2 * cos(beta))
         # righthand-side function
         RHS = ca.vertcat(v*cos(psi + beta), v*sin(psi + beta),
                          v * (np.tan(delta_f) * cos(beta) \
-                          - np.tan(delta_r) * cos(beta)) / (l_f + l_r),
+                          - np.tan(delta_r) * cos(beta)) / (self.l_f + self.l_r),
                          virtual_v)
         ## to change
         # maps controls from [input] to [states].T
         f = ca.Function('f', [states, controls], [RHS])
         return states, controls, n_states, n_controls ,f, s
     
-    def path(self):
-        path = os.path.dirname(os.path.realpath(__file__))
-        s_shape_path = np.loadtxt(str(path) + '/std_path.txt')
+    def path(self, file_name):
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        relative_path = "../path"
+        file_path = os.path.join(current_dir, relative_path, file_name)
+        s_shape_path = np.loadtxt(file_path)
         x_p = s_shape_path[:,0]
         y_p = s_shape_path[:,1]
         arc_length = s_shape_path[:,2]
@@ -124,7 +133,7 @@ class fwsKinematics(object):
         U = ca.SX.sym('U', n_controls, N)
 
         # coloumn vector for storing initial state and target state
-        P = ca.SX.sym('P', n_states + n_states*N + n_controls)
+        P = ca.SX.sym('P', n_states + n_states + n_controls)
 
         # state weights matrix (Q_X, Q_Y, Q_THETA)
         Q = ca.diagcat(Q_x, Q_y, Q_psi, Q_s)
@@ -152,20 +161,21 @@ class fwsKinematics(object):
             vf = U[0,k]; vr = U[1,k]; d_f = U[2,k]; d_r = U[3,k]
             if k == (self.N-1): con_l = con
             else: con_l = U[:,k+1]
-            i_state = slice((k*4+4), (k*4+8))
+            i_state = slice(4, 8)
 
             obj = obj \
                 + (st - P[i_state]).T @ Q @ (st - P[i_state]) \
                 + (con).T @ R @ (con) \
                 + (con - con_l).T @ W @ (con - con_l) \
                 + m*(vf*cos(d_f)- vr*cos(d_r))**2
+            
             st_next = X[:, k+1]
             f_value = f(st, con)
             st_next_euler = st + self.dt * f_value
             g1 = ca.vertcat(g1, st_next - st_next_euler)
             if k == (self.N-1): g2 = ca.vertcat(g2, U[:,k] - U[:,k])
             else: g2 = ca.vertcat(g2, U[:,k] - U[:,k+1])
-        obj = obj - eps/2*(st[3])**2 + gamma/2*(st[2] - P[k*4+6])**2
+        obj = obj - eps/2*(st[3])**2 + gamma/2*(st[2] - P[6])**2
 
         g = ca.vertcat(g1, g2[:-5])
         OPT_variables = ca.vertcat(
@@ -214,6 +224,7 @@ class fwsKinematics(object):
         ubx[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = delta_max
         ubx[n_states*(N+1)+3:n_states*(N+1)+n_controls*N:n_controls] = delta_max                                                                         # v upper bound for all V
         ubx[n_states*(N+1)+4:n_states*(N+1)+n_controls*N:n_controls] = virtual_v_max  
+        
         lbg = ca.DM.zeros((n_states*(N+1)+n_controls*N, 1))  # constraints lower bound
         ubg = ca.DM.zeros((n_states*(N+1)+n_controls*N, 1))  # constraints upper bound
     
@@ -294,19 +305,20 @@ class fwsKinematics(object):
             xp0.extend([x_int, y_int, psi_int, 0])
             ref.append([float(x_int), float(y_int), float(psi_int)])
         self.ref = np.vstack([self.ref, ref])
-        xp0.extend([x_int, y_int, psi_int, 0])
         
+        xp0.extend([x_int, y_int, psi_int, 0])        
         up0 = u[1,:].T
         xp0 = Arr2DM(xp0)
-        return  u0, xp0, up0, s
+        x_r = ([x_int, y_int, psi_int, 0])
+        return  u0, xp0, up0, s, x_r
 
 
-    def solve_mpc(self, solver, state, args, n_states, n_controls, xp0, up0):
+    def solve_mpc(self, solver, state, args, n_states, n_controls, x_r, up0):
         state[3] = self.theta
 
         args['p'] = ca.vertcat(
                     state,    # current state
-                    xp0,   # target state
+                    x_r,   # target state
                     up0,
                     )
 
@@ -326,17 +338,22 @@ class fwsKinematics(object):
         )
         u = ca.reshape(sol['x'][n_states * (self.N + 1):], n_controls, self.N)
         self.X0 = ca.reshape(sol['x'][: n_states * (self.N+1)], n_states, self.N+1)
-
+        #self.get_logger().info("solved!")
         inp = DM2Arr(u[:, 0])
         self.pred = np.vstack([self.pred, self.X0.T])
         
-        input = [float(inp[0]), float(inp[1]), float(inp[2]),
-                  float(inp[3]), 0.0, float(inp[4])]
-       
-        [self.u0, new_xp0, new_up0, self.theta] = \
+        v_f = float(inp[0]); v_r = float(inp[1]); alpha = 0.0
+
+        [v_fl, v_fr, v_rl, v_rr] = self.make_vel(v_f, v_r, alpha, self.b)
+
+        input = [v_fl, v_fr, v_rl, v_rr, float(inp[2]),
+                  float(inp[3]), alpha, float(inp[4])]
+        
+
+        [self.u0, new_xp0, new_up0, self.theta, new_x_r] = \
             self.shift_timestep(u, self.X0, self.x_p, self.y_p, self.arc_length, inp)
 
-        return input, new_xp0, new_up0
+        return input, new_x_r, new_up0
 
 
     

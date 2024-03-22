@@ -3,6 +3,7 @@
 <xacro:include filename="$(find description)/urdf/materials.xacro"/>
 
 <xacro:macro name="ernest"> 
+
   <link name="base_link">
   </link>
 
@@ -22,14 +23,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://description/meshes/chassis.STL"/>
+        <mesh filename="file://$(find description)/meshes/chassis.STL"/>
       </geometry>
       <material name="white"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://description/meshes/chassis.STL"/>
+        <mesh filename="file://$(find description)/meshes/chassis.STL"/>
       </geometry>
     </collision> 
   </link>
@@ -43,20 +44,20 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://description/meshes/pivot.STL"/>
+        <mesh filename="file://$(find description)/meshes/pivot.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://description/meshes/pivot.STL"/>
+        <mesh filename="file://$(find description)/meshes/pivot.STL"/>
       </geometry>
     </collision>
   </link>
 
   <joint name="pivot_joint" type="revolute">
-    <limit effort="100.0" lower="-0.8" upper="0.8" velocity="2"/>
+    <limit effort="100.0" lower="-0.8" upper="0.8" velocity="10"/>
     <origin rpy="0 0 3.13911747329568" xyz="0 0.4015 -0.00700000000000001"/>
     <parent link="chassis"/>
     <child link="pivot"/>
@@ -74,14 +75,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://description/meshes/bogie.STL"/>
+        <mesh filename="file://$(find description)/meshes/bogie.STL"/>
       </geometry>
       <material name="white"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://description/meshes/bogie.STL"/>
+        <mesh filename="file://$(find description)/meshes/bogie.STL"/>
       </geometry>
     </collision>
   </link>
@@ -103,14 +104,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://description/meshes/front_left_steer.STL"/>
+        <mesh filename="file://$(find description)/meshes/front_left_steer.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://description/meshes/front_left_steer.STL"/>
+        <mesh filename="file://$(find description)/meshes/front_left_steer.STL"/>
       </geometry>
     </collision>
   </link>
@@ -133,17 +134,18 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://description/meshes/front_left_wheel.STL"/>
+        <mesh filename="file://$(find description)/meshes/front_left_wheel.STL"/>
       </geometry>
       <material name="grey"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0.0"/>
       <geometry>
-          <mesh filename="package://description/meshes/front_left_wheel.STL"/>
+          <mesh filename="file://$(find description)/meshes/front_left_wheel.STL"/>
       </geometry>
     </collision>
   </link>
+
   <joint name="front_left_wheel_joint" type="continuous">
     <origin rpy="1.57079632679491 0.0288958987838113 1.5707963267949" xyz="0 0 -0.214560184613926"/>
     <parent link="front_left_steer"/>
@@ -158,14 +160,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://description/meshes/front_right_steer.STL"/>
+        <mesh filename="file://$(find description)/meshes/front_right_steer.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://description/meshes/front_right_steer.STL"/>
+        <mesh filename="file://$(find description)/meshes/front_right_steer.STL"/>
       </geometry>
     </collision>
   </link>
@@ -188,14 +190,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://description/meshes/front_right_wheel.STL"/>
+        <mesh filename="file://$(find description)/meshes/front_right_wheel.STL"/>
       </geometry>
       <material name="grey"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0.0"/>
       <geometry>
-        <mesh filename="package://description/meshes/front_right_wheel.STL"/>
+        <mesh filename="file://$(find description)/meshes/front_right_wheel.STL"/>
       </geometry>
     </collision>
   </link>
@@ -214,14 +216,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://description/meshes/rear_right_steer.STL"/>
+        <mesh filename="file://$(find description)/meshes/rear_right_steer.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://description/meshes/rear_right_steer.STL"/>
+        <mesh filename="file://$(find description)/meshes/rear_right_steer.STL"/>
       </geometry>
     </collision>
   </link>
@@ -242,14 +244,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://description/meshes/rear_right_wheel.STL"/>
+        <mesh filename="file://$(find description)/meshes/rear_right_wheel.STL"/>
       </geometry>
       <material name="grey"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0.0"/>
       <geometry>
-        <mesh filename="package://description/meshes/rear_right_wheel.STL"/>
+        <mesh filename="file://$(find description)/meshes/rear_right_wheel.STL"/>
       </geometry>
     </collision>
   </link>
@@ -267,14 +269,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://description/meshes/rear_left_steer.STL"/>
+        <mesh filename="file://$(find description)/meshes/rear_left_steer.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://description/meshes/rear_left_steer.STL"/>
+        <mesh filename="file://$(find description)/meshes/rear_left_steer.STL"/>
       </geometry>
     </collision>
   </link>
@@ -296,14 +298,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://description/meshes/rear_left_wheel.STL"/>
+        <mesh filename="file://$(find description)/meshes/rear_left_wheel.STL"/>
       </geometry>
       <material name="grey"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0.0"/>
       <geometry>
-        <mesh filename="package://description/meshes/rear_left_wheel.STL"/>
+        <mesh filename="file://$(find description)/meshes/rear_left_wheel.STL"/>
       </geometry>
     </collision>
   </link>

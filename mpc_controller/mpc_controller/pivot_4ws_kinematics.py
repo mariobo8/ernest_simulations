@@ -29,9 +29,8 @@ class Pivot4wsKinematics(object):
         self.pred = np.zeros((1,4))
         
         self.ref = np.zeros((1,3))
-        self.b = 0.4 #[m]
         self.x_r = ([self.x_p[0], self.y_p[0], 0.0, 0.0])
-
+        self.b = 0.4 #[m]
         self.l_f = 0.16
         self.l_r = 0.71
         self.wheel_radius = 0.15
@@ -45,9 +44,6 @@ class Pivot4wsKinematics(object):
         v_rl = vr*(1 - b / (R * cos(beta)))
         v_rr = vr*(1 + b / (R * cos(beta)))
         return v_fl, v_fr, v_rl, v_rr
-    
-
-
     
     def kin_model(self):
         # Define state variables

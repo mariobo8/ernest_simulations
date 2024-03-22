@@ -6,6 +6,7 @@ import rclpy
 from rclpy.node import Node
 
 import csv
+
 from .pivot_4ws_kinematics import Pivot4wsKinematics as pfws_mpc
 from .pivot_kinematics import Pivot4wsKinematics as p_mpc
 from .fws_kinematics import fwsKinematics as fws_mpc
@@ -22,7 +23,7 @@ class PathTrackingMPC(Node):
 
     def __init__(self):
         super().__init__('path_tracking_MPC')
-        self.mpc_inst = pfws_mpc()
+        self.mpc_inst = fws_mpc()
         self.xp_0 = self.mpc_inst.start
         self.alpha_0 = 0.0 
         self.input_sequence = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
@@ -54,7 +55,8 @@ class PathTrackingMPC(Node):
 
     def pose_sub_cb(self, msg):
         start_time = time.time()
-        print("callback padre ")
+        self.get_logger().info("going to solve")
+
         #self.pose_ts = msg.header.stamp.sec + 1e-9 * msg.header.stamp.nanosec
         x = msg.pose.pose.position.x + self.xp_0
         y = msg.pose.pose.position.y 
@@ -71,7 +73,7 @@ class PathTrackingMPC(Node):
         #self.steering_input = Float64MultiArray()
         #self.velocity_input.data = [0.0, 0.0, 0.0, 0.0]
         #self.steering_input.data = [0.0, 0.0, 0.0, 0.0, 0.0]
-
+        self.get_logger().info("solved!")
         end_time = time.time()
         elapsed_time = end_time - start_time
         print("time step %f" % elapsed_time)

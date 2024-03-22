@@ -69,11 +69,11 @@ class TorqueSensing(Node):
         # Rear Right wheel 
         Mz = msg.wrench.torque.z
         self.rr_wheel_force.append(Mz)
-        self.iter += 1
-        if self.iter > 1000:
-            self.save()
-            print('saved')
-            rclpy.shutdown()
+       # self.iter += 1
+        #if self.iter > 1000:
+         #   self.save()
+          #  print('saved')
+           # rclpy.shutdown()
 
         
 

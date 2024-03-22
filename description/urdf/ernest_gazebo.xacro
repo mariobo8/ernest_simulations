@@ -8,12 +8,14 @@
       </plugin>
   </gazebo>
 <!-- Include Gazebo plugin for 3D pose -->
+
   <gazebo>
     <plugin filename="libgazebo_ros_p3d.so" name="gazebo_ros_p3d">
       <ros>
           <remapping>odom:=odom</remapping>
       </ros>
       <frame_name>map</frame_name>
+
       <body_name>base_link</body_name>
       <update_rate>1000.0</update_rate>
       <gaussian_noise>0.0</gaussian_noise>
@@ -158,9 +160,8 @@
   
   <gazebo reference="front_left_wheel">
     <material>Gazebo/Grey</material>
-    <mu1>1.0</mu1>
-    <mu2>1.0</mu2>
-    <fdir1>1 0 0</fdir1>
+    <mu1>2.0</mu1>
+    <mu2>2.0</mu2>
     <kp>10000000.0</kp>
     <kd>10.0</kd>
     <minDepth>0.01</minDepth>
@@ -169,9 +170,8 @@
 
   <gazebo reference="front_right_wheel">
     <material>Gazebo/Grey</material>
-    <mu1>1.0</mu1>
-    <mu2>1.0</mu2>
-    <fdir1>1 0 0</fdir1>
+    <mu1>2.0</mu1>
+    <mu2>2.0</mu2>
     <kp>10000000.0</kp>
     <kd>10.0</kd>
     <minDepth>0.01</minDepth>
@@ -180,8 +180,8 @@
 
   <gazebo reference="rear_left_wheel">
     <material>Gazebo/Grey</material>
-    <mu1>1.0</mu1>
-    <mu2>1.0</mu2>
+    <mu1>2.0</mu1>
+    <mu2>2.0</mu2>
     <kp>10000000.0</kp>
     <kd>10.0</kd>
     <minDepth>0.01</minDepth>
@@ -190,8 +190,8 @@
   
   <gazebo reference="rear_right_wheel">
     <material>Gazebo/Grey</material>
-    <mu1>1.0</mu1>
-    <mu2>1.0</mu2>
+    <mu1>2.0</mu1>
+    <mu2>2.0</mu2>
     <kp>10000000.0</kp>
     <kd>10.0</kd>
     <minDepth>0.01</minDepth>

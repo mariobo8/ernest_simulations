@@ -34,7 +34,7 @@ if(BUILD_TESTING)
 endif()
 
 install(
-  DIRECTORY  launch config
+  DIRECTORY  launch config src
   DESTINATION share/${PROJECT_NAME}
 )
 

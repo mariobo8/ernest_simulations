@@ -30,5 +30,9 @@ steer_controller:
       - rear_right_steer_joint
       - pivot_joint
 
+joint_state:
+  ros__parameters:
+    joints:
+     - bogie_joint
 
 
