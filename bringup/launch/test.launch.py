@@ -84,12 +84,9 @@ def generate_launch_description():
         parameters=[robot_description]
     )
 
-    node_joint_state_publisher = Node(
-        package='joint_state_publisher',
-        executable='joint_state_publisher',
-        output='screen',
-        parameters=[robot_description]
-
+    node_odom_to_tf = Node(
+        package='bringup',
+        executable='odom_to_tf',
     )
 
 
@@ -101,7 +98,7 @@ def generate_launch_description():
     return LaunchDescription([
         gazebo,
         node_robot_state_publisher,
-        #node_joint_state_publisher,
+        node_odom_to_tf,
         spawn_entity,
         load_joint_state_controller,
         RegisterEventHandler(

@@ -20,6 +20,8 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(nav_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
 
 if(BUILD_TESTING)
@@ -32,6 +34,14 @@ if(BUILD_TESTING)
   #set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
+
+add_executable(odom_to_tf src/odom_to_tf.cpp)
+ament_target_dependencies(odom_to_tf rclcpp tf2_ros nav_msgs geometry_msgs)
+
+install(TARGETS
+  odom_to_tf
+  DESTINATION lib/${PROJECT_NAME}
+)
 
 install(
   DIRECTORY  launch config src
