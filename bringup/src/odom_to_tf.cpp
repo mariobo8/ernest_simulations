@@ -11,20 +11,14 @@ class OdomToTF : public rclcpp::Node {
     public:
         OdomToTF() : Node("odom_to_tf") {
             std::string odom_topic;
-            frame_id = this->declare_parameter("frame_id", std::string("world"));
+            frame_id = this->declare_parameter("frame_id", std::string("odom"));
             child_frame_id = this->declare_parameter("child_frame_id", std::string("base_link"));
-            RCLCPP_INFO(this->get_logger(), "odom_topic set to %s", odom_topic.c_str());
+            RCLCPP_INFO(this->get_logger(), "odom_topic: %s", odom_topic.c_str());
             if (frame_id != "") {
-                RCLCPP_INFO(this->get_logger(), "frame_id set to %s", frame_id.c_str());
-            }
-            else {
-                RCLCPP_INFO(this->get_logger(), "frame_id was not set. The frame_id of the odom message will be used.");
+                RCLCPP_INFO(this->get_logger(), "frame_id: %s", frame_id.c_str());
             }
             if (child_frame_id != "") {
                 RCLCPP_INFO(this->get_logger(), "child_frame_id set to %s", child_frame_id.c_str());
-            }
-            else {
-                RCLCPP_INFO(this->get_logger(), "child_frame_id was not set. The child_frame_id of the odom message will be used.");
             }
             sub_ = this->create_subscription<nav_msgs::msg::Odometry>("/odom", rclcpp::SensorDataQoS(), std::bind(&OdomToTF::odomCallback, this, _1));
             tfb_ = std::make_shared<tf2_ros::TransformBroadcaster>(this);

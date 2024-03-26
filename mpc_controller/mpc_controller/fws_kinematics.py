@@ -11,7 +11,6 @@ import casadi as ca
 import numpy as np
 import rclpy
 
-
 class fwsKinematics(object):
     def __init__(self):
         self.N = 10
@@ -36,14 +35,34 @@ class fwsKinematics(object):
         self.l_r = 0.71
         self.wheel_radius = 0.15
 
-    def make_vel(self, vf, vr, alpha, b):
-        beta = np.arctan(( self.l_r * sin(alpha)) / (self.l_f + self.l_r * cos(alpha)))
-        #R = (self.l_f + self.l_r) / (sin(beta) + sin(alpha - beta)) 
-        v_fl = vf
-        v_fr = vf
-        v_rl = vr
-        v_rr = vr
-        return v_fl, v_fr, v_rl, v_rr
+    def make_vel(self, vf, vr, d_f, d_r, alpha, b):
+        beta = np.arctan((self.l_f * np.tan(d_r) + self.l_r * np.tan(d_f)*cos(alpha)+
+                          sin(alpha)*self.l_r) / (self.l_f + self.l_r))
+        #if alpha + d_f + d_r == 0.0: 
+        #    v_fl = vf; v_fr = vf
+        #    v_rl = vr; v_rr = vr
+        #    d_fl = d_f; d_fr = d_f
+        #    d_rl = d_r; d_rr = d_r
+        #else:
+        R = (self.l_f + self.l_r) / (np.tan(d_f)*cos(alpha+beta)+sin(alpha-beta)
+                                        + sin(beta) - np.tan(d_r)*cos(beta)) 
+        R_fr = np.sqrt((R*cos(beta) + (b - self.l_f*np.tan(alpha))*cos(alpha))**2 + 
+                    (R*sin(beta) + self.l_f*cos(alpha) + b*sin(beta))**2)
+        R_fl = np.sqrt((R*cos(beta) - (b + self.l_f*np.tan(alpha))*cos(alpha))**2 + 
+                    (R*sin(beta) + self.l_f*cos(alpha) - b*sin(beta))**2)
+        R_f = np.sqrt((R*cos(beta) - self.l_f*sin(alpha))**2 + (R*sin(beta + self.l_f*cos(alpha)))**2)
+        R_rl = np.sqrt((R*cos(beta) - b)**2 + (R*sin(beta) - self.l_r)**2)
+        R_rr = np.sqrt((R*cos(beta) + b)**2 + (R*sin(beta) - self.l_r)**2)
+        R_r = np.sqrt((R*cos(beta))**2 + (R*sin(beta) - self.l_r)**2)
+
+        v_fl = R_fl / R_f * vf; v_fr = R_fr / R_f * vf
+        v_rl = R_rl / R_r * vr; v_rr = R_rr / R_r * vr
+        d_fr = d_f - np.arcsin(b*sin(d_f)/R_fr)
+        d_fl = d_f + np.arcsin(b*sin(d_f)/R_fl)
+        d_rr = d_r - np.arcsin(b*sin(d_r)/R_rr)
+        d_rl = d_r + np.arcsin(b*sin(d_r)/R_rl)
+
+        return v_fl, v_fr, v_rl, v_rr, d_fl, d_fr, d_rl, d_rr
         
     def kin_model(self):
         # Define state variables
@@ -342,12 +361,17 @@ class fwsKinematics(object):
         inp = DM2Arr(u[:, 0])
         self.pred = np.vstack([self.pred, self.X0.T])
         
-        v_f = float(inp[0]); v_r = float(inp[1]); alpha = 0.0
+        v_f = float(inp[0]); v_r = float(inp[1])
+        delta_f = float(inp[2]); delta_r = float(inp[3])
+        alpha = 0.0; v_virt = float(inp[4])
 
-        [v_fl, v_fr, v_rl, v_rr] = self.make_vel(v_f, v_r, alpha, self.b)
+        [v_fl, v_fr, v_rl, v_rr, 
+        delta_fl, delta_fr, delta_rl, delta_rr] = self.make_vel(v_f, v_r, delta_f, delta_r, alpha, self.b)
 
-        input = [v_fl, v_fr, v_rl, v_rr, float(inp[2]),
-                  float(inp[3]), alpha, float(inp[4])]
+        input = [v_fl, v_fr, v_rl, v_rr, delta_fl,
+                 delta_fr, delta_rl, delta_rr, alpha, v_virt]
+
+
         
 
         [self.u0, new_xp0, new_up0, self.theta, new_x_r] = \

@@ -23,10 +23,10 @@ class PathTrackingMPC(Node):
 
     def __init__(self):
         super().__init__('path_tracking_MPC')
-        self.mpc_inst = fws_mpc()
+        self.mpc_inst = pfws_mpc()
         self.xp_0 = self.mpc_inst.start
         self.alpha_0 = 0.0 
-        self.input_sequence = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        self.input_sequence = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         self.state_sequence = [self.xp_0, 0.0, 0.0, 0.0]
         self.time_step = [0.0]
         self.b = 0.4
@@ -125,9 +125,9 @@ class PathTrackingMPC(Node):
             self.input_sequence = np.vstack([self.input_sequence, input])
             self.state_sequence = np.vstack([self.state_sequence, self.mpc_inst.x0])
             
-            velocity_input.data = [input[0]/0.14, input[1]/0.14, input[2]/0.14, input[3]/0.14] 
+            velocity_input.data = [input[0]/0.15, input[1]/0.15, input[2]/0.15, input[3]/0.15] 
             print(velocity_input.data)
-            steering_input.data = [-input[4], -input[4], -input[5], -input[5], -input[6]]
+            steering_input.data = [-input[4], -input[5], -input[6], -input[7], -input[8]]
         return velocity_input, steering_input
     
 

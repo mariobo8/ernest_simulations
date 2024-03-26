@@ -99,7 +99,7 @@ class TorqueSensing(Node):
         wheel_force = np.column_stack((fl_wheel, fr_wheel,
                                        rl_wheel, rr_wheel))
         current_dir = os.path.dirname(os.path.realpath(__file__))
-        relative_folder_path = "../results/"
+        relative_folder_path = "../results/4ws_pivot"
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'steer_torque.txt'),
             steer_force, fmt='%f', delimiter='\t')
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'wheel_torque.txt'),

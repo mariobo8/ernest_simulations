@@ -86,8 +86,7 @@ class Pivot4wsKinematics(object):
             virtual_v
         )
         n_controls = controls.numel()
-        #delta_f = delta_fl + delta_fr
-        #delta_r = delta_rl + delta_rr
+
         delta_f = 2*(delta_fl * delta_fr) / (delta_fl + delta_fr + 1e-1)
         delta_r = 2*(delta_rl * delta_rr) / (delta_rl + delta_rr + 1e-1)
 

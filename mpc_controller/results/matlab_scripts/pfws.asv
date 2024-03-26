@@ -1,8 +1,8 @@
 clearvars; clc; close all;
 %% loading
 load(fullfile(pwd, '../4ws_pivot/input.txt'))
-load(fullfile(pwd, '../4ws_pivot/time_step.txt'))
-load(fullfile(pwd, '../4ws_pivot/wheel_torque.txt'))
+load(fullfile(pwd, '../4ws_pivot/prediction.txt'))
+load(fullfile(pwd, '../4ws_pivot/reference.txt'))
 load(fullfile(pwd, '../4ws_pivot/state.txt'))
 load(fullfile(pwd, '../4ws_pivot/steer_torque.txt'))
 pred_k = load(fullfile(pwd, '../4ws_pivot/prediction.txt'));
