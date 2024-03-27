@@ -1,7 +1,7 @@
 import os
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import String, Float64MultiArray
+from std_msgs.msg import String, Float64MultiArray, Bool
 from sensor_msgs.msg import JointState
 import numpy as np
 
@@ -45,7 +45,9 @@ class PidController(Node):
         #pivot_joint
         self.kpp = 4000; self.kdp = 150; self.kip = 0.0
 
-        
+        #torque
+        self.wheel_torque = [0.0, 0.0, 0.0, 0.0]
+        self.steer_torque = [0.0, 0.0, 0.0, 0.0, 0.0]
 
     def ref_vel_sub_cb(self, msg):
         self.ref_vel = msg.data
@@ -61,23 +63,26 @@ class PidController(Node):
         
         [torque_vel, torque_steer] = self.pid_controller()
     
-
-        #torque_vel.data = ([0.0, 0.0, 0.0, 0.0])
-        #torque_steer.data = ([0.0,0.0, 0.0, 0.0, 0.0])
-        #self.get_logger().info("Publishing command")
         self.pub_wheel.publish(torque_vel)
         self.pub_steer.publish(torque_steer)
         self.iter += 1
-        #if self.iter > 2000:
-        #    self.save() 
-        #    print("saved")
-        #    rclpy.shutdown()
+
+
+    def switch_cb(self, msg):
+        if msg.data: 
+            print('saving')
+            self.save()
+            print('saved')
+            
 
     def save(self):
         current_dir = os.path.dirname(os.path.realpath(__file__))
-        relative_folder_path = "../results/pid_calibration"
-        np.savetxt(os.path.join(current_dir, relative_folder_path, 'step.txt'),
-                   self.steer_pos, fmt='%f')
+        relative_folder_path = "../results/4ws_pivot"
+        np.savetxt(os.path.join(current_dir, relative_folder_path, 'steer_effort.txt'),
+            self.steer_torque, fmt='%f', delimiter='\t')
+        np.savetxt(os.path.join(current_dir, relative_folder_path, 'wheel_effort.txt'),
+            self.wheel_torque, fmt='%f', delimiter='\t')
+        self.get_logger().info("torque saved")
         
     def pid_controller(self):
         torque_steer = Float64MultiArray(); torque_vel = Float64MultiArray()
@@ -139,42 +144,54 @@ class PidController(Node):
         #velocities
         index = msg.name.index("front_left_wheel_joint")
         fl_wheel = msg.velocity[index]
-        #fl_wheel_torque = msg.effrot[index]  
+        fl_wheel_torque = msg.effort[index]  
      
         index = msg.name.index("front_right_wheel_joint")
         fr_wheel = msg.velocity[index] 
-        #fr_wheel_torque = msg.effrot[index]
+        fr_wheel_torque = msg.effort[index]
 
         index = msg.name.index("rear_left_wheel_joint")
         rl_wheel = msg.velocity[index]
-        #rl_wheel_torque = msg.effrot[index]   
+        rl_wheel_torque = msg.effort[index]   
       
         index = msg.name.index("rear_right_wheel_joint")
         rr_wheel = msg.velocity[index]
-        #rr_wheel_torque = msg.effrot[index] 
+        rr_wheel_torque = msg.effort[index] 
 
         #positions
         index = msg.name.index("front_left_steer_joint")
         fl_steer = msg.position[index] 
-        #rl_steer_torque = msg.effrot[index]       
+        fl_steer_torque = msg.effort[index]  
+
         index = msg.name.index("front_right_steer_joint")
         fr_steer = msg.position[index]
-        #rl_steer_torque = msg.effrot[index] 
+        fr_steer_torque = msg.effort[index] 
+
         index = msg.name.index("rear_left_steer_joint")
         rl_steer = msg.position[index]
-        #rl_steer_torque = msg.effrot[index]         
+        rl_steer_torque = msg.effort[index] 
+
         index = msg.name.index("rear_right_steer_joint")
         rr_steer = msg.position[index]
-        #rl_steer_torque = msg.effrot[index]  
+        rr_steer_torque = msg.effort[index] 
+
         index = msg.name.index("pivot_joint")
         pivot = msg.position[index] 
+        pivot_torque = msg.effort[index]
+
         fb_vel.data = [fl_wheel, fr_wheel, rl_wheel, 
                           rr_wheel]
         fb_steer.data = [fl_steer, fr_steer, 
                            rl_steer, rr_steer, pivot]
         
+        wheel_torque = [fl_wheel_torque, fr_wheel_torque, rl_wheel_torque, rr_wheel_torque]
+        steer_torque = [fl_steer_torque, fr_steer_torque, rl_steer_torque, rr_steer_torque, pivot_torque]
+        self.wheel_torque = np.row_stack((self.wheel_torque, wheel_torque))
+        self.steer_torque = np.row_stack((self.steer_torque, steer_torque))
         return fb_vel, fb_steer
+    
     def set_subscribers_publishers(self):
+        self.switch_sub = self.create_subscription(Bool, '/switch_status', self.switch_cb, 10)
         self.fb_sub = self.create_subscription(JointState,'/joint_states',self.fb_sub_cb,10)
         self.ref_steer_sub = self.create_subscription(
                             Float64MultiArray, '/ref_vel_commands', self.ref_vel_sub_cb, 10)

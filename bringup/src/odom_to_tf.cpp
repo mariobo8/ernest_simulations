@@ -16,7 +16,7 @@ class OdomToTF : public rclcpp::Node {
             RCLCPP_INFO(this->get_logger(), "odom_topic: %s", odom_topic.c_str());
             if (frame_id != "") {
                 RCLCPP_INFO(this->get_logger(), "frame_id: %s", frame_id.c_str());
-            }
+            }               
             if (child_frame_id != "") {
                 RCLCPP_INFO(this->get_logger(), "child_frame_id set to %s", child_frame_id.c_str());
             }
