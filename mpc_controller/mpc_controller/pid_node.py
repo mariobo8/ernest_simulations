@@ -4,6 +4,7 @@ from rclpy.node import Node
 from std_msgs.msg import String, Float64MultiArray, Bool
 from sensor_msgs.msg import JointState
 import numpy as np
+import time
 
 
 
@@ -16,7 +17,7 @@ class PidController(Node):
         self.set_subscribers_publishers()
         self.steer_pos = [0.0]
         self.drive = 0.0
-        self.ref_vel = [0.0, 0.0, 0.0, 0.0]
+        self.ref_vel = [1.0, 1.0, 1.0, 1.0]
         self.ref_steer = [0.0, 0.0, 0.0, 0.0, 0.0]
         #self.ref_steer = [0.0, 0.0, 0.0, 0.0, 0.0]
         #pid stuff
@@ -26,8 +27,10 @@ class PidController(Node):
         self.rl_e_prev = 0; self.rl_e_tot = 0; self.prev_rl = 0
         self.rr_e_prev = 0; self.rr_e_tot = 0; self.prev_rr = 0
         #wheel velocity
-        self.kpv = 10.1; self.kdv = 0.0; self.kiv = 0.0
-        self.dt = 0.001
+        self.kpv = 2; self.kdv = 0.0; self.kiv = 0.0
+        self.dt = 0.005
+        self.start_time = time.time()
+        self.start_time = time.time()
 
         self.s_fl_e_prev = 0; self.s_fl_e_tot = 0; self.prev_s_fl = 0 
         self.s_fr_e_prev = 0; self.s_fr_e_tot = 0; self.prev_s_fr = 0
@@ -35,16 +38,15 @@ class PidController(Node):
         self.s_rr_e_prev = 0; self.s_rr_e_tot = 0; self.prev_s_rr = 0
         self.pivot_e_prev = 0; self.pivot_e_tot = 0; self.prev_pivot = 0
         #fl_steering_wheel
-        self.kps_fl = 35; self.kds_fl = 1; self.kis_fl = 0.0
+        self.kps_fl = 0.55; self.kds_fl = 0.17; self.kis_fl = 0.0#done!!
         #fr_steering_wheel
-        self.kps_fr = 20; self.kds_fr = 0.8; self.kis_fr = 0.0
+        self.kps_fr = 0.55; self.kds_fr = 0.17; self.kis_fr = 0.0 #done!!
         #rl_steering_wheel
-        self.kps_rl = 60; self.kds_rl = 4; self.kis_rl = 0.0    
+        self.kps_rl = 1.7; self.kds_rl = 0.51; self.kis_rl = 0.0 #done !!   
         #rr_steering_wheel
-        self.kps_rr = 22.0; self.kds_rr = 0.9; self.kis_rr = 0.0
+        self.kps_rr = 1.8; self.kds_rr = 0.14; self.kis_rr = 0.0 #done!!
         #pivot_joint
-        self.kpp = 4000; self.kdp = 150; self.kip = 0.0
-
+        self.kpp = 40; self.kdp = 2.5; self.kip = 0.0  #done!
         #torque
         self.wheel_torque = [0.0, 0.0, 0.0, 0.0]
         self.steer_torque = [0.0, 0.0, 0.0, 0.0, 0.0]
@@ -57,15 +59,20 @@ class PidController(Node):
         return
 
     def fb_sub_cb(self, msg):
-
         #e_vel = Float64MultiArray(); e_steer = Float64MultiArray()
         [self.vel, self.steer] = self.order_joints(msg)
-        
-        [torque_vel, torque_steer] = self.pid_controller()
     
+        self.end_time = time.time()
+        elapsed_time = self.end_time - self.start_time
+        print("time step %f" % elapsed_time)
+        if elapsed_time > 0.02: time.sleep(0.0)
+        else: time.sleep(0.02 - elapsed_time)
+
+        [torque_vel, torque_steer] = self.pid_controller()
         self.pub_wheel.publish(torque_vel)
         self.pub_steer.publish(torque_steer)
         self.iter += 1
+        self.start_time = self.end_time
 
 
     def switch_cb(self, msg):
@@ -77,7 +84,7 @@ class PidController(Node):
 
     def save(self):
         current_dir = os.path.dirname(os.path.realpath(__file__))
-        relative_folder_path = "../results/4ws_pivot"
+        relative_folder_path = "../results/4ws_pivot_smart"
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'steer_effort.txt'),
             self.steer_torque, fmt='%f', delimiter='\t')
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'wheel_effort.txt'),
@@ -121,21 +128,36 @@ class PidController(Node):
         self.steer_pos.append(self.steer.data[4])
         torque_steer.data = [fl_steer, fr_steer, rl_steer, rr_steer, pivot]
         #print(torque_steer.data)
-        #torque_vel.data = ([15.0, 15.0, 15.0, 15.0])
+        #torque_vel.data = ([0.0, 0.0, 0.0, 0.0])
         #print(torque_vel.data)
-        #torque_steer.data = ([0.0, 0.0, 0.0, 0.0, pivot])
+        #torque_steer.data = ([0.0,0.0,0.0,0.0,0.0])
         return torque_vel, torque_steer
 
     def pid_set(self, ref, value, kp, kd, ki, e_prev, e_tot, prev_control):
         e_0 = ref - value
-        control = kp*e_0 + kd*(e_0 - e_prev) / self.dt + ki*(e_0 + e_tot)
-        if control > prev_control + 5.0: control = prev_control + 5.0
-        elif control < prev_control - 5.0: control = prev_control - 5.0
-        if control > 100: control = 100.0
-        elif control < -100: control = -100.0        
-        e_prev = e_0; e_tot += e_0  
+        control = kp * e_0 + kd * ((e_0 - e_prev) / self.dt) + ki * (e_0 + e_tot)*self.dt
+        
+        if ki != 0:
+            # Anti-windup
+            if control > 100.0:
+                control = 100.0
+                e_tot -= (100.0 - control) / ki
+            elif control < -100.0:
+                control = -100.0
+                e_tot -= (-100.0 - control) / ki
+            else:
+                e_tot += e_0
+
+        # Rate limiter
+        control = max(min(control, prev_control + 25.0), prev_control - 25.0)
+
+        # Saturation
+        #control = max(min(control, 100.0), -100.0)
+
+        e_prev = e_0
 
         return control, e_prev, e_tot
+
 
 
     def order_joints(self,msg):

@@ -1,13 +1,13 @@
 clearvars; clc; close all;
 %% loading
-load(fullfile(pwd, '../4ws_pivot/input.txt'))
-load(fullfile(pwd, '../4ws_pivot/time_step.txt'))
-load(fullfile(pwd, '../4ws_pivot/wheel_effort.txt'))
-load(fullfile(pwd, '../4ws_pivot/state.txt'))
-load(fullfile(pwd, '../4ws_pivot/steer_effort.txt'))
+load(fullfile(pwd, '../4ws_pivot_smart/input.txt'))
+load(fullfile(pwd, '../4ws_pivot_smart/time_step.txt'))
+load(fullfile(pwd, '../4ws_pivot_smart/wheel_effort.txt'))
+load(fullfile(pwd, '../4ws_pivot_smart/state.txt'))
+load(fullfile(pwd, '../4ws_pivot_smart/steer_effort.txt'))
 load(fullfile(pwd, '../../path/std_path.txt'))
-pred_k = load(fullfile(pwd, '../4ws_pivot/prediction.txt'));
-ref_k = load (fullfile(pwd, '../4ws_pivot/reference.txt'));
+pred_k = load(fullfile(pwd, '../4ws_pivot_smart/prediction.txt'));
+ref_k = load (fullfile(pwd, '../4ws_pivot_smart/reference.txt'));
 %% data
 N = 10;
 dt = 0.1;
@@ -162,7 +162,7 @@ xlabel('time (s)'); ylabel('T_{pivot} (Nm)')
 f_torque = time(end)/length(wheel_effort(:,1));
 t_torque_m = 0:f_torque:time(end);
 t_torque = t_torque_m(1:end-1);
-
+wheel_energy = 
 line_width = 1;
 figure
 sgtitle('Wheel Torque');

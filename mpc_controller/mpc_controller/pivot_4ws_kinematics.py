@@ -36,6 +36,8 @@ class Pivot4wsKinematics(object):
         self.l_r = 0.71
         self.wheel_radius = 0.15
 
+        self.alpha_prev = 0.0
+
 
     def make_vel(self, vf, vr, d_f, d_r, alpha, b):
         beta = np.arctan((self.l_f * np.tan(d_r) + self.l_r * np.tan(d_f)*cos(alpha)+
@@ -64,6 +66,12 @@ class Pivot4wsKinematics(object):
         d_rr = d_r - np.arcsin(b*sin(d_r)/R_rr)
         d_rl = d_r + np.arcsin(b*sin(d_r)/R_rl)
 
+        alpha_dot = (alpha - self.alpha_prev) / self.dt
+        
+        h = np.sqrt(self.l_f**2 + self.b**2)
+        v_fl = v_fl - alpha_dot * h
+        v_fr = v_fr + alpha_dot * h
+        self.alpha_prev = alpha
 
         return v_fl, v_fr, v_rl, v_rr, d_fl, d_fr, d_rl, d_rr
     
