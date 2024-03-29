@@ -20,17 +20,18 @@ class StopMotors(Node):
         velocity_input = Float64MultiArray()
         steering_input = Float64MultiArray()
         velocity_input.data = [0.0, 0.0, 0.0, 0.0]
-        steering_input.data = [0.0, 0.0, 0.0, 0.0, 0.0]
+        steering_input.data = [0.0, 0.0, 0.0, 0.0]
 
         print("manthan")
         self.vel_pub.publish(velocity_input)
+        self.steer_pub.publish(steering_input)
  
 
 
     # End: Callbacks Section
 
     def set_subscribers_publishers(self):
-        self.pose_sub = self.create_subscription(Odometry, '/p3d/odom', self.pose_sub_cb, 10)
+        self.pose_sub = self.create_subscription(Odometry, '/odom', self.pose_sub_cb, 10)
         self.vel_pub = self.create_publisher(Float64MultiArray, '/velocity_controller/commands', 10)
         self.steer_pub = self.create_publisher(Float64MultiArray, '/position_controller/commands', 10)
 

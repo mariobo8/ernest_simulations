@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro"  name="ernest_controller">
 
-  <xacro:macro name="effort_joint">
+  <xacro:macro name="effort_controller">
 
     <ros2_control name="Joint Control" type="system">
       <hardware>

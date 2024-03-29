@@ -3,16 +3,13 @@ controller_manager:
     update_rate: 100  # Hz
 
     joint_state:
-      type: joint_state_broadcaster/JointStateBroadcaster
+      type: "joint_state_broadcaster/JointStateBroadcaster"
 
     position_controller:
       type: "position_controllers/JointGroupPositionController" 
 
     velocity_controller:
       type: "velocity_controllers/JointGroupVelocityController"  
-
-    effort_controller:
-      type: effort_controllers/JointGroupPositionController
    
 position_controller:
   ros__parameters:
@@ -21,12 +18,6 @@ position_controller:
         - front_right_steer_joint
         - rear_left_steer_joint
         - rear_right_steer_joint
-        - pivot_joint
-
-effort_controller:
-  ros__parameters:
-    joints:
-      - bogie_joint
 
 
 velocity_controller:
@@ -36,6 +27,7 @@ velocity_controller:
         - front_right_wheel_joint
         - rear_left_wheel_joint
         - rear_right_wheel_joint
+    
 
 
 

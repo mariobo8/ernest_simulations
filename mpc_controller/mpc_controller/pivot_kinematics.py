@@ -13,7 +13,7 @@ import numpy as np
 
 class Pivot4wsKinematics(object):
     def __init__(self):
-        self.N = 10
+        self.N = 20
         self.dt = 0.1
         self.theta = 0
         [self.x_p, self.y_p, self.arc_length] = self.path(file_name = "std_path.txt")
@@ -28,12 +28,15 @@ class Pivot4wsKinematics(object):
         self.up0 =ca.DM.zeros(4,1)
         self.pred = np.zeros((1,4))
         self.ref = np.zeros((1,3))
-        self.b = 0.4 #[m]
         self.x_r = ([self.x_p[0], self.y_p[0], 0.0, 0.0])
         
+        self.x_r = ([self.x_p[0], self.y_p[0], 0.0, 0.0])
+        self.b = 0.4 #[m]
         self.l_f = 0.16
         self.l_r = 0.71
         self.wheel_radius = 0.15
+
+        self.alpha_prev = 0.0
 
 
     def make_vel(self, vf, vr, alpha, b):
@@ -43,6 +46,13 @@ class Pivot4wsKinematics(object):
         v_fr = vf*(1 + b / (R * cos(alpha - beta)))
         v_rl = vr*(1 - b / (R * cos(beta)))
         v_rr = vr*(1 + b / (R * cos(beta)))
+
+        alpha_dot = (alpha - self.alpha_prev) / self.dt
+        
+        h = np.sqrt(self.l_f**2 + self.b**2)
+        v_fl = v_fl - alpha_dot * h
+        v_fr = v_fr + alpha_dot * h
+        self.alpha_prev = alpha
         return v_fl, v_fr, v_rl, v_rr
 
     def kin_model(self):
@@ -187,9 +197,9 @@ class Pivot4wsKinematics(object):
     def constraints(self, n_states, n_controls, N):
         # Boundaries
         v_max = 0.7
-        alpha_max = 0.5
+        alpha_max = 0.9
         virtual_v_max = 0.65
-        alpha_min = - 0.5
+        alpha_min = - 0.9
         v_min = -0.5
         virtual_v_min = 0
         a_min = - 0.04
@@ -227,11 +237,11 @@ class Pivot4wsKinematics(object):
         #rate input change
         lbg[n_states*(N+1):n_states*(N+1)+n_controls*N:n_controls] = a_min                
         lbg[n_states*(N+1)+1:n_states*(N+1)+n_controls*N:n_controls] = a_min            
-        lbg[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = w_min*0.25
+        lbg[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = w_min#*0.25
         lbg[n_states*(N+1)+3:n_states*(N+1)+n_controls*N:n_controls] = a_min
         ubg[n_states*(N+1):n_states*(N+1)+n_controls*N:n_controls] = a_max                                                                            # v upper bound for all V
         ubg[n_states*(N+1)+1:n_states*(N+1)+n_controls*N:n_controls] = a_max                                   # v upper bound for all V
-        ubg[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = w_max*0.25 
+        ubg[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = w_max#*0.25 
         ubg[n_states*(N+1)+3:n_states*(N+1)+n_controls*N:n_controls] = a_max 
         return lbg,ubg,lbx,ubx
 
@@ -336,7 +346,7 @@ class Pivot4wsKinematics(object):
         
         [v_fl, v_fr, v_rl, v_rr] = self.make_vel(v_f, v_r, alpha, self.b)
 
-        input = [v_fl, v_fr, v_rl, v_rr, 0.0, 0.0, alpha, float(inp[3])]
+        input = [v_fl, v_fr, v_rl, v_rr, 0.0, 0.0, 0.0, 0.0, alpha, float(inp[3])]
        
         [self.u0, new_xp0, new_up0, self.theta, new_x_r] = \
             self.shift_timestep(u, self.X0, self.x_p, self.y_p, self.arc_length, inp)

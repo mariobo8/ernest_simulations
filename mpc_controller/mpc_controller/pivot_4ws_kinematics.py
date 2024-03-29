@@ -41,7 +41,8 @@ class Pivot4wsKinematics(object):
 
     def make_vel(self, vf, vr, d_f, d_r, alpha, b):
         beta = np.arctan((self.l_f * np.tan(d_r) + self.l_r * np.tan(d_f)*cos(alpha)+
-                          sin(alpha)*self.l_r) / (self.l_f + self.l_r))
+                          sin(alpha)*self.l_r) / (self.l_f + self.l_r * 
+                           (cos(alpha - np.tan(d_f) * sin(alpha)))))
         #if alpha + d_f + d_r == 0.0: 
         #    v_fl = vf; v_fr = vf
         #    v_rl = vr; v_rr = vr
@@ -51,20 +52,24 @@ class Pivot4wsKinematics(object):
         R = (self.l_f + self.l_r) / (np.tan(d_f)*cos(alpha+beta)+sin(alpha-beta)
                                         + sin(beta) - np.tan(d_r)*cos(beta)) 
         R_fr = np.sqrt((R*cos(beta) + (b - self.l_f*np.tan(alpha))*cos(alpha))**2 + 
-                    (R*sin(beta) + self.l_f*cos(alpha) + b*sin(beta))**2)
+                    (R*sin(beta) + self.l_f*cos(alpha) + b*sin(alpha))**2)
         R_fl = np.sqrt((R*cos(beta) - (b + self.l_f*np.tan(alpha))*cos(alpha))**2 + 
-                    (R*sin(beta) + self.l_f*cos(alpha) - b*sin(beta))**2)
+                    (R*sin(beta) + self.l_f*cos(alpha) - b*sin(alpha))**2)
         R_f = np.sqrt((R*cos(beta) - self.l_f*sin(alpha))**2 + (R*sin(beta + self.l_f*cos(alpha)))**2)
+        
         R_rl = np.sqrt((R*cos(beta) - b)**2 + (R*sin(beta) - self.l_r)**2)
         R_rr = np.sqrt((R*cos(beta) + b)**2 + (R*sin(beta) - self.l_r)**2)
+
         R_r = np.sqrt((R*cos(beta))**2 + (R*sin(beta) - self.l_r)**2)
 
         v_fl = R_fl / R_f * vf; v_fr = R_fr / R_f * vf
         v_rl = R_rl / R_r * vr; v_rr = R_rr / R_r * vr
-        d_fr = d_f - np.arcsin(b*sin(d_f)/R_fr)
-        d_fl = d_f + np.arcsin(b*sin(d_f)/R_fl)
-        d_rr = d_r - np.arcsin(b*sin(d_r)/R_rr)
-        d_rl = d_r + np.arcsin(b*sin(d_r)/R_rl)
+        
+        d_fl = d_f + np.arcsin(b * sin(d_f) / R_fl)
+        d_fr = d_f - np.arcsin(b * sin(d_f) / R_fr)
+        d_rl = d_r + np.arcsin(b * sin(d_r) / R_rl)
+        d_rr = d_r - np.arcsin(b * sin(d_r) / R_rr)
+        
 
         alpha_dot = (alpha - self.alpha_prev) / self.dt
         
@@ -225,10 +230,10 @@ class Pivot4wsKinematics(object):
     def constraints(self, n_states, n_controls, N):
         # Boundaries
         v_max = 0.7
-        alpha_max = 0.5
+        alpha_max = 0.4
         delta_max = 0.9
         virtual_v_max = 0.65
-        alpha_min = - 0.5
+        alpha_min = - 0.4
         v_min = -0.5
         delta_min = -0.9
         virtual_v_min = 0
@@ -273,13 +278,13 @@ class Pivot4wsKinematics(object):
         lbg[n_states*(N+1)+1:n_states*(N+1)+n_controls*N:n_controls] = a_min
         lbg[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = w_min*0.30        
         lbg[n_states*(N+1)+3:n_states*(N+1)+n_controls*N:n_controls] = w_min*0.30               
-        lbg[n_states*(N+1)+4:n_states*(N+1)+n_controls*N:n_controls] = w_min*0.25
+        lbg[n_states*(N+1)+4:n_states*(N+1)+n_controls*N:n_controls] = w_min*0.1
         lbg[n_states*(N+1)+5:n_states*(N+1)+n_controls*N:n_controls] = a_min
         ubg[n_states*(N+1):n_states*(N+1)+n_controls*N:n_controls] = a_max                                                                            # v upper bound for all V
         ubg[n_states*(N+1)+1:n_states*(N+1)+n_controls*N:n_controls] = a_max   
         ubg[n_states*(N+1)+2:n_states*(N+1)+n_controls*N:n_controls] = w_max*0.30        
         ubg[n_states*(N+1)+3:n_states*(N+1)+n_controls*N:n_controls] = w_max*0.30                                                                      # v upper bound for all V
-        ubg[n_states*(N+1)+4:n_states*(N+1)+n_controls*N:n_controls] = w_max*0.25 
+        ubg[n_states*(N+1)+4:n_states*(N+1)+n_controls*N:n_controls] = w_max*0.1
         ubg[n_states*(N+1)+5:n_states*(N+1)+n_controls*N:n_controls] = a_max 
         return lbg,ubg,lbx,ubx
 

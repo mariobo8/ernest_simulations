@@ -37,7 +37,8 @@ class fwsKinematics(object):
 
     def make_vel(self, vf, vr, d_f, d_r, alpha, b):
         beta = np.arctan((self.l_f * np.tan(d_r) + self.l_r * np.tan(d_f)*cos(alpha)+
-                          sin(alpha)*self.l_r) / (self.l_f + self.l_r))
+                          sin(alpha)*self.l_r) / (self.l_f + self.l_r * 
+                           (cos(alpha - np.tan(d_f) * sin(alpha)))))
         #if alpha + d_f + d_r == 0.0: 
         #    v_fl = vf; v_fr = vf
         #    v_rl = vr; v_rr = vr
@@ -47,20 +48,24 @@ class fwsKinematics(object):
         R = (self.l_f + self.l_r) / (np.tan(d_f)*cos(alpha+beta)+sin(alpha-beta)
                                         + sin(beta) - np.tan(d_r)*cos(beta)) 
         R_fr = np.sqrt((R*cos(beta) + (b - self.l_f*np.tan(alpha))*cos(alpha))**2 + 
-                    (R*sin(beta) + self.l_f*cos(alpha) + b*sin(beta))**2)
+                    (R*sin(beta) + self.l_f*cos(alpha) + b*sin(alpha))**2)
         R_fl = np.sqrt((R*cos(beta) - (b + self.l_f*np.tan(alpha))*cos(alpha))**2 + 
-                    (R*sin(beta) + self.l_f*cos(alpha) - b*sin(beta))**2)
+                    (R*sin(beta) + self.l_f*cos(alpha) - b*sin(alpha))**2)
         R_f = np.sqrt((R*cos(beta) - self.l_f*sin(alpha))**2 + (R*sin(beta + self.l_f*cos(alpha)))**2)
+        
         R_rl = np.sqrt((R*cos(beta) - b)**2 + (R*sin(beta) - self.l_r)**2)
         R_rr = np.sqrt((R*cos(beta) + b)**2 + (R*sin(beta) - self.l_r)**2)
+
         R_r = np.sqrt((R*cos(beta))**2 + (R*sin(beta) - self.l_r)**2)
 
         v_fl = R_fl / R_f * vf; v_fr = R_fr / R_f * vf
         v_rl = R_rl / R_r * vr; v_rr = R_rr / R_r * vr
-        d_fr = d_f - np.arcsin(b*sin(d_f)/R_fr)
-        d_fl = d_f + np.arcsin(b*sin(d_f)/R_fl)
-        d_rr = d_r - np.arcsin(b*sin(d_r)/R_rr)
-        d_rl = d_r + np.arcsin(b*sin(d_r)/R_rl)
+        
+        d_fl = d_f + np.arcsin(b * sin(d_f) / R_fl)
+        d_fr = d_f - np.arcsin(b * sin(d_f) / R_fr)
+        d_rl = d_r + np.arcsin(b * sin(d_r) / R_rl)
+        d_rr = d_r - np.arcsin(b * sin(d_r) / R_rr)
+        
 
         return v_fl, v_fr, v_rl, v_rr, d_fl, d_fr, d_rl, d_rr
         

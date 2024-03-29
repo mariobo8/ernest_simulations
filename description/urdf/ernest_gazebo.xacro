@@ -4,7 +4,7 @@
 <xacro:macro name="ernest_gazebo">
   <gazebo>
       <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
-        <parameters>$(find bringup)/config/effort_controller_config.yaml</parameters>
+        <parameters>$(find bringup)/config/position_controller_config.yaml</parameters>
       </plugin>
   </gazebo>
 <!-- Include Gazebo plugin for 3D pose -->
@@ -15,7 +15,6 @@
           <remapping>odom:=odom</remapping>
       </ros>
       <frame_name>map</frame_name>
-
       <body_name>base_link</body_name>
       <update_rate>1000.0</update_rate>
       <gaussian_noise>0.0</gaussian_noise>

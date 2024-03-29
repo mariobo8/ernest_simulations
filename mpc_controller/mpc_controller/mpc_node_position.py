@@ -6,7 +6,6 @@ import rclpy
 from rclpy.node import Node
 
 import csv
-from .pid_node import PidMotor 
 from .pivot_4ws_kinematics import Pivot4wsKinematics as pfws_mpc
 from .pivot_kinematics import Pivot4wsKinematics as p_mpc
 from .fws_kinematics import fwsKinematics as fws_mpc
@@ -23,10 +22,9 @@ class PathTrackingMPC(Node):
     def __init__(self):
         super().__init__('path_tracking_MPC')
         self.mpc_inst = pfws_mpc()
-        self.pid_motor = PidMotor()
         self.xp_0 = self.mpc_inst.start
         self.alpha_0 = 0.0 
-        self.input_sequence = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        self.input_sequence = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         self.state_sequence = [self.xp_0, 0.0, 0.0, 0.0]
         self.time_step = [0.0]
         self.b = 0.4
@@ -34,11 +32,10 @@ class PathTrackingMPC(Node):
         [self.solver, self.args, self.n_states, self.n_controls, self.f] \
             = self.mpc_inst.set_solver()
         self.set_subscribers_publishers()
-        self.torque_pid()
     
     def save_data(self):
         current_dir = os.path.dirname(os.path.realpath(__file__))
-        relative_folder_path = "../results/pivot"
+        relative_folder_path = "../results/position_controller/pivot"
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'input.txt'),
             self.input_sequence, fmt='%f', delimiter='\t')
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'state.txt'),
@@ -79,14 +76,14 @@ class PathTrackingMPC(Node):
         self.steer_pub.publish(self.steering_input)
         if self.switch: 
             self.save_data()
-            time.sleep(2)
+            time.sleep(3)
             #rclpy.shutdown()
 
  
     # End: Callbacks Section
 
     def set_subscribers_publishers(self):
-        self.pose_sub = self.create_subscription(Odometry, '/p3d/odom', self.pose_sub_cb, 10)
+        self.pose_sub = self.create_subscription(Odometry, '/odom', self.pose_sub_cb, 10)
         self.vel_pub = self.create_publisher(Float64MultiArray, '/velocity_controller/commands', 10)
         self.steer_pub = self.create_publisher(Float64MultiArray, '/position_controller/commands', 10)
 
@@ -95,7 +92,7 @@ class PathTrackingMPC(Node):
         steering_input = Float64MultiArray()
         if self.mpc_inst.x0[0] >= -0.02:
             velocity_input.data = [0.0, 0.0, 0.0, 0.0]
-            steering_input.data = [0.0, 0.0, 0.0, 0.0, 0.0] 
+            steering_input.data = [0.0, 0.0, 0.0, 0.0] #, 0.0] 
             self.switch = True            
             
         else:
@@ -107,12 +104,12 @@ class PathTrackingMPC(Node):
             #alpha_dot = input[4] - self.alpha_0
             #self.alpha_0 = input[4]
 
-
             self.input_sequence = np.vstack([self.input_sequence, input])
             self.state_sequence = np.vstack([self.state_sequence, self.mpc_inst.x0])
-
-            velocity_input.data = [input[0]/0.14, input[1]/0.14, input[2]/0.14, input[3]/0.14] 
-            steering_input.data = [-input[4], -input[4], -input[5], -input[5], -input[6]]
+            
+            velocity_input.data = [input[0]/0.15, input[1]/0.15, input[2]/0.15, input[3]/0.15] 
+            print(velocity_input.data)
+            steering_input.data = [-input[4], -input[5], -input[6], -input[7]]#, -input[8]]
         return velocity_input, steering_input
     
 

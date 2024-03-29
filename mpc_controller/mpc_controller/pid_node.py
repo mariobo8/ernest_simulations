@@ -17,9 +17,10 @@ class PidController(Node):
         self.set_subscribers_publishers()
         self.steer_pos = [0.0]
         self.drive = 0.0
-        self.ref_vel = [1.0, 1.0, 1.0, 1.0]
+        self.ref_vel = [5.0, 5.0, 5.0, 5.0]
+        self.ref_vel = [0.0, 0.0, 0.0, 0.0]
         self.ref_steer = [0.0, 0.0, 0.0, 0.0, 0.0]
-        #self.ref_steer = [0.0, 0.0, 0.0, 0.0, 0.0]
+        self.ref_steer = [0.0, 0.0, 0.0, 0.0, 0.0]
         #pid stuff
         self.iter = 0
         self.fl_e_prev = 0; self.fl_e_tot = 0; self.prev_fl = 0
@@ -27,7 +28,7 @@ class PidController(Node):
         self.rl_e_prev = 0; self.rl_e_tot = 0; self.prev_rl = 0
         self.rr_e_prev = 0; self.rr_e_tot = 0; self.prev_rr = 0
         #wheel velocity
-        self.kpv = 2; self.kdv = 0.0; self.kiv = 0.0
+        self.kpv = 3.0; self.kdv = 0.001; self.kiv = 0.0
         self.dt = 0.005
         self.start_time = time.time()
         self.start_time = time.time()
@@ -38,15 +39,16 @@ class PidController(Node):
         self.s_rr_e_prev = 0; self.s_rr_e_tot = 0; self.prev_s_rr = 0
         self.pivot_e_prev = 0; self.pivot_e_tot = 0; self.prev_pivot = 0
         #fl_steering_wheel
-        self.kps_fl = 0.55; self.kds_fl = 0.17; self.kis_fl = 0.0#done!!
+        self.kps_fl = 1.55; self.kds_fl = 0.18; self.kis_fl = 0.0#done!!
         #fr_steering_wheel
-        self.kps_fr = 0.55; self.kds_fr = 0.17; self.kis_fr = 0.0 #done!!
+        self.kps_fr = 1.8; self.kds_fr = 0.16; self.kis_fr = 0.0 #done!!
         #rl_steering_wheel
-        self.kps_rl = 1.7; self.kds_rl = 0.51; self.kis_rl = 0.0 #done !!   
+        self.kps_rl = 9.5; self.kds_rl = 1.6; self.kis_rl = 0.0 #done !!   
         #rr_steering_wheel
-        self.kps_rr = 1.8; self.kds_rr = 0.14; self.kis_rr = 0.0 #done!!
+        self.kps_rr = 3.5; self.kds_rr = 0.25; self.kis_rr = 0.2 #done!!
         #pivot_joint
-        self.kpp = 40; self.kdp = 2.5; self.kip = 0.0  #done!
+        #self.kpp = 130; self.kdp = 13.0; self.kip = 0.0  #done!
+        self.kpp = 0.0; self.kdp = 0.0; self.kip = 0.0  #done!
         #torque
         self.wheel_torque = [0.0, 0.0, 0.0, 0.0]
         self.steer_torque = [0.0, 0.0, 0.0, 0.0, 0.0]
@@ -84,7 +86,7 @@ class PidController(Node):
 
     def save(self):
         current_dir = os.path.dirname(os.path.realpath(__file__))
-        relative_folder_path = "../results/4ws_pivot_smart"
+        relative_folder_path = "../results/4ws"
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'steer_effort.txt'),
             self.steer_torque, fmt='%f', delimiter='\t')
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'wheel_effort.txt'),

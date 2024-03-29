@@ -38,14 +38,14 @@ setup(
     # scripts here.
     entry_points={
         'console_scripts': [
-            #'mpc_node = mpc_controller.mpc_node:main',
+            'mpc_node_position = mpc_controller.mpc_node_position:main',
             #'mpc_node_demo = mpc_controller.mpc_node_carexample:main',
             'utils = mpc_controller.utils',
             #'ackermann_solve = mpc_controller.ackermann_kinematics',
             #'pivot_solve = mpc_controller.pivot_4ws_kinematics',
             'mpc_node = mpc_controller.mpc_node:main',
-            #'stop_motors = mpc_controller.stop_motors:main',
-            #'test = mpc_controller.test_actuators:main',
+            'stop_motors = mpc_controller.stop_motors:main',
+            'test = mpc_controller.test_actuators:main',
             'pid_node = mpc_controller.pid_node:main',
             'sensors_node = mpc_controller.sensors_node:main'
         ],
