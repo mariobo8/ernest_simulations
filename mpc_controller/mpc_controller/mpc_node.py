@@ -39,7 +39,7 @@ class PathTrackingMPC(Node):
     
     def save_data(self):
         current_dir = os.path.dirname(os.path.realpath(__file__))
-        relative_folder_path = "../results/4ws"
+        relative_folder_path = "../results/5_dof/passive"
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'input.txt'),
             self.input_sequence, fmt='%f', delimiter='\t')
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'state.txt'),
@@ -55,7 +55,7 @@ class PathTrackingMPC(Node):
 
     def pose_sub_cb(self, msg):
         start_time = time.time()
-        self.get_logger().info("going to solve")
+        #self.get_logger().info("going to solve")
 
         #self.pose_ts = msg.header.stamp.sec + 1e-9 * msg.header.stamp.nanosec
         x = msg.pose.pose.position.x + self.xp_0
@@ -73,10 +73,10 @@ class PathTrackingMPC(Node):
         #self.steering_input = Float64MultiArray()
         #self.velocity_input.data = [0.0, 0.0, 0.0, 0.0]
         #self.steering_input.data = [0.0, 0.0, 0.0, 0.0, 0.0]
-        self.get_logger().info("solved!")
+        #self.get_logger().info("solved!")
         end_time = time.time()
         elapsed_time = end_time - start_time
-        print("time step %f" % elapsed_time)
+        self.get_logger().info("time step %f" % elapsed_time)
         if elapsed_time > 0.1:time.sleep(0.0)
         else: time.sleep(0.1 - elapsed_time)
         self.time_step.append(elapsed_time)
@@ -128,6 +128,8 @@ class PathTrackingMPC(Node):
             velocity_input.data = [input[0]/0.15, input[1]/0.15, input[2]/0.15, input[3]/0.15] 
             print(velocity_input.data)
             steering_input.data = [-input[4], -input[5], -input[6], -input[7], -input[8]]
+            self.get_logger().info("ble ble %s" % str(steering_input.data))
+
         return velocity_input, steering_input
     
 

@@ -63,6 +63,11 @@ def generate_launch_description():
              'velocity_controller'],
         output='screen'
     )
+    
+    node_odom_to_tf = Node(
+        package='bringup',
+        executable='odom_to_tf',
+    )
 
     # Get URDF via xacro
     robot_description_content = Command(
@@ -92,6 +97,7 @@ def generate_launch_description():
     return LaunchDescription([
         gazebo,
         node_robot_state_publisher,
+        node_odom_to_tf,
         spawn_entity,
         load_joint_state_controller,
         RegisterEventHandler(

@@ -14,7 +14,7 @@ import numpy as np
 
 class Pivot4wsKinematics(object):
     def __init__(self):
-        self.N = 10
+        self.N = 15
         self.dt = 0.1
         self.theta = 0
         [self.x_p, self.y_p, self.arc_length] = self.path(file_name = "std_path.txt")
@@ -43,38 +43,54 @@ class Pivot4wsKinematics(object):
         beta = np.arctan((self.l_f * np.tan(d_r) + self.l_r * np.tan(d_f)*cos(alpha)+
                           sin(alpha)*self.l_r) / (self.l_f + self.l_r * 
                            (cos(alpha - np.tan(d_f) * sin(alpha)))))
-        #if alpha + d_f + d_r == 0.0: 
-        #    v_fl = vf; v_fr = vf
-        #    v_rl = vr; v_rr = vr
-        #    d_fl = d_f; d_fr = d_f
-        #    d_rl = d_r; d_rr = d_r
-        #else:
-        R = (self.l_f + self.l_r) / (np.tan(d_f)*cos(alpha+beta)+sin(alpha-beta)
-                                        + sin(beta) - np.tan(d_r)*cos(beta)) 
-        R_fr = np.sqrt((R*cos(beta) + (b - self.l_f*np.tan(alpha))*cos(alpha))**2 + 
-                    (R*sin(beta) + self.l_f*cos(alpha) + b*sin(alpha))**2)
-        R_fl = np.sqrt((R*cos(beta) - (b + self.l_f*np.tan(alpha))*cos(alpha))**2 + 
-                    (R*sin(beta) + self.l_f*cos(alpha) - b*sin(alpha))**2)
-        R_f = np.sqrt((R*cos(beta) - self.l_f*sin(alpha))**2 + (R*sin(beta + self.l_f*cos(alpha)))**2)
-        
-        R_rl = np.sqrt((R*cos(beta) - b)**2 + (R*sin(beta) - self.l_r)**2)
-        R_rr = np.sqrt((R*cos(beta) + b)**2 + (R*sin(beta) - self.l_r)**2)
+        if (d_f + alpha - d_r) == 0.0: 
+            v_fl = vf; v_fr = vf
+            v_rl = vr; v_rr = vr
+            d_fl = d_f; d_fr = d_f
+            d_rl = d_r; d_rr = d_r
+        else:
+            R = (self.l_f + self.l_r) / (np.tan(d_f)*cos(alpha+beta)+sin(alpha-beta)
+                                            + sin(beta) - np.tan(d_r)*cos(beta)) 
+            R_fr = np.sqrt((R*cos(beta) + (b - self.l_f*np.tan(alpha))*cos(alpha))**2 + 
+                        (R*sin(beta) + self.l_f*cos(alpha) + b*sin(alpha))**2)
+            R_fl = np.sqrt((R*cos(beta) - (b + self.l_f*np.tan(alpha))*cos(alpha))**2 + 
+                        (R*sin(beta) + self.l_f*cos(alpha) - b*sin(alpha))**2)
+            R_f = np.sqrt((R*cos(beta) - self.l_f*sin(alpha))**2 + (R*sin(beta + self.l_f*cos(alpha)))**2)
+            
+            R_rl = np.sqrt((R*cos(beta) - b)**2 + (R*sin(beta) - self.l_r)**2)
+            R_rr = np.sqrt((R*cos(beta) + b)**2 + (R*sin(beta) - self.l_r)**2)
+            R_r = np.sqrt((R*cos(beta))**2 + (R*sin(beta) - self.l_r)**2)
 
-        R_r = np.sqrt((R*cos(beta))**2 + (R*sin(beta) - self.l_r)**2)
+            v_fl = R_fl / R_f * vf; v_fr = R_fr / R_f * vf
+            v_rl = R_rl / R_r * vr; v_rr = R_rr / R_r * vr
+            
+            if b * sin(d_f) < R_fl:
+                d_fl = d_f + np.arcsin(b * sin(d_f) / R_fl)
+            else:
+                d_fl = d_f
+            
+            if b * sin(d_f) < R_fr:
+                d_fr = d_f - np.arcsin(b * sin(d_f) / R_fr)
+            else:
+                d_fr = d_f
 
-        v_fl = R_fl / R_f * vf; v_fr = R_fr / R_f * vf
-        v_rl = R_rl / R_r * vr; v_rr = R_rr / R_r * vr
-        
-        d_fl = d_f + np.arcsin(b * sin(d_f) / R_fl)
-        d_fr = d_f - np.arcsin(b * sin(d_f) / R_fr)
-        d_rl = d_r + np.arcsin(b * sin(d_r) / R_rl)
-        d_rr = d_r - np.arcsin(b * sin(d_r) / R_rr)
+            if b * sin(d_f) < R_rl:
+                d_rl = d_r + np.arcsin(b * sin(d_r) / R_rl)
+            else:
+                d_rl = d_r
+
+            if b * sin(d_f) < R_rr:
+                d_rr = d_r - np.arcsin(b * sin(d_r) / R_rr)
+            else:
+                d_rr = d_r 
+            
+            
         
 
         alpha_dot = (alpha - self.alpha_prev) / self.dt
         
         h = np.sqrt(self.l_f**2 + self.b**2)
-        v_fl = v_fl - alpha_dot * h
+        v_fl = v_fl - alpha_dot * h 
         v_fr = v_fr + alpha_dot * h
         self.alpha_prev = alpha
 
@@ -138,9 +154,9 @@ class Pivot4wsKinematics(object):
     def weighing_matrices(self, n_states, n_controls, N):
     # Weighing Matrices
         #states
-        Q_x = 9e6
-        Q_y = 9e6
-        Q_psi = 1e5
+        Q_x = 1e9
+        Q_y = 1e9
+        Q_psi = 0e0
         Q_s = 0
 
         #controls

@@ -47,8 +47,8 @@ class PidController(Node):
         #rr_steering_wheel
         self.kps_rr = 3.5; self.kds_rr = 0.25; self.kis_rr = 0.2 #done!!
         #pivot_joint
-        #self.kpp = 130; self.kdp = 13.0; self.kip = 0.0  #done!
-        self.kpp = 0.0; self.kdp = 0.0; self.kip = 0.0  #done!
+        self.kpp = 130; self.kdp = 13.0; self.kip = 0.0  #done!
+        #self.kpp = 0.0; self.kdp = 0.0; self.kip = 0.0  #done!
         #torque
         self.wheel_torque = [0.0, 0.0, 0.0, 0.0]
         self.steer_torque = [0.0, 0.0, 0.0, 0.0, 0.0]
@@ -86,7 +86,7 @@ class PidController(Node):
 
     def save(self):
         current_dir = os.path.dirname(os.path.realpath(__file__))
-        relative_folder_path = "../results/4ws"
+        relative_folder_path = "../results/5_dof/passive"
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'steer_effort.txt'),
             self.steer_torque, fmt='%f', delimiter='\t')
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'wheel_effort.txt'),
@@ -132,7 +132,7 @@ class PidController(Node):
         #print(torque_steer.data)
         #torque_vel.data = ([0.0, 0.0, 0.0, 0.0])
         #print(torque_vel.data)
-        #torque_steer.data = ([0.0,0.0,0.0,0.0,0.0])
+        #torque_steer.data = ([fl_steer, fr_steer, rl_steer, rr_steer, 0.0])
         return torque_vel, torque_steer
 
     def pid_set(self, ref, value, kp, kd, ki, e_prev, e_tot, prev_control):

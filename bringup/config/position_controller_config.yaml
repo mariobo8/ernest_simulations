@@ -18,6 +18,7 @@ position_controller:
         - front_right_steer_joint
         - rear_left_steer_joint
         - rear_right_steer_joint
+        - pivot_joint
 
 
 velocity_controller:
@@ -29,5 +30,9 @@ velocity_controller:
         - rear_right_wheel_joint
     
 
+joint_state:
+  ros__parameters:
+      joints:
+        - bogie_joint
 
 
