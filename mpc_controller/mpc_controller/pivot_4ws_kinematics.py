@@ -14,7 +14,7 @@ import numpy as np
 
 class Pivot4wsKinematics(object):
     def __init__(self):
-        self.N = 15
+        self.N = 10
         self.dt = 0.1
         self.theta = 0
         [self.x_p, self.y_p, self.arc_length] = self.path(file_name = "std_path.txt")
@@ -245,12 +245,12 @@ class Pivot4wsKinematics(object):
  
     def constraints(self, n_states, n_controls, N):
         # Boundaries
-        v_max = 0.7
+        v_max = 0.5
         alpha_max = 0.4
         delta_max = 0.9
-        virtual_v_max = 0.65
+        virtual_v_max = 0.45
         alpha_min = - 0.4
-        v_min = -0.5
+        v_min = -0.3
         delta_min = -0.9
         virtual_v_min = 0
         a_min = - 0.04

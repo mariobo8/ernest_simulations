@@ -1,7 +1,7 @@
 %pivot + diff driven wheels
 clearvars; clc; close all;
 %% loading
-input_path = fullfile(pwd, '../../pivot/passive/input.txt'); % Paths Folder
+input_path = fullfile(pwd, '../../position/pivot/passive/input.txt'); % Paths Folder
 load(input_path)
 state_path = fullfile(pwd, '../../pivot/passive/state.txt'); % Paths Folder
 load(state_path)
@@ -11,11 +11,9 @@ reference_path = fullfile(pwd, '../../pivot/passive/reference.txt'); % Paths Fol
 ref = load(reference_path);
 path_path = fullfile(pwd, '../../../path/std_path.txt'); % Paths Folder
 path = load(path_path);
-load(fullfile(pwd, '../../pivot/passive/steer_effort.txt'))
-load(fullfile(pwd, '../../pivot/passive/wheel_effort.txt'))
 % TO DO add plot effort and compare to pivot active
 
-%%data
+%% data
 dt = 0.1;
 N = 10;
 time = linspace(0,dt*length(input(:,1)),length(input(:,1)))';
@@ -61,73 +59,7 @@ figure
 plot(alpha); grid on
 
 
-%% STEERING TORQUE
-%NAME torque
-%TODO: change labels add filter and limits
-f_torque = time(end)/length(steer_effort(:,1));
-t_torque_m = 0:f_torque:time(end);
-t_torque = t_torque_m(1:end-1);
 
-line_width = 1;
-figure
-plot(t_torque, steer_effort(:,5), "k", "LineWidth", line_width); 
-grid on; xlim([0, time(end)]); 
-xlabel('time (s)'); ylabel('Steering Torque (Nm)')
-
-
-%% Wheel TORQUE
-%NAME torque
-%TODO: change labels add filter and limits
-f_torque = time(end)/length(wheel_effort(:,1));
-t_torque_m = 0:f_torque:time(end);
-t_torque = t_torque_m(1:end-1);
-
-line_width = 1;
-figure
-sgtitle('Wheel Torque');
-subplot(221)
-plot(t_torque, wheel_effort(:,1), "k", "LineWidth", line_width); 
-grid on; xlim([0, time(end)]);
-xlabel('time (s)'); ylabel('T_{fl} (Nm)')
-subplot(222)
-plot(t_torque, wheel_effort(:,2), "k", "LineWidth", line_width); 
-grid on; xlim([0, time(end)]); 
-xlabel('time (s)'); ylabel('T_{fr} (Nm)')
-subplot(223)
-plot(t_torque, wheel_effort(:,3), "k", "LineWidth", line_width); 
-grid on; xlim([0, time(end)]);
-xlabel('time (s)'); ylabel('T_{rl} (Nm)')
-subplot(224)
-plot(t_torque, wheel_effort(:,4), "k", "LineWidth", line_width);
-grid on; xlim([0, time(end)]); 
-xlabel('time (s)'); ylabel('T_{rr} (Nm)')
-
-%% energy computation (T *pivot_steering or T * )
-%steer
-tk = 0.05; %Nm/A torque constant
-V = 80;
-st_eff_new = interp1(t_torque', steer_effort(:,5), time);
-nan_indices = isnan(st_eff_new);
-st_eff_new(nan_indices) = 0;
-I = st_eff_new / tk; %current
-P = abs(V*I*1e-3); %power KW
-E_st = trapz(time, P) / 3600
-
-% %wheel 
-tk = 0.05; %Nm/A torque constant
-V = 80;
-wheel_eff_new = interp1(t_torque', wheel_effort, time);
-nan_indices = isnan(wheel_eff_new);
-wheel_eff_new(nan_indices) = 0;
-I_w = wheel_eff_new ./ tk; %current
-P_w = abs(V*I_w*1e-3); %power KW
-E_fl = trapz(time, P_w(:,1)) / 3600;
-E_fr = trapz(time, P_w(:,2)) / 3600;
-E_rl = trapz(time, P_w(:,3)) / 3600;
-E_rr = trapz(time, P_w(:,4)) / 3600;
-E_wheel = E_fl + E_fr + E_rl + E_rr
-
-E_tot = E_st + E_wheel
 
 % %% trajectory plotting
 % figure(500)

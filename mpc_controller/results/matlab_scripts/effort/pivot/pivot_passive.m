@@ -1,18 +1,18 @@
 %pivot + diff driven wheels
 clearvars; clc; close all;
 %% loading
-input_path = fullfile(pwd, '../../pivot/passive/input.txt'); % Paths Folder
+input_path = fullfile(pwd, '../../../pivot/passive/input.txt'); % Paths Folder
 load(input_path)
-state_path = fullfile(pwd, '../../pivot/passive/state.txt'); % Paths Folder
+state_path = fullfile(pwd, '../../../pivot/passive/state.txt'); % Paths Folder
 load(state_path)
-prediction_path = fullfile(pwd, '../../pivot/passive/prediction.txt'); % Paths Folder
+prediction_path = fullfile(pwd, '../../../pivot/passive/prediction.txt'); % Paths Folder
 pred = load(prediction_path);
-reference_path = fullfile(pwd, '../../pivot/passive/reference.txt'); % Paths Folder
+reference_path = fullfile(pwd, '../../../pivot/passive/reference.txt'); % Paths Folder
 ref = load(reference_path);
-path_path = fullfile(pwd, '../../../path/std_path.txt'); % Paths Folder
+path_path = fullfile(pwd, '../../../../path/std_path.txt'); % Paths Folder
 path = load(path_path);
-load(fullfile(pwd, '../../pivot/passive/steer_effort.txt'))
-load(fullfile(pwd, '../../pivot/passive/wheel_effort.txt'))
+load(fullfile(pwd, '../../../pivot/passive/steer_effort.txt'))
+load(fullfile(pwd, '../../../pivot/passive/wheel_effort.txt'))
 % TO DO add plot effort and compare to pivot active
 
 %%data
@@ -60,10 +60,6 @@ plot(v_rr); grid on
 figure 
 plot(alpha); grid on
 
-%% rate of change 
-alpha_f = diff(alpha);
-en_coeff = sum(abs(alpha_f)*dt);
-disp(en_coeff)
 
 %% STEERING TORQUE
 %NAME torque
@@ -106,7 +102,32 @@ plot(t_torque, wheel_effort(:,4), "k", "LineWidth", line_width);
 grid on; xlim([0, time(end)]); 
 xlabel('time (s)'); ylabel('T_{rr} (Nm)')
 
+%% energy computation (T *pivot_steering or T * )
+%steer
+tk = 0.05; %Nm/A torque constant
+V = 80;
+st_eff_new = interp1(t_torque', steer_effort(:,5), time);
+nan_indices = isnan(st_eff_new);
+st_eff_new(nan_indices) = 0;
+I = st_eff_new / tk; %current
+P = abs(V*I*1e-3); %power KW
+E_st = trapz(time, P) / 3600
 
+% %wheel 
+tk = 0.05; %Nm/A torque constant
+V = 80;
+wheel_eff_new = interp1(t_torque', wheel_effort, time);
+nan_indices = isnan(wheel_eff_new);
+wheel_eff_new(nan_indices) = 0;
+I_w = wheel_eff_new ./ tk; %current
+P_w = abs(V*I_w*1e-3); %power KW
+E_fl = trapz(time, P_w(:,1)) / 3600;
+E_fr = trapz(time, P_w(:,2)) / 3600;
+E_rl = trapz(time, P_w(:,3)) / 3600;
+E_rr = trapz(time, P_w(:,4)) / 3600;
+E_wheel = E_fl + E_fr + E_rl + E_rr
+
+E_tot = E_st + E_wheel
 
 % %% trajectory plotting
 % figure(500)

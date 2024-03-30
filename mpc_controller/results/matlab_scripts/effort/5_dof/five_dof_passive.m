@@ -1,14 +1,20 @@
-%this code is ok
+%this code is not ok
 clearvars; clc; close all;
 %% loading
-load(fullfile(pwd, '../position_controller/5_dof_no_psi/input.txt'))
-load(fullfile(pwd, '../position_controller/5_dof_no_psi/time_step.txt'))
-load(fullfile(pwd, '../4ws_pivot/wheel_effort.txt'))
-load(fullfile(pwd, '../position_controller/5_dof_no_psi/state.txt'))
-load(fullfile(pwd, '../4ws_pivot/steer_effort.txt'))
-load(fullfile(pwd, '../../path/std_path.txt'))
-pred_k = load(fullfile(pwd, '../position_controller/5_dof_no_psi/prediction.txt'));
-ref_k = load (fullfile(pwd, '../position_controller/5_dof_no_psi/reference.txt'));
+input_path = fullfile(pwd, '../../../5_dof/passive/input.txt'); % Paths Folder
+load(input_path)
+state_path = fullfile(pwd, '../../../5_dof/passive/state.txt'); % Paths Folder
+load(state_path)
+prediction_path = fullfile(pwd, '../../../5_dof/passive/prediction.txt'); % Paths Folder
+pred = load(prediction_path);
+reference_path = fullfile(pwd, '../../../5_dof/passive/reference.txt'); % Paths Folder
+ref = load(reference_path);
+path_path = fullfile(pwd, '../../../../path/std_path.txt'); % Paths Folder
+path = load(path_path);
+
+load(fullfile(pwd, '../../../5_dof/passive/time_step.txt'))
+load(fullfile(pwd, '../../../5_dof/passive/steer_effort.txt'))
+load(fullfile(pwd, '../../../5_dof/passive/wheel_effort.txt'))
 %% data
 N = 10;
 dt = 0.1;
@@ -34,8 +40,8 @@ psi = state(:,3);
 
 %% path
 %TO DO: load the path
-x_p = std_path(:,1);
-y_p = std_path(:,2);
+x_p = path(:,1);
+y_p = path(:,2);
 
 figure
 plot(x_p, y_p, 'LineWidth',1.5, 'Color',[0.5 0.5 0.5])
@@ -130,34 +136,6 @@ plot(time, alpha, "b", "LineWidth", line_width);
 grid on; xlim([0, time(end)]); ylim([-1.1,1.1])
 xlabel('time (s)'); ylabel('\alpha (rad)')
 
-
-%% rate of change
-omega_f = [0; diff(delta_f)];
-omega_r = [0; diff(delta_r)];
-omega_a = [0; diff(alpha)];
-
-
-en_coeff = sum((abs(omega_f)*2 + abs(omega_r)*2 ...
-    + abs(omega_a)*2)*dt);
-figure
-subplot(311)
-sgtitle(num2str(en_coeff))
-plot(time, omega_f,'k', 'LineWidth',line_width)
-grid on; xlim([0, time(end)]); ylim([-0.09 0.09])
-xlabel('time (s)'); ylabel('\omega_f (m/s)')
-subplot(312)
-plot(time, omega_r,'k', 'LineWidth',line_width)
-grid on; xlim([0, time(end)]); ylim([-0.09 0.09])
-xlabel('time (s)'); ylabel('\omega_r (m/s)')
-subplot(313)
-plot(time, omega_a,'k', 'LineWidth',line_width)
-grid on; xlim([0, time(end)]); ylim([-0.09 0.09])
-xlabel('time (s)'); ylabel('\alpha (m/s)')
-
-disp(en_coeff)
-
-
-
 % %% skidding eval
 % %beta
 % 
@@ -186,63 +164,96 @@ xlabel('MPC Step'); ylabel('Solving Time (ms)')
 
 %% STEERING TORQUE
 %NAME torque
-% %TODO: change labels add filter and limits
-% f_torque = time(end)/length(steer_effort(:,1));
-% t_torque_m = 0:f_torque:time(end);
-% t_torque = t_torque_m(1:end-1);
-% 
-% line_width = 1;
-% figure
-% sgtitle('Steering Torque');
-% subplot(321)
-% plot(t_torque, steer_effort(:,1), "k", "LineWidth", line_width); 
-% grid on; xlim([0, time(end)]);
-% xlabel('time (s)'); ylabel('T_{fl} (Nm)')
-% subplot(322)
-% plot(t_torque, steer_effort(:,2), "k", "LineWidth", line_width); 
-% grid on; xlim([0, time(end)]); 
-% xlabel('time (s)'); ylabel('T_{fr} (Nm)')
-% subplot(323)
-% plot(t_torque, steer_effort(:,3), "k", "LineWidth", line_width); 
-% grid on; xlim([0, time(end)]);
-% xlabel('time (s)'); ylabel('T_{rl} (Nm)')
-% subplot(324)
-% plot(t_torque, steer_effort(:,4), "k", "LineWidth", line_width);
-% grid on; xlim([0, time(end)]); 
-% xlabel('time (s)'); ylabel('T_{rr} (Nm)')
-% subplot(325)
-% plot(t_torque, steer_effort(:,5), "k", "LineWidth", line_width); 
-% grid on; xlim([0, time(end)]); 
-% xlabel('time (s)'); ylabel('T_{pivot} (Nm)')
+%TODO: change labels add filter and limits
+f_torque = time(end)/length(steer_effort(:,1));
+t_torque_m = 0:f_torque:time(end);
+t_torque = t_torque_m(1:end-1);
+
+line_width = 1;
+figure
+sgtitle('Steering Torque');
+subplot(321)
+plot(t_torque, steer_effort(:,1), "k", "LineWidth", line_width); 
+grid on; xlim([0, time(end)]);
+xlabel('time (s)'); ylabel('T_{fl} (Nm)')
+subplot(322)
+plot(t_torque, steer_effort(:,2), "k", "LineWidth", line_width); 
+grid on; xlim([0, time(end)]); 
+xlabel('time (s)'); ylabel('T_{fr} (Nm)')
+subplot(323)
+plot(t_torque, steer_effort(:,3), "k", "LineWidth", line_width); 
+grid on; xlim([0, time(end)]);
+xlabel('time (s)'); ylabel('T_{rl} (Nm)')
+subplot(324)
+plot(t_torque, steer_effort(:,4), "k", "LineWidth", line_width);
+grid on; xlim([0, time(end)]); 
+xlabel('time (s)'); ylabel('T_{rr} (Nm)')
+subplot(325)
+plot(t_torque, steer_effort(:,5), "k", "LineWidth", line_width); 
+grid on; xlim([0, time(end)]); 
+xlabel('time (s)'); ylabel('T_{pivot} (Nm)')
 
 
 %% Wheel TORQUE
-% %NAME torque
-% %TODO: change labels add filter and limits
-% f_torque = time(end)/length(wheel_effort(:,1));
-% t_torque_m = 0:f_torque:time(end);
-% t_torque = t_torque_m(1:end-1);
-% 
-% line_width = 1;
-% figure
-% sgtitle('Wheel Torque');
-% subplot(221)
-% plot(t_torque, wheel_effort(:,1), "k", "LineWidth", line_width); 
-% grid on; xlim([0, time(end)]);
-% xlabel('time (s)'); ylabel('T_{fl} (Nm)')
-% subplot(222)
-% plot(t_torque, wheel_effort(:,2), "k", "LineWidth", line_width); 
-% grid on; xlim([0, time(end)]); 
-% xlabel('time (s)'); ylabel('T_{fr} (Nm)')
-% subplot(223)
-% plot(t_torque, wheel_effort(:,3), "k", "LineWidth", line_width); 
-% grid on; xlim([0, time(end)]);
-% xlabel('time (s)'); ylabel('T_{rl} (Nm)')
-% subplot(224)
-% plot(t_torque, wheel_effort(:,4), "k", "LineWidth", line_width);
-% grid on; xlim([0, time(end)]); 
-% xlabel('time (s)'); ylabel('T_{rr} (Nm)')
+%NAME torque
+%TODO: change labels add filter and limits
+f_torque = time(end)/length(wheel_effort(:,1));
+t_torque_m = 0:f_torque:time(end);
+t_torque = t_torque_m(1:end-1);
 
+line_width = 1;
+figure
+sgtitle('Wheel Torque');
+subplot(221)
+plot(t_torque, wheel_effort(:,1), "k", "LineWidth", line_width); 
+grid on; xlim([0, time(end)]);
+xlabel('time (s)'); ylabel('T_{fl} (Nm)')
+subplot(222)
+plot(t_torque, wheel_effort(:,2), "k", "LineWidth", line_width); 
+grid on; xlim([0, time(end)]); 
+xlabel('time (s)'); ylabel('T_{fr} (Nm)')
+subplot(223)
+plot(t_torque, wheel_effort(:,3), "k", "LineWidth", line_width); 
+grid on; xlim([0, time(end)]);
+xlabel('time (s)'); ylabel('T_{rl} (Nm)')
+subplot(224)
+plot(t_torque, wheel_effort(:,4), "k", "LineWidth", line_width);
+grid on; xlim([0, time(end)]); 
+xlabel('time (s)'); ylabel('T_{rr} (Nm)')
+
+%% energy computation 
+%steer
+tk = 0.05; %Nm/A torque constant
+V = 80;
+st_eff_new = interp1(t_torque', steer_effort, time);
+nan_indices = isnan(st_eff_new);
+st_eff_new(nan_indices) = 0;
+I = st_eff_new ./ tk; %current
+P_st = abs(V.*I.*1e-3); %power KW
+E_st = trapz(time, P_st) / 3600
+E_t_st = sum(E_st)
+figure
+for i = 1 : size(P_st,2)
+    plot(time, P_st(:,i))
+    hold on
+end
+legend('\delta_{fl}','\delta_{fr}','\delta_{rl}','\delta_{rr}','pivot', 'Orientation','horizontal')
+
+%wheel 
+tk = 0.05; %Nm/A torque constant
+V = 80;
+wheel_eff_new = interp1(t_torque', wheel_effort, time);
+nan_indices = isnan(wheel_eff_new);
+wheel_eff_new(nan_indices) = 0;
+I_w = wheel_eff_new ./ tk; %current
+P_w = abs(V*I_w*1e-3); %power KW
+E_fl = trapz(time, P_w(:,1)) / 3600;
+E_fr = trapz(time, P_w(:,2)) / 3600;
+E_rl = trapz(time, P_w(:,3)) / 3600;
+E_rr = trapz(time, P_w(:,4)) / 3600;
+E_wheel = E_fl + E_fr + E_rl + E_rr
+
+E_tot = E_t_st + E_wheel
 
 %%
 
