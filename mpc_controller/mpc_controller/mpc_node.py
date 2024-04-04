@@ -9,7 +9,9 @@ import csv
 
 from .pivot_4ws_kinematics import Pivot4wsKinematics as pfws_mpc
 from .pivot_kinematics import Pivot4wsKinematics as p_mpc
+from .pivot_kinematics_new_approach import Pivot4wsKinematics as np_mpc
 from .fws_kinematics import fwsKinematics as fws_mpc
+from .sym_fws_kinematics import fwsKinematics as s_fws_mpc
 from .ackermann_kinematics import AckermannKinematics as ack_mpc
 
 import math
@@ -23,15 +25,15 @@ class PathTrackingMPC(Node):
 
     def __init__(self):
         super().__init__('path_tracking_MPC')
-        self.mpc_inst = pfws_mpc()
+        self.mpc_inst = p_mpc()
         self.xp_0 = self.mpc_inst.start
         self.alpha_0 = 0.0 
         self.input_sequence = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        self.input_bicycle = [0.0, 0.0, 0.0, 0.0, 0.0]
         self.state_sequence = [self.xp_0, 0.0, 0.0, 0.0]
         self.time_step = [0.0]
         self.b = 0.4
         self.switch = False
-        #self.switch = False
         [self.solver, self.args, self.n_states, self.n_controls, self.f] \
             = self.mpc_inst.set_solver()
         self.set_subscribers_publishers()
@@ -39,9 +41,11 @@ class PathTrackingMPC(Node):
     
     def save_data(self):
         current_dir = os.path.dirname(os.path.realpath(__file__))
-        relative_folder_path = "../results/5_dof/passive"
+        relative_folder_path = "../results/pivot"
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'input.txt'),
             self.input_sequence, fmt='%f', delimiter='\t')
+        np.savetxt(os.path.join(current_dir, relative_folder_path, 'input_bicycle.txt'),
+            self.input_bicycle, fmt='%f', delimiter='\t')
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'state.txt'),
             self.state_sequence, fmt='%f', delimiter='\t')
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'time_step.txt'),
@@ -78,15 +82,14 @@ class PathTrackingMPC(Node):
         elapsed_time = end_time - start_time
         self.get_logger().info("time step %f" % elapsed_time)
         if elapsed_time > 0.1:time.sleep(0.0)
-        else: time.sleep(0.1 - elapsed_time)
+        else: time.sleep(0.2 - elapsed_time)
         self.time_step.append(elapsed_time)
         print("Publishing ref")
         self.ref_vel_pub.publish(self.velocity_input)
         self.ref_steer_pub.publish(self.steering_input)
         #publish the status of the switch on a topic
-        self.get_logger().info("saved %s" % type(self.switch))
         self.switch_pub.publish(Bool(data=self.switch))
-        self.get_logger().info('Switch value: %s' %self.switch)
+
         if self.switch: 
             self.get_logger().info("saving")
             self.save_data()
@@ -113,7 +116,7 @@ class PathTrackingMPC(Node):
             self.switch = True            
             
         else:
-            [input, new_xp0, new_up0] = self.mpc_inst.solve_mpc(self.solver, 
+            [input, new_xp0, new_up0, bicycle] = self.mpc_inst.solve_mpc(self.solver, 
                                         self.mpc_inst.x0 , self.args, self.n_states, 
                                         self.n_controls, self.mpc_inst.x_r, self.mpc_inst.up0)
             self.mpc_inst.x_r = new_xp0
@@ -121,14 +124,14 @@ class PathTrackingMPC(Node):
             #alpha_dot = input[4] - self.alpha_0
             #self.alpha_0 = input[4]
 
-
+            self.input_bicycle = np.vstack([self.input_bicycle, bicycle])
             self.input_sequence = np.vstack([self.input_sequence, input])
             self.state_sequence = np.vstack([self.state_sequence, self.mpc_inst.x0])
             
             velocity_input.data = [input[0]/0.15, input[1]/0.15, input[2]/0.15, input[3]/0.15] 
             print(velocity_input.data)
             steering_input.data = [-input[4], -input[5], -input[6], -input[7], -input[8]]
-            self.get_logger().info("ble ble %s" % str(steering_input.data))
+            #self.get_logger().info("ble ble %s" % str(steering_input.data))
 
         return velocity_input, steering_input
     

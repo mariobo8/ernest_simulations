@@ -53,6 +53,7 @@
         </command_interface>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
+        <state_interface name="effort"/>
       </joint>
 
       <joint name="rear_left_wheel_joint">
@@ -62,6 +63,7 @@
         </command_interface>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
+        <state_interface name="effort"/>
       </joint>
 
       <joint name="front_right_wheel_joint">
@@ -71,6 +73,7 @@
         </command_interface>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
+        <state_interface name="effort"/>
       </joint>
 
       <joint name="front_left_wheel_joint">
@@ -80,6 +83,7 @@
         </command_interface>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
+        <state_interface name="effort"/>
       </joint>
 
       <joint name="pivot_joint">
@@ -89,6 +93,7 @@
         </command_interface>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
+        
       </joint> 
 
       <joint name="bogie_joint">

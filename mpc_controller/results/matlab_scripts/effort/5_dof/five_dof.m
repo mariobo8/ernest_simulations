@@ -9,7 +9,7 @@ prediction_path = fullfile(pwd, '../../../5_dof/prediction.txt'); % Paths Folder
 pred = load(prediction_path);
 reference_path = fullfile(pwd, '../../../5_dof/reference.txt'); % Paths Folder
 ref = load(reference_path);
-path_path = fullfile(pwd, '../../../../path/std_path.txt'); % Paths Folder
+path_path = fullfile(pwd, '../../../../path/new_path.txt'); % Paths Folder
 path = load(path_path);
 
 load(fullfile(pwd, '../../../5_dof/time_step.txt'))

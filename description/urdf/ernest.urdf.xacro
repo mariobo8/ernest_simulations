@@ -57,7 +57,7 @@
   </link>
 
   <joint name="pivot_joint" type="revolute">
-    <limit effort="2000.0" lower="-0.8" upper="0.8" velocity="20"/>
+    <limit effort="2000.0" lower="-0.9" upper="0.9" velocity="20"/>
     <origin rpy="0 0 3.13911747329568" xyz="0 0.4015 -0.00700000000000001"/>
     <parent link="chassis"/>
     <child link="pivot"/>

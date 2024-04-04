@@ -47,7 +47,8 @@ setup(
             'stop_motors = mpc_controller.stop_motors:main',
             'test = mpc_controller.test_actuators:main',
             'pid_node = mpc_controller.pid_node:main',
-            'sensors_node = mpc_controller.sensors_node:main'
+            'sensors_node = mpc_controller.sensors_node:main',
+            'mpc_node_blended = mpc_controller.mpc_node_blended:main',
         ],
     },
 )

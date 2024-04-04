@@ -1,5 +1,6 @@
 %this code is not ok
 clearvars; clc; close all;
+
 %% loading
 input_path = fullfile(pwd, '../../../5_dof/passive/input.txt'); % Paths Folder
 load(input_path)
@@ -9,7 +10,7 @@ prediction_path = fullfile(pwd, '../../../5_dof/passive/prediction.txt'); % Path
 pred = load(prediction_path);
 reference_path = fullfile(pwd, '../../../5_dof/passive/reference.txt'); % Paths Folder
 ref = load(reference_path);
-path_path = fullfile(pwd, '../../../../path/std_path.txt'); % Paths Folder
+path_path = fullfile(pwd, '../../../../path/new_path.txt'); % Paths Folder
 path = load(path_path);
 
 load(fullfile(pwd, '../../../5_dof/passive/time_step.txt'))
@@ -87,7 +88,7 @@ line_width = 1.5;
 %velocities
 
 figure
-subplot(311)
+subplot(211)
 plot(time, v_fl, "b", "LineWidth", line_width); 
 grid on; xlim([0, time(end)]); ylim([-0.2, 1.2]);
 xlabel('time (s)'); ylabel('v_{f} (m/s)')
@@ -96,7 +97,7 @@ plot(time, v_fr, "r", "LineWidth", line_width);
 grid on; xlim([0, time(end)]); ylim([-0.2, 1.2]);
 xlabel('time (s)'); ylabel('v_{f} (m/s)')
 legend('v_{fl}', 'v_{fr}', Orientation='horizontal')
-subplot(312)
+subplot(212)
 plot(time, v_fl, "b", "LineWidth", line_width); 
 grid on; xlim([0, time(end)]); ylim([-0.2, 1.2]);
 xlabel('time (s)'); ylabel('v_{r} (m/s)')
@@ -106,10 +107,10 @@ grid on; xlim([0, time(end)]); ylim([-0.2, 1.2]);
 xlabel('time (s)'); ylabel('v_{r} (m/s)')
 legend('v_{fl}', 'v_{fr}', Orientation='horizontal')
 
-subplot(313)
-plot(time, virtual_v, "b", "LineWidth", line_width); 
-grid on; xlim([0, time(end)]); ylim([-.2,1])
-xlabel('time (s)'); ylabel('v_{virtual} (m/s)')
+% subplot(313)
+% plot(time, virtual_v, "b", "LineWidth", line_width); 
+% grid on; xlim([0, time(end)]); ylim([-.2,1])
+% xlabel('time (s)'); ylabel('v_{virtual} (m/s)')
 
 %steering 
 figure
@@ -224,7 +225,7 @@ xlabel('time (s)'); ylabel('T_{rr} (Nm)')
 %% energy computation 
 %steer
 tk = 0.05; %Nm/A torque constant
-V = 80;
+V = 80; %V
 st_eff_new = interp1(t_torque', steer_effort, time);
 nan_indices = isnan(st_eff_new);
 st_eff_new(nan_indices) = 0;
@@ -237,8 +238,9 @@ for i = 1 : size(P_st,2)
     plot(time, P_st(:,i))
     hold on
 end
+xlabel('time (s)'); ylabel('Power (W)')
 legend('\delta_{fl}','\delta_{fr}','\delta_{rl}','\delta_{rr}','pivot', 'Orientation','horizontal')
-
+grid on
 %wheel 
 tk = 0.05; %Nm/A torque constant
 V = 80;
@@ -273,8 +275,8 @@ E_tot = E_t_st + E_wheel
 %     hold on
 % line_width = 1.5;
 % fontsize_labels = 15;
-% pred = pred_k(2:end,:);
-% ref = ref_k(2:end,:);
+% pred = pred(2:end,:);
+% ref = ref(2:end,:);
 % x_r_1 = [];
 % y_r_1 = [];
 % 
@@ -297,7 +299,8 @@ E_tot = E_t_st + E_wheel
 %     if k < size(pred,1) % plot prediction
 %         plot(pred(1+(k-1)*(N+1):(N+1)*k,1),pred(1+(k-1)*(N+1):k*(N+1),2),'r--*') %pred
 %         hold on
-%         plot(ref(1+(k-1)*(N-1):k*(N-1),1),ref(1+(k-1)*(N-1):(N-1)*k,2), 'g--*') %ref
+%         %plot(ref(1+(k-1)*(N-1):k*(N-1),1),ref(1+(k-1)*(N-1):(N-1)*k,2), 'g--*') %ref
+%         plot(ref(k,1),ref(k,2), 'g--*') %ref
 %     end
 % 
 %     hold on
@@ -320,5 +323,5 @@ E_tot = E_t_st + E_wheel
 % open(video)
 % writeVideo(video,F)
 % close (video)
-
-% % scatter(pred(N:N*2,1), pred(N:N*2,2))
+% 
+% % % scatter(pred(N:N*2,1), pred(N:N*2,2))

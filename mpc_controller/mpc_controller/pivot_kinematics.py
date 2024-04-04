@@ -13,10 +13,10 @@ import numpy as np
 
 class Pivot4wsKinematics(object):
     def __init__(self):
-        self.N = 20
+        self.N = 10  
         self.dt = 0.1
         self.theta = 0
-        [self.x_p, self.y_p, self.arc_length] = self.path(file_name = "std_path.txt")
+        [self.x_p, self.y_p, self.arc_length] = self.path(file_name = "new_path.txt")
         self.start = self.x_p[0]
         self.x0 = ca.DM([self.x_p[0], self.y_p[0], 0.0, self.theta])  
         self.X0 = ca.repmat(self.x0, 1, self.N+1)     
@@ -50,8 +50,8 @@ class Pivot4wsKinematics(object):
         alpha_dot = (alpha - self.alpha_prev) / self.dt
         
         h = np.sqrt(self.l_f**2 + self.b**2)
-        v_fl = v_fl - alpha_dot * h
-        v_fr = v_fr + alpha_dot * h
+        #v_fl = v_fl - alpha_dot * h
+        #v_fr = v_fr + alpha_dot * h
         self.alpha_prev = alpha
         return v_fl, v_fr, v_rl, v_rr
 
@@ -109,26 +109,26 @@ class Pivot4wsKinematics(object):
     def weighing_matrices(self, n_states, n_controls, N):
     # Weighing Matrices
         #states
-        Q_x = 9e1
-        Q_y = 9e1
-        Q_psi = 1e1
+        Q_x = 5e2
+        Q_y = 5e2
+        Q_psi = 5e1
         Q_s = 5
 
         #controls
         R_vf = 9e1
         R_vr = 9e1
-        R_alpha = 8e1
-        R_virtv = 9e1     
+        R_alpha = 5e1
+        R_virtv = 5e1     
 
         #rate change input
         
-        W_vf = 1e0
-        W_vr = 1e0
-        W_alpha = 1e2
-        W_virtv = 1
+        W_vf = 1e1
+        W_vr = 1e1
+        W_alpha = 5e3
+        W_virtv = 1e1
 
         #penalty
-        eps = 5e3
+        eps = 5e12
         #orientation
         gamma = 2e2
         #anti drifting
@@ -196,11 +196,11 @@ class Pivot4wsKinematics(object):
  
     def constraints(self, n_states, n_controls, N):
         # Boundaries
-        v_max = 0.7
+        v_max = 0.5
         alpha_max = 0.9
-        virtual_v_max = 0.65
+        virtual_v_max = 0.50
         alpha_min = - 0.9
-        v_min = -0.5
+        v_min = -0.3
         virtual_v_min = 0
         a_min = - 0.04
         a_max = 0.04
@@ -343,15 +343,17 @@ class Pivot4wsKinematics(object):
         inp = DM2Arr(u[:, 0])
 
         v_f = float(inp[0]); v_r = float(inp[1]); alpha = float(inp[2])
-        
+        delta_f = 0.0; delta_r = 0.0
+
         [v_fl, v_fr, v_rl, v_rr] = self.make_vel(v_f, v_r, alpha, self.b)
 
         input = [v_fl, v_fr, v_rl, v_rr, 0.0, 0.0, 0.0, 0.0, alpha, float(inp[3])]
        
+        bicycle_input = [v_f, v_r, delta_f, delta_r, alpha]
         [self.u0, new_xp0, new_up0, self.theta, new_x_r] = \
             self.shift_timestep(u, self.X0, self.x_p, self.y_p, self.arc_length, inp)
 
-        return input, new_x_r, new_up0,
+        return input, new_x_r, new_up0, bicycle_input
 
 
     

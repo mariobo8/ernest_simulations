@@ -9,6 +9,7 @@ import csv
 from .pivot_4ws_kinematics import Pivot4wsKinematics as pfws_mpc
 from .pivot_kinematics import Pivot4wsKinematics as p_mpc
 from .fws_kinematics import fwsKinematics as fws_mpc
+from .sym_fws_kinematics import fwsKinematics as sym_fws_mpc
 from .ackermann_kinematics import AckermannKinematics as ack_mpc
 
 import math
@@ -35,7 +36,7 @@ class PathTrackingMPC(Node):
     
     def save_data(self):
         current_dir = os.path.dirname(os.path.realpath(__file__))
-        relative_folder_path = "../results/position_controller/5_dof_no_psi"
+        relative_folder_path = "../results/position_controller/4ws"
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'input.txt'),
             self.input_sequence, fmt='%f', delimiter='\t')
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'state.txt'),
@@ -92,7 +93,7 @@ class PathTrackingMPC(Node):
         steering_input = Float64MultiArray()
         if self.mpc_inst.x0[0] >= -0.02:
             velocity_input.data = [0.0, 0.0, 0.0, 0.0]
-            steering_input.data = [0.0, 0.0, 0.0, 0.0, 0.0] 
+            steering_input.data = [0.0, 0.0, 0.0, 0.0]#, 0.0] 
             self.switch = True            
             
         else:
@@ -109,7 +110,7 @@ class PathTrackingMPC(Node):
             
             velocity_input.data = [input[0]/0.15, input[1]/0.15, input[2]/0.15, input[3]/0.15] 
             print(velocity_input.data)
-            steering_input.data = [-input[4], -input[5], -input[6], -input[7], -input[8]]
+            steering_input.data = [-input[4], -input[5], -input[6], -input[7]]#, -input[8]]
         return velocity_input, steering_input
     
 

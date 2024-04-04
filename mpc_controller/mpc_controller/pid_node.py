@@ -23,13 +23,16 @@ class PidController(Node):
         self.ref_steer = [0.0, 0.0, 0.0, 0.0, 0.0]
         #pid stuff
         self.iter = 0
-        self.fl_e_prev = 0; self.fl_e_tot = 0; self.prev_fl = 0
-        self.fr_e_prev = 0; self.fr_e_tot = 0; self.prev_fr = 0
-        self.rl_e_prev = 0; self.rl_e_tot = 0; self.prev_rl = 0
-        self.rr_e_prev = 0; self.rr_e_tot = 0; self.prev_rr = 0
+        self.fl_e_prev = 0; self.fl_e_tot = 0; self.prev_fl = 0; self.prev_filt_fl = 0
+        self.fr_e_prev = 0; self.fr_e_tot = 0; self.prev_fr = 0; self.prev_filt_fr = 0
+        self.rl_e_prev = 0; self.rl_e_tot = 0; self.prev_rl = 0; self.prev_filt_rl = 0
+        self.rr_e_prev = 0; self.rr_e_tot = 0; self.prev_rr = 0; self.prev_filt_rr = 0
+        
         #wheel velocity
-        self.kpv = 3.0; self.kdv = 0.001; self.kiv = 0.0
-        self.dt = 0.005
+
+        self.kpv_f = 40.0; self.kdv_f = 1.2; self.kiv_f = 0.0
+        self.kpv_r = 20.0; self.kdv_r = 1.5; self.kiv_r = 0.0
+        self.dt = 0.1
         self.start_time = time.time()
         self.start_time = time.time()
 
@@ -38,17 +41,19 @@ class PidController(Node):
         self.s_rl_e_prev = 0; self.s_rl_e_tot = 0; self.prev_s_rl = 0
         self.s_rr_e_prev = 0; self.s_rr_e_tot = 0; self.prev_s_rr = 0
         self.pivot_e_prev = 0; self.pivot_e_tot = 0; self.prev_pivot = 0
+        self.filter =  0.01
         #fl_steering_wheel
-        self.kps_fl = 1.55; self.kds_fl = 0.18; self.kis_fl = 0.0#done!!
+        self.kps_fl = 3.3; self.kds_fl = 2.1; self.kis_fl = 1.0#done!!
         #fr_steering_wheel
-        self.kps_fr = 1.8; self.kds_fr = 0.16; self.kis_fr = 0.0 #done!!
+        self.kps_fr = 3.3; self.kds_fr = 2.5; self.kis_fr = 1.0 #done!!
         #rl_steering_wheel
-        self.kps_rl = 9.5; self.kds_rl = 1.6; self.kis_rl = 0.0 #done !!   
+        self.kps_rl = 13.5; self.kds_rl = 25.6; self.kis_rl = 3.2 #done !!   
         #rr_steering_wheel
-        self.kps_rr = 3.5; self.kds_rr = 0.25; self.kis_rr = 0.2 #done!!
+        self.kps_rr = 9.5; self.kds_rr = 2.5; self.kis_rr = 3.0 #done!!
         #pivot_joint
-        self.kpp = 130; self.kdp = 13.0; self.kip = 0.0  #done!
-        #self.kpp = 0.0; self.kdp = 0.0; self.kip = 0.0  #done!
+        self.kpp = 250; self.kdp = 180.0; self.kip = 1000.0  #done!
+        #self.kpp = 40.0; self.kdp = 15.0; self.kip = 10.0  #done! for passive
+        self.kpp = 100.0; self.kdp = 50.0; self.kip = 30.0  #done! for active
         #torque
         self.wheel_torque = [0.0, 0.0, 0.0, 0.0]
         self.steer_torque = [0.0, 0.0, 0.0, 0.0, 0.0]
@@ -67,9 +72,10 @@ class PidController(Node):
         self.end_time = time.time()
         elapsed_time = self.end_time - self.start_time
         print("time step %f" % elapsed_time)
-        if elapsed_time > 0.02: time.sleep(0.0)
-        else: time.sleep(0.02 - elapsed_time)
-
+        #if elapsed_time > 0.02: time.sleep(0.0)
+        #else: time.sleep(0.02 - elapsed_time)
+        #self.get_logger().info("time step: %f" %elapsed_time)
+        self.dt = elapsed_time
         [torque_vel, torque_steer] = self.pid_controller()
         self.pub_wheel.publish(torque_vel)
         self.pub_steer.publish(torque_steer)
@@ -82,11 +88,13 @@ class PidController(Node):
             print('saving')
             self.save()
             print('saved')
+            time.sleep(100)
+            #rclpy.shutdown()
             
 
     def save(self):
         current_dir = os.path.dirname(os.path.realpath(__file__))
-        relative_folder_path = "../results/5_dof/passive"
+        relative_folder_path = "../results/pivot"
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'steer_effort.txt'),
             self.steer_torque, fmt='%f', delimiter='\t')
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'wheel_effort.txt'),
@@ -94,71 +102,81 @@ class PidController(Node):
         self.get_logger().info("torque saved")
         
     def pid_controller(self):
-        torque_steer = Float64MultiArray(); torque_vel = Float64MultiArray()
-
-        
-        [fl_wheel, self.fl_e_prev, self.fl_e_tot] = self.pid_set(self.ref_vel[0], self.vel.data[0],
-                                                                 self.kpv, self.kdv, self.kiv, self.fl_e_prev, self.fl_e_tot, self.prev_fl)
+        torque_steer = Float64MultiArray(); torque_steer_mock = Float64MultiArray()
+        torque_vel = Float64MultiArray()
+        wh_s = True
+        st_s = False
+        [fl_wheel, self.fl_e_prev, self.fl_e_tot, self.prev_filt_fl] = self.pid_set(self.ref_vel[0], self.vel.data[0],
+                                                                 self.kpv_f, self.kdv_f, self.kiv_f, self.fl_e_prev, 
+                                                                 self.fl_e_tot, self.prev_fl, self.prev_filt_fl, wh_s)
         self.prev_fl = fl_wheel
-        [fr_wheel, self.fr_e_prev, self.fr_e_tot] = self.pid_set(self.ref_vel[1], self.vel.data[1], 
-                                                                 self.kpv, self.kdv, self.kiv, self.fr_e_prev, self.fr_e_tot, self.prev_fr)
+        [fr_wheel, self.fr_e_prev, self.fr_e_tot, self.prev_filt_fr] = self.pid_set(self.ref_vel[1], self.vel.data[1], 
+                                                                 self.kpv_f, self.kdv_f, self.kiv_f, self.fr_e_prev,
+                                                                   self.fr_e_tot, self.prev_fr, self.prev_filt_fr, wh_s)
         self.prev_fr = fr_wheel
-        [rl_wheel, self.rl_e_prev, self.rl_e_tot] = self.pid_set(self.ref_vel[2], self.vel.data[2], 
-                                                                 self.kpv, self.kdv, self.kiv, self.rl_e_prev, self.rl_e_tot, self.prev_rl)
+        [rl_wheel, self.rl_e_prev, self.rl_e_tot, self.prev_filt_rl] = self.pid_set(self.ref_vel[2], self.vel.data[2], 
+                                                                 self.kpv_r, self.kdv_r, self.kiv_r, self.rl_e_prev,
+                                                                   self.rl_e_tot, self.prev_rl, self.prev_filt_rl, wh_s)
         self.prev_rl = rl_wheel
-        [rr_wheel, self.rr_e_prev, self.rr_e_tot] = self.pid_set(self.ref_vel[3], self.vel.data[3],
-                                                                 self.kpv, self.kdv, self.kiv, self.rr_e_prev, self.rr_e_tot, self.prev_rr)
+        [rr_wheel, self.rr_e_prev, self.rr_e_tot, self.prev_filt_rr] = self.pid_set(self.ref_vel[3], self.vel.data[3],
+                                                                 self.kpv_r, self.kdv_r, self.kiv_r, self.rr_e_prev, 
+                                                                 self.rr_e_tot, self.prev_rr, self.prev_filt_rr, wh_s)
         self.prev_rr = rr_wheel
         
         torque_vel.data = [fl_wheel, fr_wheel, rl_wheel, rr_wheel]
 
-        [fl_steer, self.s_fl_e_prev, self.s_fl_e_tot] = self.pid_set(self.ref_steer[0], self.steer.data[0],
-                                                                 self.kps_fl, self.kds_fl, self.kis_fl, self.s_fl_e_prev, self.s_fl_e_tot, self.prev_s_fl)
+        [fl_steer, self.s_fl_e_prev, self.s_fl_e_tot, _] = self.pid_set(self.ref_steer[0], self.steer.data[0],
+                                                                 self.kps_fl, self.kds_fl, self.kis_fl, self.s_fl_e_prev, self.s_fl_e_tot, self.prev_s_fl, 1.0 ,st_s)
         self.prev_s_fl = fl_steer
-        [fr_steer, self.s_fr_e_prev, self.s_fr_e_tot] = self.pid_set(self.ref_steer[1], self.steer.data[1], 
-                                                                 self.kps_fr, self.kds_fr, self.kis_fr, self.s_fr_e_prev, self.s_fr_e_tot, self.prev_s_fr)
+        [fr_steer, self.s_fr_e_prev, self.s_fr_e_tot, _] = self.pid_set(self.ref_steer[1], self.steer.data[1], 
+                                                                 self.kps_fr, self.kds_fr, self.kis_fr, self.s_fr_e_prev, self.s_fr_e_tot, self.prev_s_fr, 1.0, st_s)
         self.prev_s_fr = fr_steer
-        [rl_steer, self.s_rl_e_prev, self.s_rl_e_tot] = self.pid_set(self.ref_steer[2], self.steer.data[2], 
-                                                                 self.kps_rl, self.kds_rl, self.kis_rl, self.s_rl_e_prev, self.s_rl_e_tot, self.prev_s_rl)
+        [rl_steer, self.s_rl_e_prev, self.s_rl_e_tot, _] = self.pid_set(self.ref_steer[2], self.steer.data[2], 
+                                                                 self.kps_rl, self.kds_rl, self.kis_rl, self.s_rl_e_prev, self.s_rl_e_tot, self.prev_s_rl, 1.0, st_s)
         self.prev_s_rl = rl_steer
-        [rr_steer, self.s_rr_e_prev, self.s_rr_e_tot] = self.pid_set(self.ref_steer[3], self.steer.data[3],
-                                                                 self.kps_rr, self.kds_rr, self.kis_rr, self.s_rr_e_prev, self.s_rr_e_tot, self.prev_s_rr)
+        [rr_steer, self.s_rr_e_prev, self.s_rr_e_tot, _] = self.pid_set(self.ref_steer[3], self.steer.data[3],
+                                                                 self.kps_rr, self.kds_rr, self.kis_rr, self.s_rr_e_prev, self.s_rr_e_tot, self.prev_s_rr, 1.0, st_s)
         self.prev_s_rr = rr_steer
-        [pivot, self.pivot_e_prev, self.pivot_e_tot] = self.pid_set(self.ref_steer[4], self.steer.data[4],
-                                                                 self.kpp, self.kdp, self.kip, self.pivot_e_prev, self.pivot_e_tot, self.prev_pivot)
+        [pivot, self.pivot_e_prev, self.pivot_e_tot, _] = self.pid_set(self.ref_steer[4], self.steer.data[4],
+                                                                 self.kpp, self.kdp, self.kip, self.pivot_e_prev, self.pivot_e_tot, self.prev_pivot, 1.0, st_s)
         self.prev_pivot = pivot
         self.steer_pos.append(self.steer.data[4])
         torque_steer.data = [fl_steer, fr_steer, rl_steer, rr_steer, pivot]
         #print(torque_steer.data)
-        #torque_vel.data = ([0.0, 0.0, 0.0, 0.0])
+        #torque_vel.data = ([4.0, 4.0, 0.0, 0.0])
         #print(torque_vel.data)
-        #torque_steer.data = ([fl_steer, fr_steer, rl_steer, rr_steer, 0.0])
+        #torque_steer_mock.data = ([fl_steer, fr_steer, rl_steer, rr_steer])#, 0.0])
         return torque_vel, torque_steer
 
-    def pid_set(self, ref, value, kp, kd, ki, e_prev, e_tot, prev_control):
+    def pid_set(self, ref, value, kp, kd, ki, e_prev, e_tot, prev_control, prev_filt, s):
         e_0 = ref - value
+        if s: 
+            e_0 = self.filter * e_0 + (1 - self.filter) * prev_filt
+        prev_filt = e_0
         control = kp * e_0 + kd * ((e_0 - e_prev) / self.dt) + ki * (e_0 + e_tot)*self.dt
         
+        if s: lim = 10.0
+        else: lim = 10.0
         if ki != 0:
             # Anti-windup
-            if control > 100.0:
-                control = 100.0
-                e_tot -= (100.0 - control) / ki
-            elif control < -100.0:
-                control = -100.0
-                e_tot -= (-100.0 - control) / ki
+            if control > 50.0:
+                control = 50.0
+                e_tot -= (50.0 - control) / ki
+            elif control < -50.0:
+                control = -50.0
+                e_tot -= (-50.0 - control) / ki
             else:
                 e_tot += e_0
 
         # Rate limiter
-        control = max(min(control, prev_control + 25.0), prev_control - 25.0)
+        control = max(min(control, prev_control + lim), prev_control - lim)
 
         # Saturation
-        #control = max(min(control, 100.0), -100.0)
+        control = max(min(control, 50.0), -50.0)
 
         e_prev = e_0
 
-        return control, e_prev, e_tot
+        return control, e_prev, e_tot, prev_filt
 
 
 
@@ -199,7 +217,7 @@ class PidController(Node):
         rr_steer = msg.position[index]
         rr_steer_torque = msg.effort[index] 
 
-        index = msg.name.index("pivot_joint")
+        index = msg.name.index("pivot_joint") #pivot
         pivot = msg.position[index] 
         pivot_torque = msg.effort[index]
 

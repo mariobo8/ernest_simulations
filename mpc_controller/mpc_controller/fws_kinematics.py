@@ -16,7 +16,7 @@ class fwsKinematics(object):
         self.N = 10
         self.dt = 0.1
         self.theta = 0
-        [self.x_p, self.y_p, self.arc_length] = self.path(file_name = "std_path.txt")
+        [self.x_p, self.y_p, self.arc_length] = self.path(file_name = "new_path.txt")
         self.start = self.x_p[0]
         self.x0 = ca.DM([self.x_p[0], self.y_p[0], 0.0, self.theta])  
         self.X0 = ca.repmat(self.x0, 1, self.N+1)     
@@ -125,31 +125,31 @@ class fwsKinematics(object):
     def weighing_matrices(self, n_states, n_controls, N):
     # Weighing Matrices
         #states
-        Q_x = 7e8
-        Q_y = 7e8
-        Q_psi = 4e7
+        Q_x = 3e7
+        Q_y = 3e7
+        Q_psi = 6e6
         Q_s = 0
 
         #controls
         R_vf = 6e2
         R_vr = 6e2
-        R_deltaf = 9e3
-        R_deltar = 9e3
-        R_virtv = 0
+        R_deltaf = 5e3
+        R_deltar = 5e3
+        R_virtv = 6e2
         
 
         #rate change input
-        W_vf = 1e2
-        W_vr = 1e2
-        W_deltaf = 7e3
-        W_deltar = 7e3
-        W_virtv = 7e1
+        W_vf = 6e1
+        W_vr = 6e1
+        W_deltaf = 1e3
+        W_deltar = 1e3
+        W_virtv = 6e1
         #anti drifting
-        m = 5e9
+        m = 5e7
         #orientation
-        gamma = 2e2
+        gamma = 1e1
         #penalty
-        eps = 5e3
+        eps = 4e8
         # matrix containing all states over all time steps +1 (each column is a state vector)
         X = ca.SX.sym('X', n_states, N + 1)
 
@@ -211,10 +211,10 @@ class fwsKinematics(object):
  
     def constraints(self, n_states, n_controls, N):
         # Boundaries
-        v_max = 0.7
+        v_max = 0.5
         delta_max = 0.9
-        virtual_v_max = 0.65
-        v_min = -0.5
+        virtual_v_max = 0.5
+        v_min = -0.3
         delta_min = -0.9
         virtual_v_min = 0
         a_min = - 0.04
@@ -378,11 +378,11 @@ class fwsKinematics(object):
 
 
         
-
+        bicycle_input = [v_f, v_r, delta_f, delta_r, alpha]
         [self.u0, new_xp0, new_up0, self.theta, new_x_r] = \
             self.shift_timestep(u, self.X0, self.x_p, self.y_p, self.arc_length, inp)
 
-        return input, new_x_r, new_up0
+        return input, new_x_r, new_up0, bicycle_input
 
 
     

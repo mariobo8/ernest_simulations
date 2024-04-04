@@ -17,7 +17,7 @@ class Pivot4wsKinematics(object):
         self.N = 10
         self.dt = 0.1
         self.theta = 0
-        [self.x_p, self.y_p, self.arc_length] = self.path(file_name = "std_path.txt")
+        [self.x_p, self.y_p, self.arc_length] = self.path(file_name = "new_path.txt")
         self.start = self.x_p[0]
         self.x0 = ca.DM([self.x_p[0], self.y_p[0], 0.0, self.theta])  
         self.X0 = ca.repmat(self.x0, 1, self.N+1)     
@@ -90,8 +90,8 @@ class Pivot4wsKinematics(object):
         alpha_dot = (alpha - self.alpha_prev) / self.dt
         
         h = np.sqrt(self.l_f**2 + self.b**2)
-        v_fl = v_fl - alpha_dot * h 
-        v_fr = v_fr + alpha_dot * h
+        #v_fl = v_fl - alpha_dot * h / cos(d_fl)
+        #v_fr = v_fr + alpha_dot * h / cos(d_fr)
         self.alpha_prev = alpha
 
         return v_fl, v_fr, v_rl, v_rr, d_fl, d_fr, d_rl, d_rr
@@ -154,30 +154,30 @@ class Pivot4wsKinematics(object):
     def weighing_matrices(self, n_states, n_controls, N):
     # Weighing Matrices
         #states
-        Q_x = 1e9
-        Q_y = 1e9
-        Q_psi = 0e0
-        Q_s = 0
+        Q_x = 5e9
+        Q_y = 5e9
+        Q_psi = 5e2
+        Q_s = 5e0
 
         #controls
         R_vf = 9e1
         R_vr = 9e1
-        R_deltaf = 4e3
-        R_deltar = 4e3
-        R_alpha = 8e3
-        R_virtv = 5e1       
+        R_deltaf = 9e2
+        R_deltar = 9e2
+        R_alpha = 9e3
+        R_virtv = 9e1       
 
         #rate change input
         
-        W_vf = 1e2
-        W_vr = 1e2
-        W_deltaf = 8e3
-        W_deltar = 8e3
-        W_alpha = 9e4
-        W_virtv = 7e1
+        W_vf = 1e1
+        W_vr = 1e1
+        W_deltaf = 1e2
+        W_deltar = 1e2
+        W_alpha = 1e3
+        W_virtv = 1e2
 
         #penalty
-        eps = 5e3
+        eps = 5e10
         #orientation
         gamma = 2e2
         #anti drifting
@@ -413,10 +413,10 @@ class Pivot4wsKinematics(object):
         input = [v_fl, v_fr, v_rl, v_rr, delta_fl,
                  delta_fr, delta_rl, delta_rr, alpha, v_virt]
         
+        bicycle_input = [v_f, v_r, delta_f, delta_r, alpha]
         [self.u0, new_xp0, new_up0, self.theta, new_x_r] = \
             self.shift_timestep(u, self.X0, self.x_p, self.y_p, self.arc_length, inp)
 
-        return input, new_x_r, new_up0
-
+        return input, new_x_r, new_up0, bicycle_input
 
     

@@ -5,7 +5,7 @@
 
     <!-- Add physics block with real_time_update_rate -->
     <physics name="default_physics" default="true" type="ode">
-      <real_time_update_rate>100000</real_time_update_rate>
+      <real_time_update_rate>1000</real_time_update_rate>
       <!-- Other physics parameters -->
     </physics>
 

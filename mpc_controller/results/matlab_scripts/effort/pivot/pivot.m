@@ -3,13 +3,15 @@ clearvars; clc; close all;
 %% loading
 input_path = fullfile(pwd, '../../../pivot/input.txt'); % Paths Folder
 load(input_path)
+bicycle = fullfile(pwd, '../../../pivot/input_bicycle.txt'); % Paths Folder
+load(bicycle)
 state_path = fullfile(pwd, '../../../pivot/state.txt'); % Paths Folder
 load(state_path)
 prediction_path = fullfile(pwd, '../../../pivot/prediction.txt'); % Paths Folder
 pred = load(prediction_path);
 reference_path = fullfile(pwd, '../../../pivot/reference.txt'); % Paths Folder
 ref = load(reference_path);
-path_path = fullfile(pwd, '../../../../path/std_path.txt'); % Paths Folder
+path_path = fullfile(pwd, '../../../../path/new_path.txt'); % Paths Folder
 path = load(path_path);
 load(fullfile(pwd, '../../../pivot/steer_effort.txt'))
 load(fullfile(pwd, '../../../pivot/wheel_effort.txt'))
@@ -25,40 +27,77 @@ v_rl = input(:,3);
 v_rr = input(:,4);
 alpha = input(:,9);
 
+%bicycle
+v_f = input_bicycle(:,1);
+v_r = input_bicycle(:,2);
+alpha = input_bicycle(:,5);
+
 %state
 x = state(:,1);
 y = state(:,2);
 psi = state(:,3);
 
-%path
+%% path
+%TO DO: load the path
 x_p = path(:,1);
 y_p = path(:,2);
 
 figure
-plot(x,y); hold on 
-plot(x_p, y_p)
+plot(x_p, y_p, 'LineWidth',1.5, 'Color',[0.5 0.5 0.5])
+hold on
+plot(x,y,'k' ,'LineWidth',1.5); hold on 
+
 grid on
 title('trajectory')
 xlabel('X [m]')
 ylabel('Y [m]')
-legend('state', 'reference', 'Location','northwest')
+legend('state', 'reference', 'Location','northeast')
 
-%% plotting
-%velocities
+%% bicycle input
+line_width = 1.5;
 figure
-subplot(221)
-plot(v_fl); grid on
-subplot(222)
-plot(v_fr); grid on
-subplot(223)
-plot(v_rl); grid on
-subplot(224)
-plot(v_rr); grid on
+subplot(311)
+plot(time, v_f, "LineWidth", line_width); 
+grid on; xlim([0, time(end)]); ylim([-0.2, 0.8]);
+xlabel('time (s)'); ylabel('v_{f} (m/s)')
+subplot(312)
+plot(time, v_r, "LineWidth", line_width); 
+grid on; xlim([0, time(end)]); ylim([-0.2, 0.8]);
+xlabel('time (s)'); ylabel('v_{r} (m/s)')
+subplot(313)
+plot(time, alpha, "LineWidth", line_width); 
+grid on; xlim([0, time(end)]); ylim([-0.6, 0.6]);
+xlabel('time (s)'); ylabel('\alpha (rad)')
+
+
+%% input
+line_width = 1.5;
+figure
+subplot(211)
+plot(time, v_fl, "b", "LineWidth", line_width); 
+grid on; xlim([0, time(end)]); ylim([-0.2, 1.2]);
+xlabel('time (s)'); ylabel('v_{f} (m/s)')
+hold on
+plot(time, v_fr, "r", "LineWidth", line_width); 
+grid on; xlim([0, time(end)]); ylim([-0.2, 1.2]);
+xlabel('time (s)'); ylabel('v_{f} (m/s)')
+legend('v_{fl}', 'v_{fr}', Orientation='horizontal')
+subplot(212)
+plot(time, v_rl, "b", "LineWidth", line_width); 
+grid on; xlim([0, time(end)]); ylim([-0.2, 1.2]);
+xlabel('time (s)'); ylabel('v_{r} (m/s)')
+hold on
+plot(time, v_rr, "r", "LineWidth", line_width); 
+grid on; xlim([0, time(end)]); ylim([-0.2, 1.2]);
+xlabel('time (s)'); ylabel('v_{r} (m/s)')
+legend('v_{rl}', 'v_{rr}', Orientation='horizontal')
 
 %alpha
 figure 
-plot(alpha); grid on
-
+plot(time, alpha, "b", "LineWidth", line_width);
+grid on; xlim([0, time(end)]); ylim([-1.2, 1.2]);
+xlabel('time (s)'); ylabel('\alpha (rad)')
+legend('alpha', Orientation='horizontal')
 
 %% STEERING TORQUE
 %NAME torque
@@ -109,8 +148,8 @@ st_eff_new = interp1(t_torque', steer_effort(:,5), time);
 nan_indices = isnan(st_eff_new);
 st_eff_new(nan_indices) = 0;
 I = st_eff_new / tk; %current
-P = abs(V*I*1e-3); %power KW
-E_st = trapz(time, P) / 3600
+P_st = abs(V*I*1e-3); %power KW
+E_st = trapz(time, P_st) / 3600
 
 % %wheel 
 tk = 0.05; %Nm/A torque constant
@@ -128,6 +167,44 @@ E_wheel = E_fl + E_fr + E_rl + E_rr
 
 E_tot = E_st + E_wheel
 
+figure
+plot(time, P_st)
+xlabel('time (s)'); ylabel('Power (W)')
+legend('\alpha','Orientation','horizontal')
+grid on
+
+%% Actual energy computation (R*I^2 + T*omega)
+%steer
+tk = 0.05; %Nm/A torque constant
+V = 80;
+st_eff_new = interp1(t_torque', steer_effort(:,5), time);
+nan_indices = isnan(st_eff_new);
+st_eff_new(nan_indices) = 0;
+I = st_eff_new / tk; %current
+P_st = abs(V*I*1e-3); %power KW
+E_st = trapz(time, P_st) / 3600
+
+% %wheel 
+tk = 0.05; %Nm/A torque constant
+V = 80;
+wheel_eff_new = interp1(t_torque', wheel_effort, time);
+nan_indices = isnan(wheel_eff_new);
+wheel_eff_new(nan_indices) = 0;
+I_w = wheel_eff_new ./ tk; %current
+P_w = abs(V*I_w*1e-3); %power KW
+E_fl = trapz(time, P_w(:,1)) / 3600;
+E_fr = trapz(time, P_w(:,2)) / 3600;
+E_rl = trapz(time, P_w(:,3)) / 3600;
+E_rr = trapz(time, P_w(:,4)) / 3600;
+E_wheel = E_fl + E_fr + E_rl + E_rr
+
+E_tot = E_st + E_wheel
+
+figure
+plot(time, P_st)
+xlabel('time (s)'); ylabel('Power (W)')
+legend('\alpha','Orientation','horizontal')
+grid on
 % %% trajectory plotting
 % figure(500)
 % 
