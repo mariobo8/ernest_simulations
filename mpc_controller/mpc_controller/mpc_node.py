@@ -25,7 +25,7 @@ class PathTrackingMPC(Node):
 
     def __init__(self):
         super().__init__('path_tracking_MPC')
-        self.mpc_inst = p_mpc()
+        self.mpc_inst = pfws_mpc()
         self.xp_0 = self.mpc_inst.start
         self.alpha_0 = 0.0 
         self.input_sequence = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
@@ -41,7 +41,7 @@ class PathTrackingMPC(Node):
     
     def save_data(self):
         current_dir = os.path.dirname(os.path.realpath(__file__))
-        relative_folder_path = "../results/pivot"
+        relative_folder_path = "../results/5_dof/passive"
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'input.txt'),
             self.input_sequence, fmt='%f', delimiter='\t')
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'input_bicycle.txt'),

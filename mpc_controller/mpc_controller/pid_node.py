@@ -53,6 +53,7 @@ class PidController(Node):
         #pivot_joint
         self.kpp = 250; self.kdp = 180.0; self.kip = 1000.0  #done!
         #self.kpp = 40.0; self.kdp = 15.0; self.kip = 10.0  #done! for passive
+        #self.kpp = 60.0; self.kdp = 30.0; self.kip = 15.0  #done! for passive
         self.kpp = 100.0; self.kdp = 50.0; self.kip = 30.0  #done! for active
         #torque
         self.wheel_torque = [0.0, 0.0, 0.0, 0.0]
@@ -94,7 +95,7 @@ class PidController(Node):
 
     def save(self):
         current_dir = os.path.dirname(os.path.realpath(__file__))
-        relative_folder_path = "../results/pivot"
+        relative_folder_path = "../results/5_dof/passive"
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'steer_effort.txt'),
             self.steer_torque, fmt='%f', delimiter='\t')
         np.savetxt(os.path.join(current_dir, relative_folder_path, 'wheel_effort.txt'),
