@@ -103,7 +103,7 @@ class PidController(Node):
         self.get_logger().info("torque saved")
         
     def pid_controller(self):
-        torque_steer = Float64MultiArray(); torque_steer_mock = Float64MultiArray()
+        torque_steer = Float64MultiArray(); 
         torque_vel = Float64MultiArray()
         wh_s = True
         st_s = False

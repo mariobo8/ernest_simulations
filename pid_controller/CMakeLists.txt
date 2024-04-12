@@ -30,12 +30,7 @@ find_package(ament_index_cpp REQUIRED)
 # Add the ament_index_cpp include directory
 include_directories(${ament_index_cpp_INCLUDE_DIRS})
 
-add_executable(trajectory_controller src/trajectory_controller.cpp)
-ament_target_dependencies(trajectory_controller rclcpp trajectory_msgs nav_msgs ament_index_cpp)
 
-add_executable(position_controller src/position_controller.cpp)
-ament_target_dependencies(position_controller rclcpp trajectory_msgs nav_msgs sensor_msgs 
-ament_index_cpp)
 
 add_executable(odom_subs src/subs.cpp)
 ament_target_dependencies(odom_subs rclcpp trajectory_msgs nav_msgs ament_index_cpp)
@@ -48,15 +43,13 @@ install(TARGETS
 
   pid_controller
   odom_subs
-  trajectory_controller
-  position_controller
 
   DESTINATION lib/${PROJECT_NAME}
 )
 
 
 install(
-  DIRECTORY   matlab
+  DIRECTORY   
   DESTINATION share/${PROJECT_NAME}
 )
 

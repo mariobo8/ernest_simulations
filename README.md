@@ -1,6 +1,4 @@
-to run the simulation:
-1. ros2 launch bringup ernest_gazebo.launch.py
-2. ros2 launch bringup joint_controller.launch.py
-3. ros2 run controller trajectory_controller
-
-__ tobeadded : PID
+This ws implements a gazebo simulation for Ernest rover and C
+to spawn ERNEST in Gazebo:
+1. ros2 launch bringup effort.launch.py, position.launch.py 
+2. ros2 launch mpc_controller effort_controller.launch.py, position_controller.launch.py

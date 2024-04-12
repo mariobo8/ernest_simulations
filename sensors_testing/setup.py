@@ -38,8 +38,6 @@ setup(
     # scripts here.
     entry_points={
         'console_scripts': [
-            'test_node = sensors_testing.sensors_node:main',
-            'stop_motors = sensors_testing.stop_motors:main',
             'test = sensors_testing.test_actuators:main',
         ],
     },

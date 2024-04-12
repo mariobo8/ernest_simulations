@@ -35,9 +35,10 @@ alpha = movmean(input(:,9),coeff);
 %     (lf + lr.*(cos(alpha) - tan(delta_f).*sin(alpha))));
 virtual_v = movmean(input(:,10),coeff);
 %state
-x = state(:,1);
-y = state(:,2);
-psi = state(:,3);
+coeff=40;
+x = movmean(state(:,1),coeff);
+y = movmean(state(:,2),coeff);
+psi = movmean(state(:,3),coeff);
 
 %% path
 %TO DO: load the path
